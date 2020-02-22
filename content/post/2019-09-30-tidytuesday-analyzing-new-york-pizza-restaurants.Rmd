@@ -4,8 +4,8 @@ author: Alex Cookson
 date: '2019-09-30'
 description: 
 slug: tidytuesday-analyzing-new-york-pizza-restaurants
----
-
+---  
+\  
 
 In this post, I analyze the [Pizza Party](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-01) dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday), a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week's data is about **survey ratings of New York pizza restaurants**.  
 \  
@@ -23,7 +23,7 @@ pizza_barstool_raw <- readr::read_csv("https://raw.githubusercontent.com/rfordat
 ```  
 \  
 
-## Inspection
+## Data inspection
 
 Let's take a look!
 
@@ -145,11 +145,11 @@ new_york_extremes <- new_york_pizza %>%
 
 Great! The data is in the right format to graph. Let's do a couple clean-up steps so that our graph looks nice:
 
-1. Convert numeric price levels (0-4) to dollar signs ($, $$, etc.)
-2. Convert `pizzeria_name` to a factor and then re-order it so that, when graphed, they will appear in order from highest- to lowest-rated
-3. Find nice colours and their hex values from [ColorBrewer](http://colorbrewer2.org/#type=diverging&scheme=RdBu&n=3) (I use blue for high score and red for low score)
-4. Fiddle with some chart elements, like legend, gridlines, and text size
-5. Add titles and annotations
+1. Convert numeric price levels (0-4) to dollar signs ($, $$, etc.).
+2. Convert `pizzeria_name` to a factor and then re-order it so that, when graphed, they will appear in order from highest- to lowest-rated.
+3. Find nice colours and their hex values from [ColorBrewer](http://colorbrewer2.org/#type=diverging&scheme=RdBu&n=3) (I use blue for high score and red for low score).
+4. Fiddle with some chart elements, like legend, gridlines, and text size.
+5. Add titles and annotations.
 
 ```{r}
 library(tidytext) # Needed for reorder_within and scale_x_reordered functions

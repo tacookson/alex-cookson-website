@@ -228,9 +228,11 @@
 
 </div>
 
-  
+    
 
 
+
+<p> </p>
 <p>In this post, I analyze the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-01">Pizza Party</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about <strong>survey ratings of New York pizza restaurants</strong>.<br />
  </p>
 <div id="setup" class="section level2">
@@ -243,8 +245,8 @@ theme_set(theme_light())
 pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-01/pizza_barstool.csv&quot;)</code></pre>
 <p> </p>
 </div>
-<div id="inspection" class="section level2">
-<h2>Inspection</h2>
+<div id="data-inspection" class="section level2">
+<h2>Data inspection</h2>
 <p>Let’s take a look!</p>
 <pre class="r"><code>pizza_barstool_raw %&gt;%
   glimpse()</code></pre>
@@ -373,11 +375,11 @@ new_york_extremes &lt;- new_york_pizza %&gt;%
 <p> </p>
 <p>Great! The data is in the right format to graph. Let’s do a couple clean-up steps so that our graph looks nice:</p>
 <ol style="list-style-type: decimal">
-<li>Convert numeric price levels (0-4) to dollar signs ($, $$, etc.)</li>
-<li>Convert <code>pizzeria_name</code> to a factor and then re-order it so that, when graphed, they will appear in order from highest- to lowest-rated</li>
-<li>Find nice colours and their hex values from <a href="http://colorbrewer2.org/#type=diverging&amp;scheme=RdBu&amp;n=3">ColorBrewer</a> (I use blue for high score and red for low score)</li>
-<li>Fiddle with some chart elements, like legend, gridlines, and text size</li>
-<li>Add titles and annotations</li>
+<li>Convert numeric price levels (0-4) to dollar signs ($, $$, etc.).</li>
+<li>Convert <code>pizzeria_name</code> to a factor and then re-order it so that, when graphed, they will appear in order from highest- to lowest-rated.</li>
+<li>Find nice colours and their hex values from <a href="http://colorbrewer2.org/#type=diverging&amp;scheme=RdBu&amp;n=3">ColorBrewer</a> (I use blue for high score and red for low score).</li>
+<li>Fiddle with some chart elements, like legend, gridlines, and text size.</li>
+<li>Add titles and annotations.</li>
 </ol>
 <pre class="r"><code>library(tidytext) # Needed for reorder_within and scale_x_reordered functions
 
