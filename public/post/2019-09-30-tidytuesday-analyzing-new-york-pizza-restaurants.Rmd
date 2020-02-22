@@ -1,0 +1,113 @@
+---
+title: 'TidyTuesday: Analyzing New York pizza restaurants'
+author: Alex Cookson
+date: '2019-09-30'
+description: This is the description
+slug: tidytuesday-analyzing-new-york-pizza-restaurants
+---
+
+
+In this post, I analyze the [Pizza Party](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-01) dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday), a weekly project to share a dataset to practice skills on. This week's data is about survey ratings of New York's top pizza restaurants.  
+\  
+
+## Setup
+
+First, let's load the `tidyverse`, change our default `ggplot2` theme, and load the data. (I named the dataframe **pizza_barstool_raw** because I'll probably add some cleaning steps and I like to have the original data on hand.)
+
+```{r, echo = TRUE, results = 'hide', message = FALSE, warning = FALSE}
+library(tidyverse)
+
+pizza_barstool_raw <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-01/pizza_barstool.csv")
+```  
+\  
+
+## Inspection
+
+Let's take a look!
+
+```{r}
+pizza_barstool_raw %>%
+  glimpse()
+```
+
+
+We have three major categories of data:
+
+1. **Location**: where the restaurants are, including city (borough) and geographic coordinates
+2. **Restaurant**: name and price level
+3. **Reviews**: review counts scores for four types of reviewers
+    + Provider
+    + Community
+    + Critics
+    + Dave (Barstool)
+
+We could investigate a lot of things with this data, including where in New York the best pizza places are, how consistent the different types of reviewers are, and whether higher prices mean better pizza.
+
+**What's the best (and worst) pizza in New York, for each price level?** Next time I visit New York, I want to know the must-go pizza places (and which ones to avoid) and I want options depending on how much I'm looking to spend.  
+\    
+
+## Data cleaning
+
+Now that we have our research question, let's clean the data:
+
+1. Add `pizzeria_id` as unique ID field for each restaurant. This will help if there are multiple restaurants with the same name.
+2. Ditch location data -- it doesn't help answer our question.
+3. Rename variables that start with `review_stats_`. They're cumbersome.
+
+```{r}
+pizza_barstool <- pizza_barstool_raw %>%
+  transmute(pizzeria_id = row_number(),
+            pizzeria_name = name,
+            price_level,
+            provider_rating,
+            provider_reviews = provider_review_count,
+            all_rating = review_stats_all_average_score,
+            all_reviews = review_stats_all_count,
+            community_rating = review_stats_community_average_score,
+            community_reviews = review_stats_community_count,
+            critic_rating = review_stats_critic_average_score,
+            critic_reviews = review_stats_critic_count,
+            dave_rating = review_stats_dave_average_score,
+            dave_reviews = review_stats_dave_count)
+```
+
+
+One last cleaning step. This data is in a **wide** format. I want it to be in a **tidy** (tall) format, which is easier to work with. We can do this using `gather` and `spread`.
+
+```{r}
+pizza_barstool_tidy <- pizza_barstool %>%
+  gather("category", "value", provider_rating:dave_reviews) %>%
+  separate(category, into = c("reviewer", "measure"), sep = "_") %>%
+  spread(measure, value) %>%
+  filter(reviews > 0,
+         rating > 0)
+```
+
+
+We're looking at ratings, which is a continuous variable, so let's look at the distribution of average scores for each type of reviewer using histograms.
+
+```{r}
+pizza_barstool_tidy %>%
+  ggplot(aes(rating)) +
+  geom_histogram(binwidth = 1) +  # binwidth = 1 to get clean breaks in histogram
+  facet_wrap(~ reviewer) +
+  labs(title = "How did different reviewers score restaurants?")
+```
+
+
+Most reviews are in the 7-8 range, except for **provider**, which has a lot of 3s and 4s. I suspect **provider** ratings might be on a 5-point scale.
+
+```{r}
+pizza_barstool_tidy %>%
+  filter(reviewer == "provider") %>%
+  count(rating)
+```
+
+
+Yep. Let's double the provider scores so they are on the same scale as the other reviewers
+
+```{r}
+pizza_barstool_tidy <- pizza_barstool_tidy %>%
+  filter(reviews > 0) %>%
+  mutate(rating = if_else(reviewer == "provider", rating * 2, rating))
+```

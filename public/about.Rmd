@@ -1,0 +1,14 @@
+---
+date: "2014-04-09"
+description: ""
+sidemenu: "true"
+title: About me
+---
+
+Hi! I'm Alex. I love data science, cycling, and cats.
+
+I currently work at the [Royal Canadian Mint](https://www.mint.ca/), where I help the marketing team make the most of their data. I've worked a bunch of machine learning and business analytics projects, including predictive models for customer churn, recommendation engines, and self-service dashboards.
+
+I have Master's degrees in International Business from HEC Paris and Queen's University. I also earned my Bachelor's degree from Queen's University, where I studied commerce.
+
+Feel free to check out some of my [posts](/post/) or check me out on [Twitter](https://twitter.com/alexcookson)!

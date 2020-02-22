@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Alex Cookson</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on Alex Cookson</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy; 2020. All rights reserved.</copyright>
+    <lastBuildDate>Mon, 30 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>TidyTuesday: Analyzing New York pizza restaurants</title>
+      <link>/post/tidytuesday-analyzing-new-york-pizza-restaurants/</link>
+      <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/tidytuesday-analyzing-new-york-pizza-restaurants/</guid>
+      <description>In this post, I analyze the Pizza Party dataset from TidyTuesday, a weekly project to share a dataset to practice skills on. This week’s data is about survey ratings of New York’s top pizza restaurants.
+SetupFirst, let’s load the tidyverse, change our default ggplot2 theme, and load the data. (I named the dataframe pizza_barstool_raw because I’ll probably add some cleaning steps and I like to have the original data on hand.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,120 @@
+---
+title: 'TidyTuesday: Analyzing New York pizza restaurants'
+author: Alex Cookson
+date: '2019-09-30'
+description: This is the description
+slug: tidytuesday-analyzing-new-york-pizza-restaurants
+---
+
+
+
+<p>In this post, I analyze the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-01">Pizza Party</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a weekly project to share a dataset to practice skills on. This week’s data is about survey ratings of New York’s top pizza restaurants.<br />
+ </p>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>First, let’s load the <code>tidyverse</code>, change our default <code>ggplot2</code> theme, and load the data. (I named the dataframe <strong>pizza_barstool_raw</strong> because I’ll probably add some cleaning steps and I like to have the original data on hand.)</p>
+<pre class="r"><code>library(tidyverse)
+
+pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-01/pizza_barstool.csv&quot;)</code></pre>
+<p> </p>
+</div>
+<div id="inspection" class="section level2">
+<h2>Inspection</h2>
+<p>Let’s take a look!</p>
+<pre class="r"><code>pizza_barstool_raw %&gt;%
+  glimpse()</code></pre>
+<pre><code>## Observations: 463
+## Variables: 22
+## $ name                                 &lt;chr&gt; &quot;Pugsley&#39;s Pizza&quot;, &quot;Williamsbu...
+## $ address1                             &lt;chr&gt; &quot;590 E 191st St&quot;, &quot;265 Union A...
+## $ city                                 &lt;chr&gt; &quot;Bronx&quot;, &quot;Brooklyn&quot;, &quot;New York...
+## $ zip                                  &lt;dbl&gt; 10458, 11211, 10017, 10036, 10...
+## $ country                              &lt;chr&gt; &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, &quot;US&quot;, ...
+## $ latitude                             &lt;dbl&gt; 40.85877, 40.70808, 40.75370, ...
+## $ longitude                            &lt;dbl&gt; -73.88484, -73.95090, -73.9741...
+## $ price_level                          &lt;dbl&gt; 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, ...
+## $ provider_rating                      &lt;dbl&gt; 4.5, 3.0, 4.0, 4.0, 3.0, 3.5, ...
+## $ provider_review_count                &lt;dbl&gt; 121, 281, 118, 1055, 143, 28, ...
+## $ review_stats_all_average_score       &lt;dbl&gt; 8.011111, 7.774074, 5.666667, ...
+## $ review_stats_all_count               &lt;dbl&gt; 27, 27, 9, 2, 1, 4, 5, 17, 14,...
+## $ review_stats_all_total_score         &lt;dbl&gt; 216.3, 209.9, 51.0, 11.2, 7.1,...
+## $ review_stats_community_average_score &lt;dbl&gt; 7.992000, 7.742308, 5.762500, ...
+## $ review_stats_community_count         &lt;dbl&gt; 25, 26, 8, 0, 0, 3, 4, 16, 13,...
+## $ review_stats_community_total_score   &lt;dbl&gt; 199.8, 201.3, 46.1, 0.0, 0.0, ...
+## $ review_stats_critic_average_score    &lt;dbl&gt; 8.8, 0.0, 0.0, 4.3, 0.0, 0.0, ...
+## $ review_stats_critic_count            &lt;dbl&gt; 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, ...
+## $ review_stats_critic_total_score      &lt;dbl&gt; 8.8, 0.0, 0.0, 4.3, 0.0, 0.0, ...
+## $ review_stats_dave_average_score      &lt;dbl&gt; 7.7, 8.6, 4.9, 6.9, 7.1, 3.2, ...
+## $ review_stats_dave_count              &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ review_stats_dave_total_score        &lt;dbl&gt; 7.7, 8.6, 4.9, 6.9, 7.1, 3.2, ...</code></pre>
+<p>We have three major categories of data:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Location</strong>: where the restaurants are, including city (borough) and geographic coordinates</li>
+<li><strong>Restaurant</strong>: name and price level</li>
+<li><strong>Reviews</strong>: review counts scores for four types of reviewers
+<ul>
+<li>Provider</li>
+<li>Community</li>
+<li>Critics</li>
+<li>Dave (Barstool)</li>
+</ul></li>
+</ol>
+<p>We could investigate a lot of things with this data, including where in New York the best pizza places are, how consistent the different types of reviewers are, and whether higher prices mean better pizza.</p>
+<p><strong>What’s the best (and worst) pizza in New York, for each price level?</strong> Next time I visit New York, I want to know the must-go pizza places (and which ones to avoid) and I want options depending on how much I’m looking to spend.<br />
+ </p>
+</div>
+<div id="data-cleaning" class="section level2">
+<h2>Data cleaning</h2>
+<p>Now that we have our research question, let’s clean the data:</p>
+<ol style="list-style-type: decimal">
+<li>Add <code>pizzeria_id</code> as unique ID field for each restaurant. This will help if there are multiple restaurants with the same name.</li>
+<li>Ditch location data – it doesn’t help answer our question.</li>
+<li>Rename variables that start with <code>review_stats_</code>. They’re cumbersome.</li>
+</ol>
+<pre class="r"><code>pizza_barstool &lt;- pizza_barstool_raw %&gt;%
+  transmute(pizzeria_id = row_number(),
+            pizzeria_name = name,
+            price_level,
+            provider_rating,
+            provider_reviews = provider_review_count,
+            all_rating = review_stats_all_average_score,
+            all_reviews = review_stats_all_count,
+            community_rating = review_stats_community_average_score,
+            community_reviews = review_stats_community_count,
+            critic_rating = review_stats_critic_average_score,
+            critic_reviews = review_stats_critic_count,
+            dave_rating = review_stats_dave_average_score,
+            dave_reviews = review_stats_dave_count)</code></pre>
+<p>One last cleaning step. This data is in a <strong>wide</strong> format. I want it to be in a <strong>tidy</strong> (tall) format, which is easier to work with. We can do this using <code>gather</code> and <code>spread</code>.</p>
+<pre class="r"><code>pizza_barstool_tidy &lt;- pizza_barstool %&gt;%
+  gather(&quot;category&quot;, &quot;value&quot;, provider_rating:dave_reviews) %&gt;%
+  separate(category, into = c(&quot;reviewer&quot;, &quot;measure&quot;), sep = &quot;_&quot;) %&gt;%
+  spread(measure, value) %&gt;%
+  filter(reviews &gt; 0,
+         rating &gt; 0)</code></pre>
+<p>We’re looking at ratings, which is a continuous variable, so let’s look at the distribution of average scores for each type of reviewer using histograms.</p>
+<pre class="r"><code>pizza_barstool_tidy %&gt;%
+  ggplot(aes(rating)) +
+  geom_histogram(binwidth = 1) +  # binwidth = 1 to get clean breaks in histogram
+  facet_wrap(~ reviewer) +
+  labs(title = &quot;How did different reviewers score restaurants?&quot;)</code></pre>
+<p><img src="/post/2019-09-30-tidytuesday-analyzing-new-york-pizza-restaurants_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Most reviews are in the 7-8 range, except for <strong>provider</strong>, which has a lot of 3s and 4s. I suspect <strong>provider</strong> ratings might be on a 5-point scale.</p>
+<pre class="r"><code>pizza_barstool_tidy %&gt;%
+  filter(reviewer == &quot;provider&quot;) %&gt;%
+  count(rating)</code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   rating     n
+##    &lt;dbl&gt; &lt;int&gt;
+## 1    2       2
+## 2    2.5    14
+## 3    3      78
+## 4    3.5   155
+## 5    4     162
+## 6    4.5    48
+## 7    5       4</code></pre>
+<p>Yep. Let’s double the provider scores so they are on the same scale as the other reviewers</p>
+<pre class="r"><code>pizza_barstool_tidy &lt;- pizza_barstool_tidy %&gt;%
+  filter(reviews &gt; 0) %&gt;%
+  mutate(rating = if_else(reviewer == &quot;provider&quot;, rating * 2, rating))</code></pre>
+</div>
