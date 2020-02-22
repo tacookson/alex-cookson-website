@@ -18,7 +18,7 @@
       <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/tidytuesday-analyzing-new-york-pizza-restaurants/</guid>
-      <description>In this post, I analyze the Pizza Party dataset from TidyTuesday, a weekly project to share a dataset to practice skills on. This week’s data is about survey ratings of New York’s top pizza restaurants.
+      <description>In this post, I analyze the Pizza Party dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about survey ratings of New York pizza restaurants.
 SetupFirst, let’s load the tidyverse, change our default ggplot2 theme, and load the data. (I named the dataframe pizza_barstool_raw because I’ll probably add some cleaning steps and I like to have the original data on hand.</description>
     </item>
     

@@ -7,7 +7,7 @@ slug: tidytuesday-analyzing-new-york-pizza-restaurants
 ---
 
 
-In this post, I analyze the [Pizza Party](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-01) dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday), a weekly project to share a dataset to practice skills on. This week's data is about survey ratings of New York's top pizza restaurants.  
+In this post, I analyze the [Pizza Party](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-01) dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday), a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week's data is about **survey ratings of New York pizza restaurants**.  
 \  
 
 ## Setup
@@ -45,21 +45,26 @@ We have three major categories of data:
 
 We could investigate a lot of things with this data, including where in New York the best pizza places are, how consistent the different types of reviewers are, and whether higher prices mean better pizza.
 
-**What's the best (and worst) pizza in New York, for each price level?** Next time I visit New York, I want to know the must-go pizza places (and which ones to avoid) and I want options depending on how much I'm looking to spend.  
+I want to know, **What's the best (and worst) pizza in New York, for each price level?** Next time I visit, I want to know the must-go pizza places (and which ones to avoid) and I want options depending on how much I'm looking to spend.  
 \    
 
 ## Data cleaning
 
-Now that we have our research question, let's clean the data:
+Now that we have our research question, let's clean the data. We will:
 
-1. Add `pizzeria_id` as unique ID field for each restaurant. This will help if there are multiple restaurants with the same name.
-2. Filter out restaurants outside of New York.
+1. Filter out restaurants outside of New York.
+2. Add `pizzeria_id` as unique ID field for each restaurant. This will help if there are multiple restaurants with the same name.
 3. Ditch location data -- it doesn't help answer our question.
 4. Rename variables that start with `review_stats_`. They're cumbersome.
 
 ```{r}
 pizza_barstool <- pizza_barstool_raw %>%
-  filter(city %in% c("New York", "New York City", "Brooklyn", "Bronx", "Staten Island", "Hoboken")) %>%
+  filter(city %in% c("New York", # New York is coded two different ways
+                     "New York City",
+                     "Brooklyn",
+                     "Bronx",
+                     "Staten Island",
+                     "Hoboken")) %>%
   transmute(pizzeria_id = row_number(),
             pizzeria_name = name,
             price_level,
@@ -73,10 +78,10 @@ pizza_barstool <- pizza_barstool_raw %>%
             critic_reviews = review_stats_critic_count,
             dave_rating = review_stats_dave_average_score,
             dave_reviews = review_stats_dave_count)
-```
+```  
+\  
 
-
-One last cleaning step. This data is in a **wide** format. I want it to be in a **tidy** (tall) format, which is easier to work with. We can do this using `gather` and `spread`.
+Two more cleaning steps. First, this data is in a **wide** format. I want it to be in a [**tidy**](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html) format, which is easier to work with. We can do this using `gather` and `spread`. After that, we we'll filter out data that isn't useful to us -- restaurants without zero reviews and the aggregated reviewer "all" (we want the reviewer type to stay unaggregated).
 
 ```{r}
 pizza_barstool_tidy <- pizza_barstool %>%
@@ -84,9 +89,9 @@ pizza_barstool_tidy <- pizza_barstool %>%
   separate(category, into = c("reviewer", "measure"), sep = "_") %>%
   spread(measure, value) %>%
   filter(reviews > 0,
-         rating > 0)
-```
-
+         reviewer != "all")
+```  
+\  
 
 We're looking at ratings, which is a continuous variable, so let's look at the distribution of average scores for each type of reviewer using histograms.
 
@@ -96,19 +101,19 @@ pizza_barstool_tidy %>%
   geom_histogram(binwidth = 1) +  # binwidth = 1 to get clean breaks in histogram
   facet_wrap(~ reviewer) +
   labs(title = "How did different reviewers score restaurants?")
-```
+```  
+\  
 
-
-Most reviews are in the 7-8 range, except for **provider**, which has a lot of 3s and 4s. I suspect **provider** ratings might be on a 5-point scale.
+Most reviews are in the 7-8 range, except for **provider**, which has a lot of 3s and 4s and none over 5. I suspect **provider** ratings are on a 5-point scale.
 
 ```{r}
 pizza_barstool_tidy %>%
   filter(reviewer == "provider") %>%
   count(rating)
-```
+```  
+\  
 
-
-Yep. Let's double the provider scores so they are on the same scale as the other reviewers
+Yep. Let's double the provider scores so they are on the same scale as the other reviewers. We will lose some nuance, since people may score differently when presented with a 5-point scale compared to a 10-point scale, but I'm comfortable making the that trade-off to get all the scores on the same scale.
 
 ```{r}
 pizza_barstool_tidy <- pizza_barstool_tidy %>%
@@ -117,13 +122,13 @@ pizza_barstool_tidy <- pizza_barstool_tidy %>%
 ```  
 \  
 
+
 ## Visualization
 
-Set up for the visualization.
+We want to know, **What's the best (and worst) pizza in New York, for each price level?** One way to answer that is to determine a typical score for restaurants overall, then calculate which restaurants are farthest away from that typical score. I'm going to use the median as the typical score, since it is less susceptible to extreme values. (For example, some restaurants have a rating of zero and I prefer that those ratings not drag down the typical score too much.)
 
 ```{r}
 new_york_pizza <- pizza_barstool_tidy %>%
-  filter(reviewer != "all") %>%
   mutate(overall_median_rating = median(rating)) %>%
   group_by(pizzeria_id, pizzeria_name, overall_median_rating, price_level) %>%
   summarise(avg_rating = weighted.mean(rating, reviews)) %>%
@@ -133,33 +138,45 @@ new_york_pizza <- pizza_barstool_tidy %>%
 new_york_extremes <- new_york_pizza %>%
   mutate(direction = ifelse(diff_from_median > 0, "higher", "lower")) %>%
   group_by(price_level, direction) %>%
-  top_n(5, wt = abs(diff_from_median)) %>%
+  top_n(5, wt = abs(diff_from_median)) %>%  # Take top 5 best and worst
   ungroup()
 ```  
 \  
 
-Visualization itself
+Great! The data is in the right format to graph. Let's do a couple clean-up steps so that our graph looks nice:
+
+1. Convert numeric price levels (0-4) to dollar signs ($, $$, etc.)
+2. Convert `pizzeria_name` to a factor and then re-order it so that, when graphed, they will appear in order from highest- to lowest-rated
+3. Find nice colours and their hex values from [ColorBrewer](http://colorbrewer2.org/#type=diverging&scheme=RdBu&n=3) (I use blue for high score and red for low score)
+4. Fiddle with some chart elements, like legend, gridlines, and text size
+5. Add titles and annotations
 
 ```{r}
 library(tidytext) # Needed for reorder_within and scale_x_reordered functions
 
 new_york_extremes %>%
+  # 1. Convert price levels with dollars signs
   mutate(price_level = case_when(price_level == 0 ~ "$",
                                  price_level == 1 ~ "$$",
                                  price_level == 2 ~ "$$$",
                                  price_level == 3 ~ "$$$$",
                                  TRUE ~ NA_character_),
-         pizzeria_name = reorder_within(pizzeria_name, diff_from_median, price_level)) %>%
+  # 2. Re-order restaurants so they appear from best to worst
+         pizzeria_name = reorder_within(pizzeria_name, diff_from_median, price_level),
+         avg_rating = round(avg_rating, 1)) %>%
   ggplot(aes(pizzeria_name, diff_from_median, fill = direction)) +
   geom_col() +
   coord_flip() +
   facet_wrap(~ price_level, scales = "free_y") +
   scale_x_reordered() +
-  scale_fill_manual(values = c("#3288bd", "#d53e4f")) + # From colorbrewer2.org
-  theme(legend.position = "none",
-        panel.grid.minor = element_blank(),
-        strip.background = element_rect(fill = NA),
+  # 3. Get nice colours from colorbrewer2.org
+  scale_fill_manual(values = c("#3288bd", "#d53e4f")) +
+  # 4. Fiddle with some chart elements
+  theme(legend.position = "none", # Ditch legend
+        panel.grid.minor = element_blank(), # Ditch minor gridlines 
+        strip.background = element_rect(fill = NA), # Change facet title background to blank
         strip.text = element_text(colour = "black", face = "bold", size = 12)) +
+  # 5. Add titles and annotations
   labs(title = "What's the best and worst pizza in New York?",
        subtitle = "Broken down by price level",
        x = "",
@@ -168,8 +185,9 @@ new_york_extremes %>%
 ```  
 \  
 
+I'm definitely going to **L'industrie Pizzeria** next time I'm in New York!  
+\  
 
 ## Conclusion
 
-Conclusion.
-
+If you liked this, check out the [#TidyTuesday](https://twitter.com/search?q=%23TidyTuesday) hashtag on Twitter. People make truly wonderful contributions every week, and it's a great opportunity to bask in the support of the outstanding R community.
