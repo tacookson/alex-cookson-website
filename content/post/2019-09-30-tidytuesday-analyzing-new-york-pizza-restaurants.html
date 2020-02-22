@@ -2,7 +2,7 @@
 title: 'TidyTuesday: Analyzing New York pizza restaurants'
 author: Alex Cookson
 date: '2019-09-30'
-description: This is the description
+description: 
 slug: tidytuesday-analyzing-new-york-pizza-restaurants
 ---
 
@@ -14,6 +14,8 @@ slug: tidytuesday-analyzing-new-york-pizza-restaurants
 <h2>Setup</h2>
 <p>First, let’s load the <code>tidyverse</code>, change our default <code>ggplot2</code> theme, and load the data. (I named the dataframe <strong>pizza_barstool_raw</strong> because I’ll probably add some cleaning steps and I like to have the original data on hand.)</p>
 <pre class="r"><code>library(tidyverse)
+
+theme_set(theme_light())
 
 pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-01/pizza_barstool.csv&quot;)</code></pre>
 <p> </p>
@@ -68,10 +70,12 @@ pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com
 <p>Now that we have our research question, let’s clean the data:</p>
 <ol style="list-style-type: decimal">
 <li>Add <code>pizzeria_id</code> as unique ID field for each restaurant. This will help if there are multiple restaurants with the same name.</li>
+<li>Filter out restaurants outside of New York.</li>
 <li>Ditch location data – it doesn’t help answer our question.</li>
 <li>Rename variables that start with <code>review_stats_</code>. They’re cumbersome.</li>
 </ol>
 <pre class="r"><code>pizza_barstool &lt;- pizza_barstool_raw %&gt;%
+  filter(city %in% c(&quot;New York&quot;, &quot;New York City&quot;, &quot;Brooklyn&quot;, &quot;Bronx&quot;, &quot;Staten Island&quot;, &quot;Hoboken&quot;)) %&gt;%
   transmute(pizzeria_id = row_number(),
             pizzeria_name = name,
             price_level,
@@ -106,15 +110,65 @@ pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com
 <pre><code>## # A tibble: 7 x 2
 ##   rating     n
 ##    &lt;dbl&gt; &lt;int&gt;
-## 1    2       2
-## 2    2.5    14
-## 3    3      78
-## 4    3.5   155
-## 5    4     162
-## 6    4.5    48
-## 7    5       4</code></pre>
+## 1    2       1
+## 2    2.5     9
+## 3    3      53
+## 4    3.5    96
+## 5    4      98
+## 6    4.5    25
+## 7    5       3</code></pre>
 <p>Yep. Let’s double the provider scores so they are on the same scale as the other reviewers</p>
 <pre class="r"><code>pizza_barstool_tidy &lt;- pizza_barstool_tidy %&gt;%
   filter(reviews &gt; 0) %&gt;%
   mutate(rating = if_else(reviewer == &quot;provider&quot;, rating * 2, rating))</code></pre>
+<p> </p>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>Set up for the visualization.</p>
+<pre class="r"><code>new_york_pizza &lt;- pizza_barstool_tidy %&gt;%
+  filter(reviewer != &quot;all&quot;) %&gt;%
+  mutate(overall_median_rating = median(rating)) %&gt;%
+  group_by(pizzeria_id, pizzeria_name, overall_median_rating, price_level) %&gt;%
+  summarise(avg_rating = weighted.mean(rating, reviews)) %&gt;%
+  ungroup() %&gt;%
+  mutate(diff_from_median = avg_rating - overall_median_rating)
+
+new_york_extremes &lt;- new_york_pizza %&gt;%
+  mutate(direction = ifelse(diff_from_median &gt; 0, &quot;higher&quot;, &quot;lower&quot;)) %&gt;%
+  group_by(price_level, direction) %&gt;%
+  top_n(5, wt = abs(diff_from_median)) %&gt;%
+  ungroup()</code></pre>
+<p> </p>
+<p>Visualization itself</p>
+<pre class="r"><code>library(tidytext) # Needed for reorder_within and scale_x_reordered functions
+
+new_york_extremes %&gt;%
+  mutate(price_level = case_when(price_level == 0 ~ &quot;$&quot;,
+                                 price_level == 1 ~ &quot;$$&quot;,
+                                 price_level == 2 ~ &quot;$$$&quot;,
+                                 price_level == 3 ~ &quot;$$$$&quot;,
+                                 TRUE ~ NA_character_),
+         pizzeria_name = reorder_within(pizzeria_name, diff_from_median, price_level)) %&gt;%
+  ggplot(aes(pizzeria_name, diff_from_median, fill = direction)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~ price_level, scales = &quot;free_y&quot;) +
+  scale_x_reordered() +
+  scale_fill_manual(values = c(&quot;#3288bd&quot;, &quot;#d53e4f&quot;)) + # From colorbrewer2.org
+  theme(legend.position = &quot;none&quot;,
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill = NA),
+        strip.text = element_text(colour = &quot;black&quot;, face = &quot;bold&quot;, size = 12)) +
+  labs(title = &quot;What&#39;s the best and worst pizza in New York?&quot;,
+       subtitle = &quot;Broken down by price level&quot;,
+       x = &quot;&quot;,
+       y = &quot;Score difference from the median&quot;,
+       caption = &quot;Based on Barstool, community, critic, and Dave reviews&quot;)</code></pre>
+<p><img src="/post/2019-09-30-tidytuesday-analyzing-new-york-pizza-restaurants_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+ </p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Conclusion.</p>
 </div>

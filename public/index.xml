@@ -25,11 +25,11 @@ SetupFirst, let’s load the tidyverse, change our default ggplot2 theme, and l
     <item>
       <title>About me</title>
       <link>/about/</link>
-      <pubDate>Wed, 09 Apr 2014 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
       <description>Hi! I’m Alex. I love data science, cycling, and cats.
-I currently work at the Royal Canadian Mint, where I help the marketing team make the most of their data. I’ve worked a bunch of machine learning and business analytics projects, including predictive models for customer churn, recommendation engines, and self-service dashboards.
+I currently work at the Royal Canadian Mint, where I help the marketing team make the most of their data. I’ve worked on many machine learning and business analytics projects, including predictive models for customer churn, recommendation engines, and self-service dashboards.
 I have Master’s degrees in International Business from HEC Paris and Queen’s University. I also earned my Bachelor’s degree from Queen’s University, where I studied commerce.</description>
     </item>
     

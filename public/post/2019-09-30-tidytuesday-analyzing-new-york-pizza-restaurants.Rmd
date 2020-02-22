@@ -2,7 +2,7 @@
 title: 'TidyTuesday: Analyzing New York pizza restaurants'
 author: Alex Cookson
 date: '2019-09-30'
-description: This is the description
+description: 
 slug: tidytuesday-analyzing-new-york-pizza-restaurants
 ---
 
@@ -16,6 +16,8 @@ First, let's load the `tidyverse`, change our default `ggplot2` theme, and load 
 
 ```{r, echo = TRUE, results = 'hide', message = FALSE, warning = FALSE}
 library(tidyverse)
+
+theme_set(theme_light())
 
 pizza_barstool_raw <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-01/pizza_barstool.csv")
 ```  
@@ -51,11 +53,13 @@ We could investigate a lot of things with this data, including where in New York
 Now that we have our research question, let's clean the data:
 
 1. Add `pizzeria_id` as unique ID field for each restaurant. This will help if there are multiple restaurants with the same name.
-2. Ditch location data -- it doesn't help answer our question.
-3. Rename variables that start with `review_stats_`. They're cumbersome.
+2. Filter out restaurants outside of New York.
+3. Ditch location data -- it doesn't help answer our question.
+4. Rename variables that start with `review_stats_`. They're cumbersome.
 
 ```{r}
 pizza_barstool <- pizza_barstool_raw %>%
+  filter(city %in% c("New York", "New York City", "Brooklyn", "Bronx", "Staten Island", "Hoboken")) %>%
   transmute(pizzeria_id = row_number(),
             pizzeria_name = name,
             price_level,
@@ -110,4 +114,62 @@ Yep. Let's double the provider scores so they are on the same scale as the other
 pizza_barstool_tidy <- pizza_barstool_tidy %>%
   filter(reviews > 0) %>%
   mutate(rating = if_else(reviewer == "provider", rating * 2, rating))
-```
+```  
+\  
+
+## Visualization
+
+Set up for the visualization.
+
+```{r}
+new_york_pizza <- pizza_barstool_tidy %>%
+  filter(reviewer != "all") %>%
+  mutate(overall_median_rating = median(rating)) %>%
+  group_by(pizzeria_id, pizzeria_name, overall_median_rating, price_level) %>%
+  summarise(avg_rating = weighted.mean(rating, reviews)) %>%
+  ungroup() %>%
+  mutate(diff_from_median = avg_rating - overall_median_rating)
+
+new_york_extremes <- new_york_pizza %>%
+  mutate(direction = ifelse(diff_from_median > 0, "higher", "lower")) %>%
+  group_by(price_level, direction) %>%
+  top_n(5, wt = abs(diff_from_median)) %>%
+  ungroup()
+```  
+\  
+
+Visualization itself
+
+```{r}
+library(tidytext) # Needed for reorder_within and scale_x_reordered functions
+
+new_york_extremes %>%
+  mutate(price_level = case_when(price_level == 0 ~ "$",
+                                 price_level == 1 ~ "$$",
+                                 price_level == 2 ~ "$$$",
+                                 price_level == 3 ~ "$$$$",
+                                 TRUE ~ NA_character_),
+         pizzeria_name = reorder_within(pizzeria_name, diff_from_median, price_level)) %>%
+  ggplot(aes(pizzeria_name, diff_from_median, fill = direction)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~ price_level, scales = "free_y") +
+  scale_x_reordered() +
+  scale_fill_manual(values = c("#3288bd", "#d53e4f")) + # From colorbrewer2.org
+  theme(legend.position = "none",
+        panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill = NA),
+        strip.text = element_text(colour = "black", face = "bold", size = 12)) +
+  labs(title = "What's the best and worst pizza in New York?",
+       subtitle = "Broken down by price level",
+       x = "",
+       y = "Score difference from the median",
+       caption = "Based on Barstool, community, critic, and Dave reviews")
+```  
+\  
+
+
+## Conclusion
+
+Conclusion.
+
