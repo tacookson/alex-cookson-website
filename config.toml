@@ -15,7 +15,7 @@ paginate = 10
   # Shown in the home page
   subtitle = ""
   brand = "Alex Cookson"
-  # googleAnalytics = ""
+  googleAnalytics = "UA-158906030-1"
   # disqus = ""
   # CSS name for highlight.js
   highlightjs = "github"

@@ -23,7 +23,7 @@ First, we'll load the `tidyverse` and, because I cheated and looked ahead, a few
 - `ggrepel` to add text labels to graphs that won't overlap
 - `ggsci` for interesting colour palettes
 
-In addition to visitor figures, TidyTuesday also has state population data. This will be useful if we want to look at the relationship between park visitors and population (spoiler: we do exactly this).
+In addition to visitor figures, TidyTuesday has state population data. This will be useful if we want to look at the relationship between park visitors and population (spoiler: we do exactly this).
 
 ```{r, echo = TRUE, results = 'hide', message = FALSE, warning = FALSE}
 library(tidyverse)
