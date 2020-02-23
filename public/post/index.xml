@@ -13,13 +13,23 @@
     
     
     <item>
-      <title>TidyTuesday: Analyzing New York pizza restaurants</title>
-      <link>/post/tidytuesday-analyzing-new-york-pizza-restaurants/</link>
+      <title>TidyTuesday: New York pizza restaurants</title>
+      <link>/post/tidytuesday-new-york-pizza-restaurants/</link>
       <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-analyzing-new-york-pizza-restaurants/</guid>
+      <guid>/post/tidytuesday-new-york-pizza-restaurants/</guid>
       <description>In this post, I analyze the Pizza Party dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about survey ratings of New York pizza restaurants.
 SetupFirst, let’s load the tidyverse, change our default ggplot2 theme, and load the data. (I named the dataframe pizza_barstool_raw because I’ll probably add some cleaning steps and I like to have the original data on hand.</description>
+    </item>
+    
+    <item>
+      <title>TidyTuesday: US national parks</title>
+      <link>/post/tidytuesday-us-national-parks/</link>
+      <pubDate>Mon, 16 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/tidytuesday-us-national-parks/</guid>
+      <description>In this post, I analyze the National Park Visits dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about visitor numbers for US National Parks, going way back to 1904, when there were only six national parks.
+I’ve never been to a US national park, but I know about some of the famous ones like Yosemite and Yellowstone.</description>
     </item>
     
   </channel>

@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://alexcookson.com"
 languageCode = "en-us"
 title = "Alex Cookson"
 theme = "blackburn"

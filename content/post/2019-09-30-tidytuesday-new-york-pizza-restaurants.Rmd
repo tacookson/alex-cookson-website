@@ -1,9 +1,8 @@
 ---
-title: 'TidyTuesday: Analyzing New York pizza restaurants'
+title: 'TidyTuesday: New York pizza restaurants'
 author: Alex Cookson
 date: '2019-09-30'
-description: 
-slug: tidytuesday-analyzing-new-york-pizza-restaurants
+slug: tidytuesday-new-york-pizza-restaurants
 ---  
 \  
 
@@ -172,9 +171,9 @@ new_york_extremes %>%
   # 3. Get nice colours from colorbrewer2.org
   scale_fill_manual(values = c("#3288bd", "#d53e4f")) +
   # 4. Fiddle with some chart elements
-  theme(legend.position = "none", # Ditch legend
-        panel.grid.minor = element_blank(), # Ditch minor gridlines 
-        strip.background = element_rect(fill = NA), # Change facet title background to blank
+  theme(legend.position = "none", # No legend
+        panel.grid.minor = element_blank(), # No minor gridlines 
+        strip.background = element_rect(fill = NA), # Blank facet title background
         strip.text = element_text(colour = "black", face = "bold", size = 12)) +
   # 5. Add titles and annotations
   labs(title = "What's the best and worst pizza in New York?",
@@ -190,4 +189,4 @@ I'm definitely going to **L'industrie Pizzeria** next time I'm in New York!
 
 ## Conclusion
 
-If you liked this, check out the [#TidyTuesday](https://twitter.com/search?q=%23TidyTuesday) hashtag on Twitter. People make truly wonderful contributions every week, and it's a great opportunity to bask in the support of the outstanding R community.
+If you liked this, check out the [#TidyTuesday](https://twitter.com/search?q=%23TidyTuesday) hashtag on Twitter. People make truly wonderful contributions every week. Even better would be to [participate in TidyTuesday](https://github.com/rfordatascience/tidytuesday). The R community is tremendously positive and supportive.
