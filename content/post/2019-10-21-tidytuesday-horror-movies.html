@@ -1,0 +1,347 @@
+---
+title: 'TidyTuesday: Horror movies'
+author: "Alex Cookson"
+date: '2019-10-21'
+output: pdf_document
+description: ''
+slug: tidytuesday-horror-movies
+tags: []
+categories: []
+topics: []
+---  
+
+
+
+<p> </p>
+<p>In this post, I look at the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-22">Horror movie ratings</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a project that shares a new dataset each week to give R users a way to apply and practice their skills.</p>
+<p>We’re going to run a <a href="https://stats.stackexchange.com/questions/17251/what-is-the-lasso-in-regression-analysis">LASSO regression</a>, a type of <a href="https://www.statisticshowto.datasciencecentral.com/regularized-regression/">regularization</a>. Regularization is often used when you have lots of predictors (compared to your number of observations) or when your data has <em>multi-collinearity</em> – predictors that are highly correlated with one another.<br />
+ </p>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>First, we’ll load the <code>tidyverse</code> and a few other packages:</p>
+<ul>
+<li><code>lubridate</code> to work with dates</li>
+<li><code>tidytext</code> to work with text and create sparse matrixes</li>
+<li><code>glmnet</code> to run LASSO regression</li>
+<li><code>scales</code> to turn numbers into pretty numbers (e.g., 3000 to 3,000)</li>
+<li><code>glue</code> to incorporate dynamic data into graph title and annotations</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(lubridate)
+library(tidytext)
+library(glmnet)
+library(scales)
+library(glue)
+
+theme_set(theme_light())
+
+horror_movies_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-22/horror_movies.csv&quot;)</code></pre>
+<p> </p>
+</div>
+<div id="data-inspection" class="section level2">
+<h2>Data inspection</h2>
+<p>Let’s see what we have.</p>
+<pre class="r"><code>horror_movies_raw %&gt;%
+  glimpse()</code></pre>
+<pre><code>## Observations: 3,328
+## Variables: 12
+## $ title             &lt;chr&gt; &quot;Gut (2012)&quot;, &quot;The Haunting of Mia Moss (2017)&quot;, ...
+## $ genres            &lt;chr&gt; &quot;Drama| Horror| Thriller&quot;, &quot;Horror&quot;, &quot;Horror&quot;, &quot;C...
+## $ release_date      &lt;chr&gt; &quot;26-Oct-12&quot;, &quot;13-Jan-17&quot;, &quot;21-Oct-17&quot;, &quot;23-Apr-13...
+## $ release_country   &lt;chr&gt; &quot;USA&quot;, &quot;USA&quot;, &quot;Canada&quot;, &quot;USA&quot;, &quot;USA&quot;, &quot;UK&quot;, &quot;USA&quot;...
+## $ movie_rating      &lt;chr&gt; NA, NA, NA, &quot;NOT RATED&quot;, NA, NA, &quot;NOT RATED&quot;, NA,...
+## $ review_rating     &lt;dbl&gt; 3.9, NA, NA, 3.7, 5.8, NA, 5.1, 6.5, 4.6, 5.4, 5....
+## $ movie_run_time    &lt;chr&gt; &quot;91 min&quot;, NA, NA, &quot;82 min&quot;, &quot;80 min&quot;, &quot;93 min&quot;, &quot;...
+## $ plot              &lt;chr&gt; &quot;Directed by Elias. With Jason Vail, Nicholas Wil...
+## $ cast              &lt;chr&gt; &quot;Jason Vail|Nicholas Wilder|Sarah Schoofs|Kirstia...
+## $ language          &lt;chr&gt; &quot;English&quot;, &quot;English&quot;, &quot;English&quot;, &quot;English&quot;, &quot;Ital...
+## $ filming_locations &lt;chr&gt; &quot;New York, USA&quot;, NA, &quot;Sudbury, Ontario, Canada&quot;, ...
+## $ budget            &lt;chr&gt; NA, &quot;$30,000&quot;, NA, NA, NA, &quot;$3,400,000&quot;, NA, NA, ...</code></pre>
+<p>The <a href="https://en.wikipedia.org/wiki/Unit_of_observation">unit of observation</a> is a movie, and each movie has three data types associated with it:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Continuous or ordered discrete</strong>: all the fields with numbers, like <code>movie_run_time</code>, <code>movie_rating</code>, and <code>release_date</code>.</li>
+<li><strong>Categorical</strong>: almost all the rest of the fields, like <code>genres</code> and <code>language</code>. <code>filming_locations</code> is a bit special because it’s hierarchical (e.g., “Sudbury, Ontario, Canada” has city, province, and country in it).</li>
+<li><strong>Free text</strong>: <code>plot</code> is contains cast information and a plot synopsis. We might do something interesting with this field later.<br />
+ </li>
+</ol>
+<p>Let’s look at one of the plot descriptions by using the <code>sample_n</code> function to randomly select one row, then select just the <code>title</code> and <code>plot</code>. I quickly scanned the list and picked one out with a ridiculous title: <em>Sorority Slaughterhouse</em>.</p>
+<pre class="r"><code>horror_movies_raw %&gt;%
+  filter(str_detect(title, &quot;Sorority Slaughterhouse&quot;)) %&gt;%
+  select(title, plot) %&gt;%
+  knitr::kable(format = &quot;html&quot;)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+plot
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Sorority Slaughterhouse (2016)
+</td>
+<td style="text-align:left;">
+Directed by David DeCoteau. With Eric Roberts, Jessica Morris, Jean Louise O’Sullivan, Anthony Caravella. After a sorority girl breaks up with him, the headmaster of a college takes his own life. But what should be the end, becomes only the beginning when a magical evil 12" clown doll gets possessed by the soul of Mr. Whitman.
+</td>
+</tr>
+</tbody>
+</table>
+<p>Wow. My idea of a horror movie is <em>The Sixth Sense</em>, which seems extremely tame compared to <em>Sorority Slaughterhouse</em>.<br />
+ </p>
+<p>Let’s move on and and check fields for missing values. Our <code>glimpse</code> above showed a few fields that looked like they had a lot of them.</p>
+<pre class="r"><code>horror_movies_raw %&gt;%
+  summarise_all(~ mean(is.na(.))) %&gt;%
+  gather(&quot;field&quot;, &quot;pct_missing&quot;) %&gt;%
+  arrange(-pct_missing)</code></pre>
+<pre><code>## # A tibble: 12 x 2
+##    field             pct_missing
+##    &lt;chr&gt;                   &lt;dbl&gt;
+##  1 budget               0.629   
+##  2 movie_rating         0.564   
+##  3 filming_locations    0.370   
+##  4 movie_run_time       0.163   
+##  5 review_rating        0.0757  
+##  6 language             0.0213  
+##  7 cast                 0.00421 
+##  8 genres               0.000300
+##  9 plot                 0.000300
+## 10 title                0       
+## 11 release_date         0       
+## 12 release_country      0</code></pre>
+<p>Three fields – <code>budget</code>, <code>movie_rating</code>, and <code>filming_locations</code> – are missing for between a third and two-thirds of movies. Rather than worry too much about these, I’m going to drop them. Besides, dealing with the different currencies in <code>budget</code> would be a major pain. Imagine finding the conversion rates for all those different date and currencies to get them all to the same currency. Hard pass.<br />
+ </p>
+</div>
+<div id="research-question" class="section level2">
+<h2>Research question</h2>
+<p>It’s practically data science law that when you have a movie dataset that includes ratings, you have to <strong>build a model to predict ratings</strong>. There’s a fair bit of data here, with a lot more variety in language and release country than you see in many movie datasets.</p>
+<p><code>review_rating</code>, the field we’ll be trying to predict, has some missing values – about 7%. If we were analyzing this dataset in details we’d want to dig into these missing values to see if there is a systemic reason they are missing. But since this is just a fun, quick exploration, we’ll ignore them.<br />
+ </p>
+</div>
+<div id="data-cleaning" class="section level2">
+<h2>Data cleaning</h2>
+<p>You may have noticed that this data is <em>a bit messy</em>, with numbers coded as characters (<code>movie_run_time</code>), dates as characters (<code>release_date</code>), and fields with multiple values in one observation (<code>genres</code>). That just means it will make for a fun cleaning exercise. We’re going to:</p>
+<ol style="list-style-type: decimal">
+<li>Filter out the missing <code>review_rating</code> observations.</li>
+<li>Get rid of duplicate observations – there are 16 of them.</li>
+<li>Add an <code>id</code> field. I almost always do this if one doesn’t already exist because it ensures we have a unique key. It’s helpful for this dataset because there are some different movies that have the same title. Adding an <code>id</code> helps prevent issues if we decided to aggregate the data.</li>
+<li>Separate movie title and release year from the <code>title</code> field.</li>
+<li>Convert <code>movie_run_time</code> to a proper number.</li>
+<li>Scrub the first line of <code>plot</code> (“Directed by…”) to get a “clean” plot synopsis.</li>
+<li>Ditch <code>movie_rating</code>, <code>filming_location</code>, and <code>budget</code>. They have too much missing data or are too messy to be immediately useful to us.</li>
+<li>Ditch <code>release_date</code>, too. The data looks fine – but having just the release year will be enough for us.</li>
+</ol>
+<pre class="r"><code>horror_movies &lt;- horror_movies_raw %&gt;%
+  filter(!is.na(review_rating)) %&gt;%
+  distinct(title, plot, .keep_all = TRUE) %&gt;%
+  mutate(id = row_number(),
+         # Pull out any series of four digits - i.e., release year
+         release_year = parse_number(str_extract(title, &quot;\\([0-9]{4}\\)&quot;)),
+         # Remove those digits we just pulled out
+         title = str_remove(title, &quot; \\([0-9]{4}\\)&quot;),
+         release_date = dmy(release_date),
+         movie_run_time = parse_number(movie_run_time),
+         # Pull out text between &quot;Directed by&quot; and &quot;. With&quot;
+         director = str_extract(plot, &quot;(?&lt;=Directed by )(.*?)(?=\\. With)&quot;),
+         # Remove &quot;Directed by&quot; and &quot;With [cast]&quot; sentences
+         plot = str_squish(str_remove(plot, &quot;Directed by.*?\\. With.*?\\.&quot;))) %&gt;%
+  select(-movie_rating, -filming_locations, -budget, -release_date)</code></pre>
+<p> </p>
+<p>Great! We’re almost ready to build a model. We’re going to use a movie’s <strong>features</strong>, like director, genre, cast, and language, to predict its rating. To do that with LASSO regression, we need to build a matrix where <em>each row is a movie</em> and <em>each column is a feature</em>. The values in the matrix will answer the question, “Does [this movie] have [this feature]?” A 1 means “Yes” and 0 means “No”.</p>
+<p>A matrix is two-dimensional, though (1 row + 1 column = 2 dimensions), so we need get our dataset into two dimensions before we convert it to a matrix. We want to end up with two fields – <code>id</code> and <code>feature</code> – that correspond to the rows and columns of the matrix. <code>id</code> is already its own field, but <code>feature</code> is spread across several different fields, so we need to collect them, which we’ll do in three steps:</p>
+<ol style="list-style-type: decimal">
+<li>Use the <code>pivot_longer</code> to turn data from a wide to a long format. This will get all features condensed to two fields: <code>feature</code>, which will be the former field name (e.g., country), and <code>value</code>, which will be the value for that observation (e.g., USA).</li>
+<li>Use the <code>separate_rows</code> functions to further separate some fields. For example, <code>cast</code> has multiple cast members separated by a pipe charcter <code>|</code>.</li>
+<li>Combine the <code>feature</code> and <code>value</code> fields created in Step 1 so that we have a single field (e.g., “Country: USA”) to turn into a matrix.</li>
+</ol>
+<pre class="r"><code>by_feature &lt;- horror_movies %&gt;%
+  # Select only fields we need, using transmute to rename and re-order
+  transmute(id,
+            title,
+            # Convert to character to avoid uniting different data classes
+            year = as.character(release_year),
+            director,
+            country = release_country,
+            cast,
+            language,
+            genre = genres,
+            rating = review_rating) %&gt;%
+  # 1. Convert to long format
+  pivot_longer(year:genre, names_to = &quot;feature&quot;) %&gt;%
+  # 2. Further separate delimited values
+  separate_rows(value, sep = &quot;\\|&quot;) %&gt;%
+  # Capitalize some words and get rid of extra whitespace
+  mutate(feature = str_to_title(feature),
+         value = str_squish(value)) %&gt;%
+  # 3. Combine feature and value into one field
+  unite(feature, feature, value, sep = &quot;: &quot;)</code></pre>
+<p> </p>
+</div>
+<div id="modelling" class="section level2">
+<h2>Modelling</h2>
+<p>We’re ready to build our LASSO model! Let’s see what our pre-matrix dataset looks like for <em>Sorority Slaughterhouse</em>.</p>
+<pre class="r"><code>by_feature %&gt;%
+  filter(title == &quot;Sorority Slaughterhouse&quot;)</code></pre>
+<pre><code>## # A tibble: 13 x 4
+##       id title                   rating feature                     
+##    &lt;int&gt; &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;                       
+##  1  1722 Sorority Slaughterhouse    3.3 Year: 2016                  
+##  2  1722 Sorority Slaughterhouse    3.3 Director: David DeCoteau    
+##  3  1722 Sorority Slaughterhouse    3.3 Country: USA                
+##  4  1722 Sorority Slaughterhouse    3.3 Cast: Eric Roberts          
+##  5  1722 Sorority Slaughterhouse    3.3 Cast: Jessica Morris        
+##  6  1722 Sorority Slaughterhouse    3.3 Cast: Jean Louise O&#39;Sullivan
+##  7  1722 Sorority Slaughterhouse    3.3 Cast: Anthony Caravella     
+##  8  1722 Sorority Slaughterhouse    3.3 Cast: Alexia Quinn          
+##  9  1722 Sorority Slaughterhouse    3.3 Cast: Brianna Joy Chomer    
+## 10  1722 Sorority Slaughterhouse    3.3 Cast: Kelli Seymour         
+## 11  1722 Sorority Slaughterhouse    3.3 Cast: Vince Hill-Bedford    
+## 12  1722 Sorority Slaughterhouse    3.3 Language: English           
+## 13  1722 Sorority Slaughterhouse    3.3 Genre: Horror</code></pre>
+<p>Everything looks neat and tidy. We can see each feature that <em>Sorority Slaughterhouse</em> will get a 1 on once we convert this to a matrix. So let’s go ahead and create our matrix.</p>
+<pre class="r"><code>feature_matrix &lt;- by_feature %&gt;%
+  # We don&#39;t technically need title, just id and feature
+  select(id, feature) %&gt;%
+  cast_sparse(id, feature)
+
+# Take a look at part of our matrix
+feature_matrix[200:210, 19:22]</code></pre>
+<pre><code>## 11 x 4 sparse Matrix of class &quot;dgCMatrix&quot;
+##     Language: English Genre: Drama Genre: Horror Genre: Thriller
+## 200                 1            .             1               .
+## 201                 1            .             1               .
+## 202                 1            1             1               .
+## 203                 1            .             1               .
+## 204                 1            1             1               .
+## 205                 1            .             1               1
+## 206                 1            .             1               .
+## 207                 1            .             1               .
+## 208                 1            .             1               1
+## 209                 1            .             1               1
+## 210                 .            .             1               .</code></pre>
+<p>Looking at 10 sample rows of the matrix, we see how it is structured:</p>
+<ul>
+<li>All but one movie is in English</li>
+<li>Two movies are Dramas</li>
+<li>All movies are Horror (duh)</li>
+<li>Three movies are Thrillers<br />
+ </li>
+</ul>
+<p>One last step before we build the model. We have all our predictors in this matrix (the features), but we still need the rating – the thing we’re trying to predict! I don’t know of an elegant way to do this, so we’ll have to rely on some base R code instead of beautiful tidyverse functions.</p>
+<pre class="r"><code># Get vector of movie id, which are row names of our matrix
+ids &lt;- as.integer(rownames(feature_matrix))
+
+# Look up those ids in horror_movies to get a vector of actual ratings
+ratings &lt;- horror_movies$review_rating[ids]</code></pre>
+<p> </p>
+<p>We can <em>finally</em> build our LASSO model, which we’ll do using the <code>glmnet</code> package. We’ll use the <code>cv.glmnet</code> function, which builds a <a href="https://www.statisticshowto.datasciencecentral.com/cross-validation-statistics/">cross-validated</a> LASSO model. It needs two arguments, though we’ll be using three:</p>
+<ul>
+<li><strong>x</strong>: matrix of predictors, which in our case is <code>feature_matrix</code>.</li>
+<li><strong>y</strong>: Vector of responses (the thing you’re trying to predict), which in our case is <code>ratings</code>.</li>
+<li><strong>nfolds</strong> (optional): Number of folds to use in cross-validation. We’ll use 100 since our dataset is not that big.</li>
+</ul>
+<p>After building our model, we’re going to select version that has the lowest mean-squared error and get it into a nice format using the <code>broom</code> package’s <code>tidy</code> function.</p>
+<pre class="r"><code>set.seed(24601)
+
+cv_lasso_model &lt;- cv.glmnet(feature_matrix, # Predictors (features)
+                            ratings, # Response variable (ratings)
+                            nfolds = 100) # Folds for cross-validation
+
+cv_lasso_model_tidy &lt;- cv_lasso_model$glmnet.fit %&gt;%
+  tidy() %&gt;%
+  filter(lambda == cv_lasso_model$lambda.min)
+
+cv_lasso_model_tidy</code></pre>
+<pre><code>## # A tibble: 1,031 x 5
+##    term                  step estimate lambda dev.ratio
+##    &lt;chr&gt;                &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+##  1 (Intercept)             41   5.23   0.0382     0.412
+##  2 Year: 2012              41  -0.117  0.0382     0.412
+##  3 Language: English       41  -0.492  0.0382     0.412
+##  4 Genre: Drama            41   0.332  0.0382     0.412
+##  5 Cast: Veronica Ricci    41  -0.374  0.0382     0.412
+##  6 Genre: Comedy           41   0.208  0.0382     0.412
+##  7 Genre: Crime            41   0.234  0.0382     0.412
+##  8 Cast: Nao Ohmori        41   0.0187 0.0382     0.412
+##  9 Language: Japanese      41   0.0602 0.0382     0.412
+## 10 Genre: Mystery          41   0.204  0.0382     0.412
+## # ... with 1,021 more rows</code></pre>
+<p>Our model has a whopping 1,030 predictors! <strong>(Intercept)</strong> shows the base score, then we add whatever value is in the <code>estimate</code> field for each feature that a movie has. We end up with that movie’s a predicted score. For example, if a movie is a <strong>Drama</strong> it will get 0.332 <em>added</em> to its predicted score, while a movie with <strong>Veronica Ricci</strong> in its cast will get 0.374 <em>subtracted</em> from its predicted score.</p>
+<p>If we join the <code>cv_lasso_model_tidy</code> to our <code>by_feature</code> dataset, we can get predicted values for each movie. Let’s see how <em>Sorority Slaugherhouse</em> does.</p>
+<pre class="r"><code>sorority &lt;- by_feature %&gt;%
+  filter(title == &quot;Sorority Slaughterhouse&quot;) %&gt;%
+  left_join(cv_lasso_model_tidy, by = c(&quot;feature&quot; = &quot;term&quot;)) %&gt;%
+  replace_na(list(estimate = 0))
+
+sorority %&gt;%
+  mutate(direction = ifelse(estimate &gt; 0, &quot;Positive&quot;, &quot;Negative&quot;),
+         feature = fct_reorder(feature, estimate)) %&gt;%
+  ggplot(aes(feature, estimate, fill = direction)) +
+  geom_col() +
+  geom_hline(aes(yintercept = 0), col = &quot;black&quot;) +
+  coord_flip() +
+  scale_fill_manual(values = c(&quot;#b2182b&quot;, &quot;#053061&quot;)) +
+  theme(legend.position = &quot;none&quot;,
+        panel.grid.minor = element_blank()) +
+  labs(title = &quot;Predicting Sorority Slaughterhouse&#39;s rating&quot;,
+       subtitle = &quot;Based on a LASSO regression model&quot;,
+       x = &quot;&quot;,
+       y = &quot;Effect on predicted rating&quot;)</code></pre>
+<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Amazing. Most features didn’t have any effect on the predicted rating, which means they didn’t make it into the LASSO model. But a few features had a big negative impact on the predicted rating. I guess movies in English, directed by David DeCoteau, with Eric Roberts in the cast haven’t done so great in the past. How does our prediction stack up?</p>
+<pre class="r"><code>base_score &lt;- cv_lasso_model_tidy %&gt;%
+  filter(term == &quot;(Intercept)&quot;) %&gt;%
+  pull(estimate)
+
+by_feature %&gt;%
+  filter(title == &quot;Sorority Slaughterhouse&quot;) %&gt;%
+  inner_join(cv_lasso_model_tidy, by = c(&quot;feature&quot; = &quot;term&quot;)) %&gt;%
+  group_by(title, rating) %&gt;%
+  summarise(predicted_rating = base_score + sum(estimate)) %&gt;%
+  ungroup()</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   title                   rating predicted_rating
+##   &lt;chr&gt;                    &lt;dbl&gt;            &lt;dbl&gt;
+## 1 Sorority Slaughterhouse    3.3             3.43</code></pre>
+<p>Pretty good! We successfully identified a bad movie.<br />
+ </p>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>Let’s look at our model in general. I want to know which of the 1,030 features in our model have the biggest positive and negative impact on predicted score.</p>
+<p>(Note: We’re going to use the <code>glue</code> package, to dynamically give the number of movies and base score in our chosen LASSO model. This isn’t strictly necessary – we could look it up and hardcode it into our labels – but it’s a cool trick and makes for a slightly more reproduceable analysis. For a quick look at what <code>glue</code> does, check out Sharla Gelfand’s example <a href="https://twitter.com/sharlagelfand/status/1230973074306215937">here</a>.)</p>
+<pre class="r"><code>cv_lasso_model_tidy %&gt;%
+  filter(term != &quot;(Intercept)&quot;) %&gt;%
+  group_by(direction = ifelse(estimate &gt; 0, &quot;Positive&quot;, &quot;Negative&quot;)) %&gt;%
+  top_n(12, abs(estimate)) %&gt;%
+  ungroup() %&gt;%
+  mutate(term = fct_reorder(term, estimate)) %&gt;%
+  ggplot(aes(term, estimate, fill = direction)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values = c(&quot;#b2182b&quot;, &quot;#053061&quot;)) +
+  theme(legend.position = &quot;none&quot;) +
+  labs(title = &quot;How do cast, language, and release country affect rating?&quot;,
+       subtitle = glue(&quot;Lasso fit model of ratings for {comma(length(ids))} horror movies&quot;),
+       x = &quot;&quot;,
+       y = glue(&#39;Effect on predicted rating (starting with a base rating of {cv_lasso_model_tidy %&gt;% filter(term == &quot;(Intercept)&quot;) %&gt;% pull(estimate) %&gt;% round(1)})&#39;))</code></pre>
+<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Based on what our model is telling us, director has the biggest impact on predicted score. Almost every top feature, both positive and negative, is who directed it. I guess there’s something to be said for a director with (or without) a vision.</p>
+<p>If Rob Hawk is the “best” director (according to our model) what movie should I watch this Halloween?</p>
+<pre class="r"><code>by_feature %&gt;%
+  filter(feature == &quot;Director: Rob Hawk&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##      id title                rating feature           
+##   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             
+## 1   671 Take 2: The Audition    9.3 Director: Rob Hawk</code></pre>
+<p><em>Take 2: The Audition</em> it is!<br />
+ </p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>If you liked this, check out the <a href="https://twitter.com/search?q=%23TidyTuesday">#TidyTuesday</a> hashtag on Twitter. People make truly wonderful contributions every week. Even better would be to <a href="https://github.com/rfordatascience/tidytuesday">participate in TidyTuesday</a>. The R community is tremendously positive and supportive.</p>
+</div>
