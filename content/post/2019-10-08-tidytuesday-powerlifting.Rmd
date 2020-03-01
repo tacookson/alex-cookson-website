@@ -209,7 +209,7 @@ first_model <- lm(bench_kg ~ sex + weight_kg + equipment + age,
 summary(first_model)
 ```
 
-I dream of getting initial results this good! All of our predictors are statistically significant and we have an adjusted R-squared of 0.6793, which means that about 68%% of the variance in bench weight is "explained" by these predictors. Everything lines up with our intuition, too:
+I dream of getting initial results this good! All of our predictors are statistically significant and we have an adjusted R-squared of 0.6793, which means that about 68% of the variance in bench weight is "explained" by these predictors. Everything lines up with our intuition, too:
 
 - Sex: men are expected to lift about 53.4kg more than women
 - Weight: competitors are expected to lift 1.3kg more for every additional 1kg of bodyweight
