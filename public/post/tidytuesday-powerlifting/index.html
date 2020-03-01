@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.64.0" />
+
+  <title>TidyTuesday: Powerlifting &middot; Alex Cookson</title>
+
+    
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+ 
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/alexcookson" rel="me" target="_blank"><i class="fab fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://linkedin.com/in/alexcookson" rel="me" target="_blank"><i class="fab fa-linkedin"></i></i>LinkedIn</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/tacookson" rel="me" target="_blank"><i class="fab fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small>&copy; 2020. All rights reserved.</small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>TidyTuesday: Powerlifting</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>Oct 8, 2019</time>
+  </div>
+
+  
+
+  
+
+  
+
+</div>
+
+    
+
+
+
+<p> </p>
+<p>In this post, I analyze the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-08">Powerlifting</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about the <strong>results of powerlifting events</strong> that are part of the International Powerlifting Federation.<br />
+ </p>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>First, we’ll load our packages, set our default <code>ggplot2</code> theme, and import our data. We’re loading to packages, in addition to the <code>tidyverse</code>:</p>
+<ul>
+<li><code>broom</code> to clean up the output of modelling functions like <code>lm</code></li>
+<li><code>splines</code> so that we can add natural cubic splines to our linear regression model (I’ll provide a short, non-rigorous explanation of splines during the modelling step)</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(broom)
+library(splines)
+
+theme_set(theme_light())
+
+ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-10-08/ipf_lifts.csv&quot;)</code></pre>
+<p> </p>
+</div>
+<div id="data-inspection" class="section level2">
+<h2>Data inspection</h2>
+<p>What have we got?</p>
+<pre class="r"><code>ipf_lifts_raw %&gt;%
+  glimpse()</code></pre>
+<pre><code>## Observations: 41,152
+## Variables: 16
+## $ name             &lt;chr&gt; &quot;Hiroyuki Isagawa&quot;, &quot;David Mannering&quot;, &quot;Eddy Penge...
+## $ sex              &lt;chr&gt; &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, ...
+## $ event            &lt;chr&gt; &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;...
+## $ equipment        &lt;chr&gt; &quot;Single-ply&quot;, &quot;Single-ply&quot;, &quot;Single-ply&quot;, &quot;Single-...
+## $ age              &lt;dbl&gt; NA, 24.0, 35.5, 19.5, NA, NA, 32.5, 31.5, NA, NA, ...
+## $ age_class        &lt;chr&gt; NA, &quot;24-34&quot;, &quot;35-39&quot;, &quot;20-23&quot;, NA, NA, &quot;24-34&quot;, &quot;2...
+## $ division         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...
+## $ bodyweight_kg    &lt;dbl&gt; 67.5, 67.5, 67.5, 67.5, 67.5, 67.5, 67.5, 90.0, 90...
+## $ weight_class_kg  &lt;chr&gt; &quot;67.5&quot;, &quot;67.5&quot;, &quot;67.5&quot;, &quot;67.5&quot;, &quot;67.5&quot;, &quot;67.5&quot;, &quot;6...
+## $ best3squat_kg    &lt;dbl&gt; 205.0, 225.0, 245.0, 195.0, 240.0, 200.0, 220.0, 2...
+## $ best3bench_kg    &lt;dbl&gt; 140.0, 132.5, 157.5, 110.0, 140.0, 100.0, 140.0, 2...
+## $ best3deadlift_kg &lt;dbl&gt; 225.0, 235.0, 270.0, 240.0, 215.0, 230.0, 235.0, 3...
+## $ place            &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;1&quot;, &quot;2&quot;, &quot;2&quot;, ...
+## $ date             &lt;date&gt; 1985-08-03, 1985-08-03, 1985-08-03, 1985-08-03, 1...
+## $ federation       &lt;chr&gt; &quot;IPF&quot;, &quot;IPF&quot;, &quot;IPF&quot;, &quot;IPF&quot;, &quot;IPF&quot;, &quot;IPF&quot;, &quot;IPF&quot;, &quot;...
+## $ meet_name        &lt;chr&gt; &quot;World Games&quot;, &quot;World Games&quot;, &quot;World Games&quot;, &quot;Worl...</code></pre>
+<p>We have three categories of data:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Competitor</strong>: name, sex, age, and weight.</li>
+<li><strong>Event</strong>: the event type (i.e., what type of lifting), division, age and weight classes, and the name and date of the meet the event was a part of.</li>
+<li><strong>Results</strong>: best lift amounts for the three types of lifts (squat, bench, and deadlift) and the competitor’s place in the event.<br />
+ </li>
+</ol>
+<p>Let’s do an exploratory visualization. This data is about lifting, so I want to know much people could lift! There are two main events in this data: Bench-only (B) and Squat-Bench-Deadlift (SBD), also known as “Full Power”. I want a broad overview, so let’s stick to SBD since it gives us three types of lifts. Also, we won’t worry about making our graph too pretty, since we’re still just exploring. Cleaning up and tweaking our graphs would take too much time.</p>
+<pre class="r"><code>ipf_lifts_raw %&gt;%
+  filter(event == &quot;SBD&quot;) %&gt;%
+  pivot_longer(cols = best3squat_kg:best3deadlift_kg,
+               names_to = &quot;lift_type&quot;,
+               names_prefix = &quot;best3&quot;,
+               values_to = &quot;kg_lifted&quot;) %&gt;%
+  ggplot(aes(lift_type, kg_lifted, fill = equipment)) +
+  geom_boxplot(outlier.alpha = 0.5) +
+  facet_wrap(~ sex)</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Some competitors had <em>negative</em> lift weights – impressive! Investigating this gives us an excuse to use <code>filter_at</code>, which lets us apply the same filter to multiple fields at once.</p>
+<pre class="r"><code>ipf_lifts_raw %&gt;%
+  filter_at(vars(best3squat_kg, best3bench_kg, best3deadlift_kg), # Fields to filter
+            any_vars(. &lt; 0)) %&gt;% # Use . as a placeholder for the field name
+  select(best3squat_kg:place)</code></pre>
+<pre><code>## # A tibble: 12 x 4
+##    best3squat_kg best3bench_kg best3deadlift_kg place
+##            &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;
+##  1         -165           NA                 NA DQ   
+##  2          135           52.5             -125 DQ   
+##  3         -155           NA                 NA DQ   
+##  4         -182.          NA                 NA DQ   
+##  5           NA         -155                 NA DQ   
+##  6          222.          NA               -215 DQ   
+##  7         -120           72.5              105 DQ   
+##  8         -130           NA                 NA DQ   
+##  9          220          120               -185 DQ   
+## 10          198.        -125                 NA DQ   
+## 11          200         -160                 NA DQ   
+## 12         -210           NA                 NA DQ</code></pre>
+<p>There are 12 observations with negative lift weights and all of them are DQ – disqualified. There could be some meaning to the negative weights or they could just be entry errors, but in either case I think we’re fine to exclude these observations. Let’s re-run our exploratory graph.</p>
+<pre class="r"><code>ipf_lifts_raw %&gt;%
+  filter(event == &quot;SBD&quot;) %&gt;%
+  pivot_longer(cols = best3squat_kg:best3deadlift_kg,
+               names_to = &quot;lift_type&quot;,
+               names_prefix = &quot;best3&quot;,
+               values_to = &quot;kg_lifted&quot;) %&gt;%
+  filter(kg_lifted &gt; 0) %&gt;% # WE JUST ADDED THIS FILTER
+  ggplot(aes(lift_type, kg_lifted, fill = equipment)) +
+  geom_boxplot(outlier.alpha = 0.5) +
+  facet_wrap(~ sex)</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We can already make a few observations on this dataset:</p>
+<ul>
+<li>Men tend to lift more than women</li>
+<li>Bench weights are typically less than deadlifts or squats, which are about equal</li>
+<li>Competitors tend to lift more with single-ply, compared to raw or wrapped lifting (more on the difference <a href="https://barbend.com/raw-vs-equipped-powerlifting/">here</a>)</li>
+<li>Only men used wraps</li>
+</ul>
+<p>The fact that only men used wraps is suspicious, so let’s dig deeper.</p>
+<pre class="r"><code>ipf_lifts_raw %&gt;%
+  count(sex, equipment)</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##   sex   equipment      n
+##   &lt;chr&gt; &lt;chr&gt;      &lt;int&gt;
+## 1 F     Raw         2904
+## 2 F     Single-ply 10348
+## 3 M     Raw         4663
+## 4 M     Single-ply 22961
+## 5 M     Wraps        276</code></pre>
+<p>We only have 276 observations where “wraps” was used as the equipment. The vast majority of lifts were done raw or with single-ply equipment. Since they account for so few lifts, we are probably safe to exclude wraps from our analysis.<br />
+ </p>
+</div>
+<div id="research-question" class="section level2">
+<h2>Research question</h2>
+<p>What should we do with this data? Well, in high school and university, some of my gym-going classmates were preoccupied with one question: <strong>How much can you bench?</strong> So let’s try to answer that question for them.<br />
+ </p>
+</div>
+<div id="data-cleaning" class="section level2">
+<h2>Data cleaning</h2>
+<p>Fortunately, this data is already pretty good, so we don’t have a lot to clean. We’ll still do three things, though:</p>
+<ol style="list-style-type: decimal">
+<li>Ditch fields that we aren’t interested in, only keeping bench weight and a few potential predictors.</li>
+<li>Rename some fields so they’re nicer to work with.</li>
+<li>Filter out missing or erroneous data among the fields we want to use to predict bench weight. Specifically, we’re going to exclude rows where the bench weight is negative or the age is less than 16.</li>
+</ol>
+<pre class="r"><code>ipf_lifts &lt;- ipf_lifts_raw %&gt;%
+  # transmute acts like a combination of select and mutate
+  transmute(name,
+            sex,
+            equipment,
+            age,
+            weight_kg = bodyweight_kg,
+            bench_kg = best3bench_kg) %&gt;%
+  # Filter out missing observations in age, weight, or bench weight
+  filter_at(vars(age, weight_kg, bench_kg),
+            all_vars(!is.na(.))) %&gt;%
+  filter(equipment != &quot;Wraps&quot;,
+         bench_kg &gt; 0,
+         age &gt;= 16)</code></pre>
+<p> </p>
+</div>
+<div id="modelling" class="section level2">
+<h2>Modelling</h2>
+<div id="exploring-the-predictors" class="section level3">
+<h3>Exploring the predictors</h3>
+<p>We’re going to build a <strong>multivariate linear regression</strong> model. But before diving into it, let’s visualize what we have to get a sense of the relationship between our <em>response</em> variable (bench weight) and our <em>predictors</em>. How do competitor weight, sex, and equipment relate to bench weight?</p>
+<pre class="r"><code>ipf_lifts %&gt;%
+  ggplot(aes(weight_kg, bench_kg)) +
+  geom_point(alpha = 0.2) +
+  facet_grid(equipment ~ sex)</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>There’s a pretty clear linear relationship. You can also see that men tend have higher bench weights than women, there are more men over 150kg (compared to almost no women), and that there is more variation in bench weight when using single-ply equipment (among both sexes).<br />
+ </p>
+<p>What if we look at age instead of weight?</p>
+<pre class="r"><code>ipf_lifts %&gt;%
+  ggplot(aes(age, bench_kg)) +
+  geom_point(alpha = 0.2) +
+  # Adding axis breaks every 10 years
+  scale_x_continuous(breaks = seq(10, 90, 10)) +
+  facet_grid(equipment ~ sex)</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Interesting. There’s a clear relationship, but it’s not linear. It looks like competitors tend to lift more as they get older, until they peak in their 30s, then decline from there. Instead of eyeballing, though, we can add a <a href="http://r-statistics.co/Loess-Regression-With-R.html">loess-fitted smoothing line</a> with <code>geom_smooth</code> to get a sense of the general trend of the data.</p>
+<pre class="r"><code>ipf_lifts %&gt;%
+  ggplot(aes(age, bench_kg)) +
+  geom_point(alpha = 0.2) +
+  scale_x_continuous(breaks = seq(10, 90, 10)) +
+  # Same code as above -- we just added geom_smooth
+  geom_smooth(method = &quot;loess&quot;, col = &quot;red&quot;) +
+  facet_grid(equipment ~ sex)</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Now it’s <em>super</em> obvious, right?<br />
+ </p>
+<p>Okay, last thing to explore before building our model is the relationship between age and weight. If they’re highly correlated then that can cause <a href="https://statisticsbyjim.com/regression/multicollinearity-in-regression-analysis/">issues</a> with our regression. We’ll check visually and mathematically (using the <code>cor</code> function).</p>
+<pre class="r"><code>ipf_lifts %&gt;%
+  ggplot(aes(age, weight_kg)) +
+  geom_point(alpha = 0.2) +
+  scale_x_continuous(breaks = seq(10, 90, 10)) +
+  facet_wrap(~ sex)</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>cor(ipf_lifts$age, ipf_lifts$weight_kg)</code></pre>
+<pre><code>## [1] 0.06776009</code></pre>
+<p>The correlation’s very low. Though it is interesting we see fewer heavier competitors as age increases.<br />
+ </p>
+</div>
+<div id="building-the-model" class="section level3">
+<h3>Building the model</h3>
+<p>We have a good idea about the relationship between bench weight and our predictors, so let’s take a moment to note what those relationships are. After we run our regression, we can check its output to see how well it lines up with our intuition.</p>
+<ul>
+<li>Sex: men tended to lift more than women</li>
+<li>Weight: heavier competitors tended to lift more than lighter competitors</li>
+<li>Equipment: equipped competitors (“Single-Ply”) tended to lift more than unequipped (“Raw”) competitors</li>
+<li>Age: competitors tended to lift the most in their 30s, but less if they were younger or older</li>
+</ul>
+<p>Age is a bit weird because it has that non-linear trend, but let’s include it in our first model. Don’t worry, we’ll sort out that non-linear trend, soon.</p>
+<pre class="r"><code>first_model &lt;- lm(bench_kg ~ sex + weight_kg + equipment + age,
+                  data = ipf_lifts)
+
+summary(first_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = bench_kg ~ sex + weight_kg + equipment + age, data = ipf_lifts)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -169.892  -21.807   -1.743   19.644  149.353 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          7.805439   0.820466   9.513   &lt;2e-16 ***
+## sexM                53.403462   0.432975 123.341   &lt;2e-16 ***
+## weight_kg            1.274897   0.008197 155.526   &lt;2e-16 ***
+## equipmentSingle-ply 24.945502   0.451533  55.246   &lt;2e-16 ***
+## age                 -0.573199   0.012551 -45.671   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 34.28 on 35265 degrees of freedom
+## Multiple R-squared:  0.6793, Adjusted R-squared:  0.6793 
+## F-statistic: 1.868e+04 on 4 and 35265 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>I dream of getting initial results this good! All of our predictors are statistically significant and we have an adjusted R-squared of 0.6793, which means that about 68%% of the variance in bench weight is “explained” by these predictors. Everything lines up with our intuition, too:</p>
+<ul>
+<li>Sex: men are expected to lift about 53.4kg more than women</li>
+<li>Weight: competitors are expected to lift 1.3kg more for every additional 1kg of bodyweight</li>
+<li>Equipment: equipped competitors are expected to lift about 24.9kg more than unequipped competitors</li>
+<li>Age: older competitors are expected to lift less by about 0.6kg for every year of age<br />
+ </li>
+</ul>
+<p>Let’s dig into age by looking at the relationship between age and the residuals from our model. A properly-specified model won’t have any clear patterns in this plot.</p>
+<pre class="r"><code>first_model %&gt;%
+  augment() %&gt;%
+  ggplot(aes(age, .resid)) +
+  geom_point(alpha = 0.2) +
+  geom_hline(aes(yintercept = 0), col = &quot;red&quot;) +
+  scale_x_continuous(breaks = seq(10, 90, 10))</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>But we <em>do</em> see a pattern. We’re overestimating bench weight for younger (in their teens and 20s) and older (aged 50+) competitors. Or, put another way, there is signal left over that our model hasn’t captured.<br />
+ </p>
+</div>
+<div id="capturing-non-linearity-using-natural-cubic-splines" class="section level3">
+<h3>Capturing non-linearity using natural cubic splines</h3>
+<p><strong>How do we capture this signal?</strong> One method is to use natural cubic splines. The very, very unscientific explanation of splines is that they split a straight line into chunks and stretch each of those chunks without affecting the others. Doing this lets us add some <em>wiggle</em> to a straight line. The amount we let a line wiggle is determined by the degrees of freedom – the higher the degrees of freedom, the more wiggle. Let’s look at age versus bench weight for splines with between 1 and 9 degrees of freedom.</p>
+<pre class="r"><code>splines &lt;- tibble(degrees_of_freedom = 1:9) %&gt;%
+  mutate(linear_model = map(degrees_of_freedom,
+                            ~ lm(bench_kg ~ ns(age, df = .), data = ipf_lifts)))
+
+splines %&gt;%
+  mutate(augmented = map(linear_model, augment, data = ipf_lifts)) %&gt;%
+  unnest(augmented) %&gt;%
+  ggplot(aes(age, bench_kg)) +
+  geom_point(data = ipf_lifts, alpha = 0.1) +
+  geom_line(aes(y = .fitted), col = &quot;red&quot;) +
+  scale_x_continuous(breaks = seq(10, 90, 10)) +
+  facet_wrap(~ degrees_of_freedom)</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>One degree of freedom is just a straight line, but as we move to 2, 3, and more degrees of freedom, the line gets more wiggle. But you can also see reach a plateau where allowing for more degrees of freedom doesn’t help us that much. Once we get to 3 or 4, the wigglier lines don’t describe the trend much better.</p>
+<p>Good news! We can quantify how well each spline with different degrees of freedom fit the trend we see in each. Each of those red lines is its own linear regression, so we can use evaluation metrics like adjusted R-squared and Akaike Information Criterion (AIC). Both of these give a sense of how well a model fits a dataset while adjusting for overfitting. (Note: “better” models will have a higher adjusted R-squared and a lower AIC.)</p>
+<pre class="r"><code>splines %&gt;%
+  mutate(glanced = map(linear_model, glance, data = ipf_lifts)) %&gt;%
+  unnest(glanced) %&gt;%
+  select(degrees_of_freedom, adj.r.squared, AIC) %&gt;%
+  pivot_longer(adj.r.squared:AIC) %&gt;%
+  ggplot(aes(degrees_of_freedom, value)) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = 1:9) +
+  facet_wrap(~ name, scales = &quot;free_y&quot;) +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>Both metrics tell a similar story – our fit gets better until we hit 3 degrees of freedom, then our model plateaus. This suggests that 3 degrees of freedom is a good predictor to use in our linear model. So let’s do that and see what we get.</p>
+<pre class="r"><code>splines_model &lt;- lm(bench_kg ~ sex + weight_kg + equipment + ns(age, 3),
+                    data = ipf_lifts)
+
+summary(splines_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = bench_kg ~ sex + weight_kg + equipment + ns(age, 
+##     3), data = ipf_lifts)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -162.898  -20.050   -1.177   18.591  145.532 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         -28.813853   0.789781 -36.483   &lt;2e-16 ***
+## sexM                 55.108550   0.398513 138.285   &lt;2e-16 ***
+## weight_kg             1.202917   0.007583 158.633   &lt;2e-16 ***
+## equipmentSingle-ply  23.311848   0.415730  56.075   &lt;2e-16 ***
+## ns(age, 3)1         -15.867676   1.018444 -15.580   &lt;2e-16 ***
+## ns(age, 3)2          18.009630   1.802302   9.993   &lt;2e-16 ***
+## ns(age, 3)3         -81.655238   2.211188 -36.928   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 31.48 on 35263 degrees of freedom
+## Multiple R-squared:  0.7296, Adjusted R-squared:  0.7296 
+## F-statistic: 1.586e+04 on 6 and 35263 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>We lose some interpretability, since the estimates for each of the spline parameters aren’t obvious, but we seem to end up with a better model: an <strong>adjusted R-squared of 0.7296</strong> compared to an <strong>adjusted R-squared of 0.6793</strong> with our first model. Splines are pretty neat!<br />
+ </p>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>I hope you got a good sense of multivariate linear regression and how we can use natural cubic splines to account for non-linear trends. But, you should know, this model isn’t perfect. To be truly rigorous, we should have investigated and addressed the model’s <a href="https://statisticsbyjim.com/regression/heteroscedasticity-regression/">heteroscedasticity</a>. We should have also used <a href="https://www.statisticshowto.datasciencecentral.com/cross-validation-statistics/">cross-validation</a> to get more robust estimates. I’m sure we’ll get to address those – probably with a different dataset – in a future post.</p>
+<p>If you liked this, check out the <a href="https://twitter.com/search?q=%23TidyTuesday">#TidyTuesday</a> hashtag on Twitter. People make truly wonderful contributions every week. Even better would be to <a href="https://github.com/rfordatascience/tidytuesday">participate in TidyTuesday</a>. The R community is tremendously positive and supportive.</p>
+</div>
+
+  
+  <h4><i class="fa-share-alt" aria-hidden="true"></i>&nbsp;Share!</h4>
+<ul class="share-buttons">
+	<li><a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="https://twitter.com/intent/tweet?source=%2fpost%2ftidytuesday-powerlifting%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="https://plus.google.com/share?url=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://www.tumblr.com/share?v=3&u=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://pinterest.com/pin/create/button/?url=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://www.reddit.com/submit?url=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
+	</li>
+</ul>
+
+
+<style>
+	ul.share-buttons{
+	  list-style: none;
+	  padding: 0;
+	}
+
+	ul.share-buttons li{
+	  display: inline;
+	}
+
+	ul.share-buttons .sr-only{
+	  position: absolute;
+	  clip: rect(1px 1px 1px 1px);
+	  clip: rect(1px, 1px, 1px, 1px);
+	  padding: 0;
+	  border: 0;
+	  height: 1px;
+	  width: 1px;
+	  overflow: hidden;
+	}
+</style>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="/post/tidytuesday-new-york-pizza-restaurants/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="/post/tidytuesday-new-york-pizza-restaurants/">TidyTuesday: New York pizza restaurants</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="next">
+      <a href="/post/tidytuesday-horror-movies/">TidyTuesday: Horror movies</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+    <a href="/post/tidytuesday-horror-movies/"><i class="fa fa-chevron-right"></i></a>
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="/js/ui.js"></script>
+<script src="/js/menus.js"></script>
+
+
+<script>
+  
+  if (window.location.hostname != "localhost") {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-158906030-1', 'auto');
+    ga('send', 'pageview');
+  }
+</script>
+
+
+
+
+
+<script src="/js/math-code.js"></script>
+  <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+</body>
+</html>
+

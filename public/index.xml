@@ -23,6 +23,16 @@ We’re going to run a LASSO regression, a type of regularization. Regularizatio
     </item>
     
     <item>
+      <title>TidyTuesday: Powerlifting</title>
+      <link>/post/tidytuesday-powerlifting/</link>
+      <pubDate>Tue, 08 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/tidytuesday-powerlifting/</guid>
+      <description>In this post, I analyze the Powerlifting dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about the results of powerlifting events that are part of the International Powerlifting Federation.
+SetupFirst, we’ll load our packages, set our default ggplot2 theme, and import our data. We’re loading to packages, in addition to the tidyverse:</description>
+    </item>
+    
+    <item>
       <title>TidyTuesday: New York pizza restaurants</title>
       <link>/post/tidytuesday-new-york-pizza-restaurants/</link>
       <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
