@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.64.0" />
+
+  <title>TidyTuesday: Philadelphia parking tickets &middot; Alex Cookson</title>
+
+    
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+ 
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/alexcookson" rel="me" target="_blank"><i class="fab fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://linkedin.com/in/alexcookson" rel="me" target="_blank"><i class="fab fa-linkedin"></i></i>LinkedIn</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/tacookson" rel="me" target="_blank"><i class="fab fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small>&copy; 2020. All rights reserved.</small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>TidyTuesday: Philadelphia parking tickets</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>Dec 5, 2019</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+</div>
+
+    
+
+
+
+<p> </p>
+<p>In this post, I create a heat map using the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-03">Philly Parking Tickets</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>. TidyTuesday a project that shares a new dataset each week to give R users a way to apply and practice their skills.</p>
+<p>Specifically, we’ll cover:</p>
+<ul>
+<li>Cleaning and aggregating the data that will go into our heat map</li>
+<li>Creating a basic heat map</li>
+<li>Tweaking <code>ggplot2</code> theme components to get a much prettier heat map<br />
+ </li>
+</ul>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>We’ll load a few packages in addition to the <code>tidyverse</code>:</p>
+<ul>
+<li><code>lubridate</code> to work with dates and times</li>
+<li><code>extrafont</code> to change the font on our graphs</li>
+<li><code>scales</code> to easily change number formats (e.g., 0.32 becomes 32%)</li>
+<li><code>viridis</code> as a nice alternative to default <code>ggplot2</code> colours</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(lubridate)
+library(extrafont)
+library(scales)
+library(viridis)
+
+theme_set(theme_light())
+
+tickets_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-03/tickets.csv&quot;)</code></pre>
+<p> </p>
+</div>
+<div id="data-inspection" class="section level2">
+<h2>Data inspection</h2>
+<p>Let’s get into these parking tickets.</p>
+<pre class="r"><code>tickets_raw %&gt;%
+  glimpse()</code></pre>
+<pre><code>## Observations: 1,260,891
+## Variables: 7
+## $ violation_desc &lt;chr&gt; &quot;BUS ONLY ZONE&quot;, &quot;STOPPING PROHIBITED&quot;, &quot;OVER TIME L...
+## $ issue_datetime &lt;dttm&gt; 2017-12-06 12:29:00, 2017-10-16 18:03:00, 2017-11-0...
+## $ fine           &lt;dbl&gt; 51, 51, 26, 26, 76, 51, 36, 36, 76, 26, 26, 301, 36,...
+## $ issuing_agency &lt;chr&gt; &quot;PPA&quot;, &quot;PPA&quot;, &quot;PPA&quot;, &quot;PPA&quot;, &quot;PPA&quot;, &quot;POLICE&quot;, &quot;PPA&quot;, ...
+## $ lat            &lt;dbl&gt; 40.03550, 40.02571, 40.02579, 40.02590, 39.95617, 40...
+## $ lon            &lt;dbl&gt; -75.08111, -75.22249, -75.22256, -75.22271, -75.1660...
+## $ zip_code       &lt;dbl&gt; 19149, 19127, 19127, 19127, 19102, NA, NA, 19106, 19...</code></pre>
+<p>The <a href="https://en.wikipedia.org/wiki/Unit_of_observation">unit of observation</a> is a parking ticket, and we have over 1.2 million of them. I also see three categories of data:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Ticket</strong>: the basics of the ticket, like what it was for, the fine amount, and who issued it</li>
+<li><strong>Time</strong>: when it was issued. This dataset has tickets for 2017 only.</li>
+<li><strong>Location</strong>: where it was issued.<br />
+ </li>
+</ol>
+<p>Which are the most common violations?</p>
+<pre class="r"><code>tickets_raw %&gt;%
+  count(violation_desc, sort = TRUE) %&gt;%
+  head(20) %&gt;%
+  mutate(violation_desc = fct_reorder(violation_desc, n)) %&gt;%
+  ggplot(aes(violation_desc, n, fill = violation_desc)) +
+  geom_col() +
+  scale_fill_viridis(discrete = TRUE, direction = -1) +
+  scale_y_continuous(labels = comma_format()) +
+  coord_flip() +
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>“METER EXPIRED” and “METER EXPIRED CC” are the two most common. Is there any difference between them? Other violations seem the same, too, except for that “CC” at the end. Let’s use a cool trick to look at a couple of them: if we group by <code>violation_desc</code>, we can then use the <code>sample_n</code> function to get random observations from each group. It’s handy for spot-checking or investigating weird values like these.</p>
+<pre class="r"><code># Set seed for reproducible sampling
+set.seed(24601)
+
+tickets_raw %&gt;%
+  # Look at two violation descriptions
+  # Note the regex on PROHIBITED to capture slightly different spellings
+  filter(str_detect(violation_desc, &quot;METER EXPIRED|PARKING PROHI?BITED&quot;)) %&gt;%
+  group_by(violation_desc) %&gt;%
+  sample_n(2)</code></pre>
+<pre><code>## # A tibble: 10 x 7
+## # Groups:   violation_desc [5]
+##    violation_desc  issue_datetime       fine issuing_agency   lat   lon zip_code
+##    &lt;chr&gt;           &lt;dttm&gt;              &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+##  1 METER EXPIRED   2017-05-27 08:13:00    26 PPA             40.0 -75.1    19124
+##  2 METER EXPIRED   2017-02-10 15:45:00    26 PPA             40.0 -75.2    19104
+##  3 METER EXPIRED ~ 2017-07-20 18:45:00    36 PPA             40.0 -75.2    19107
+##  4 METER EXPIRED ~ 2017-08-09 18:28:00    36 PPA             40.0 -75.2       NA
+##  5 PARKING PROHBI~ 2017-10-06 11:59:00    41 PPA             40.0 -75.2       NA
+##  6 PARKING PROHBI~ 2017-09-19 11:33:00    41 PPA             40.0 -75.2    19130
+##  7 PARKING PROHBI~ 2017-05-04 11:40:00    51 PPA             39.9 -75.2    19107
+##  8 PARKING PROHBI~ 2017-08-25 14:08:00    51 PPA             40.0 -75.2    19103
+##  9 PARKING PROHIB~ 2017-09-07 11:50:00    31 SEPTA           40.0 -75.1    19140
+## 10 PARKING PROHIB~ 2017-08-12 06:50:00    31 TEMPLE          40.0 -75.2    19140</code></pre>
+<p>It looks like the main difference is the <code>fine</code> amount, but “PARKING PROHIBITED” (with its slightly different spelling) has a different <code>issuing_agency</code>. Some quick research makes me <em>think</em> that CC stands for “City Centre”. That would jive with the higher fine amounts – higher fines for violations downtown.</p>
+<p>Fortunately, we have location data, so we can check this hypothesis. We’re going to graph a crude map using longitude and latitude coordinates for each violation type (with CC vs. without CC) and see if the result are consistent with “CC” meaning “City Centre”.</p>
+<pre class="r"><code>tickets_raw %&gt;%
+  filter(str_detect(violation_desc, &quot;METER EXPIRED&quot;),
+         # Exclude outlier longitude values
+         lon &gt; -75.5) %&gt;%
+  group_by(violation_desc) %&gt;%
+  # Only take 1000 observations -- more takes longer to plot
+  sample_n(1e4) %&gt;%
+  ggplot(aes(lon, lat, col = violation_desc)) +
+  # Shape of . is small, so it alleviates overplotting
+  geom_point(shape = &quot;.&quot;)</code></pre>
+<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Bingo! That concentration of blue dots looks like a city centre to me. I think we’ve got a good enough feel for our data to decide what we want to do with it.<br />
+ </p>
+</div>
+<div id="research-question" class="section level2">
+<h2>Research question</h2>
+<p>I’m sure everyone has parked somewhere they shouldn’t have. Whenever I’ve done that, I always worry: “Will I get away with it?” If I parked illegaly late at night on a Sunday, I’d be less worried about getting a ticket than if I parked illegaly on a Tuesday afternoon. Would I be right to be less worried? Let’s <strong>visualize the relationship between time and tickets with a heat map</strong> to find out. Specifically, let’s look at day of the week and time of the day.<br />
+ </p>
+</div>
+<div id="data-cleaning-and-preparation" class="section level2">
+<h2>Data cleaning and preparation</h2>
+<p>We’re going to perform four cleaning steps:</p>
+<ol style="list-style-type: decimal">
+<li>Remove “CC” from <code>violation_desc</code>. We’ll consider violations the same, regardless of whether they were in the city centre or not.</li>
+<li>Correct some short-form spellings in <code>violation_desc</code>. For example we’ll add the “E” back into “PASSENGR”.</li>
+<li>Derive day-of-week and hour-of-day from <code>issue_datetime</code>. We need these to be the nodes of our heat map.</li>
+<li>Ditch <code>fine</code>, <code>issuing_agency</code>, and location data. We won’t be using these.</li>
+</ol>
+<pre class="r"><code>tickets &lt;- tickets_raw %&gt;%
+  # Remove &quot;CC&quot; and correct spelling
+  mutate(violation_desc = str_squish(str_remove(violation_desc, &quot; CC&quot;)),
+         violation_desc = str_replace_all(violation_desc,
+                                          c(&quot;PASSENGR&quot; = &quot;PASSENGER&quot;,
+                                            &quot;PROHBITED&quot; = &quot;PROHIBITED&quot;,
+                                            &quot;LOADNG&quot; = &quot;LOADING&quot;))) %&gt;%
+  # Derive features -- we&#39;re setting Mon as the first day of the week
+  mutate(day_of_week = wday(issue_datetime, label = TRUE, week_start = 1),
+         issue_hour = hour(issue_datetime)) %&gt;%
+  select(-fine:-zip_code)
+
+# Look at our clean data
+tickets %&gt;%
+  head()</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   violation_desc      issue_datetime      day_of_week issue_hour
+##   &lt;chr&gt;               &lt;dttm&gt;              &lt;ord&gt;            &lt;int&gt;
+## 1 BUS ONLY ZONE       2017-12-06 12:29:00 Wed                 12
+## 2 STOPPING PROHIBITED 2017-10-16 18:03:00 Mon                 18
+## 3 OVER TIME LIMIT     2017-11-02 22:09:00 Thu                 22
+## 4 OVER TIME LIMIT     2017-11-05 20:19:00 Sun                 20
+## 5 STOP PROHIBITED     2017-10-17 06:58:00 Tue                  6
+## 6 DOUBLE PARKED       2017-10-02 10:40:00 Mon                 10</code></pre>
+<p>It’s a simple dataset, but it’s all we need for a heat map.<br />
+ </p>
+</div>
+<div id="visualizing" class="section level2">
+<h2>Visualizing</h2>
+<p>People generally use the <code>geom_tile</code> function to create heat maps. After specifying our x and y dimensions (day-of-week and hour-of-day) we need to specify what represents the “heat”. In our case, the heat is number of tickets for a given hour of a given day of the week.</p>
+<pre class="r"><code>tickets %&gt;%
+  count(day_of_week, issue_hour) %&gt;%
+  ggplot(aes(x = day_of_week, y = issue_hour, fill = n)) +
+  geom_tile()</code></pre>
+<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>It’s pretty cool we can get a heat map with a few lines of code, but it looks rough and incomplete. We’re going to make a bunch of changes to get something more polished:</p>
+<ol style="list-style-type: decimal">
+<li>Add light borders to each node to distinguish them more easily</li>
+<li>Add more frequent labels for hours</li>
+<li>Turn the integer hour into a more recognizable time (e.g., 20 becomes 20:00)</li>
+<li>Change the colour – lighter should mean fewer tickets and darker should mean more tickets</li>
+<li>Make the numbers in the scale prettier</li>
+<li>Change the aspect ratio – the default nodes are too wide</li>
+<li>Add a descriptive title</li>
+<li>Get rid of labels for the x and y axes – I don’t need a label to know that “Mon” and “Tue” mean day of the week</li>
+<li>Change the fill label from “n” to something more descriptive</li>
+<li>Change the font – you’ll need the <code>extrafont</code> package for anything but the most basic fonts (it requires a totally-worth-it <a href="https://cran.r-project.org/web/packages/extrafont/README.html">one-time setup step</a>)</li>
+<li>Get rid of gridlines – we already have borders on our nodes</li>
+<li>Get rid of the border around the heat map</li>
+<li>Adjust the x and y axes text sizes</li>
+<li>Get rid of axis ticks on the x-axis (we’ll keep the ones on the y-axis)</li>
+</ol>
+<pre class="r"><code>tickets_heat_overall &lt;- tickets %&gt;%
+  count(day_of_week, issue_hour)
+
+tickets_heat_overall %&gt;%
+  ggplot(aes(x = day_of_week, y = issue_hour, fill = n)) +
+  # 1. Add light borders
+  geom_tile(col = &quot;gray90&quot;) +
+  scale_y_reverse(# 2. More frequent hour labels
+                  breaks = seq(0, 23, 2),
+                  # 3. More recognizable hours
+                  labels = paste0(seq(0, 23, 2), &quot;:00&quot;)) +
+  scale_fill_gradient(# 4. Change colour
+                      low = &quot;white&quot;, high = &quot;#ae017e&quot;,
+                      # 5. Pretty numbers
+                      labels = comma_format()) +
+  # 6. Better aspect ratio
+  coord_fixed(ratio = 0.3) +
+  labs(# 7. Descriptive title
+       title = &quot;Philadelphia parking tickets by time and day&quot;,
+       caption = &quot;Based on 2017 Philadelphia parking tickets for all violation types&quot;,
+       # 8. Get rid of unnecessary axis labels
+       x = &quot;&quot;,
+       y = &quot;&quot;,
+       # 9. More descriptive legend label
+       fill = &quot;Tickets Issued&quot;) +
+  theme(# 10. Change font
+        text = element_text(family = &quot;Bahnschrift&quot;),
+        # 11. Eliminate gridlines
+        panel.grid = element_blank(),
+        # 12. Eliminate border
+        panel.border = element_blank(),
+        # 13. Change axis text sizes
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 11),
+        # 14. Eliminate x-axis ticks
+        axis.ticks.x = element_blank())</code></pre>
+<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>That looks pretty good! We can make a few immediate observations:</p>
+<ul>
+<li>Most tickets are issued on weekdays during the day</li>
+<li>Sunday is the least-ticketed day</li>
+<li>Some tickets are issued late at night on party nights (Thu, Fri, Sat), but not other nights<br />
+ </li>
+</ul>
+<p>This heat map includes all violations, regardless of what type they are. <strong>What if we look at violation types individually?</strong> We can still use a heat map, but break it into <a href="https://en.wikipedia.org/wiki/Small_multiple">small multiples</a> to allow for easy comparison. Let’s look at the five violations that racked up the most tickets. First, though, we need to do two extra steps:</p>
+<ol style="list-style-type: decimal">
+<li>Use the <code>complete</code> function to turn <em>implicit</em> missing values into <em>explicit</em> missing values. For example, if a given violation type doesn’t have any tickets for 2:00 a.m. on a Sunday, that will show up as “NA” (missing). We want it to show up as “0” instead, otherwise our heat map won’t graph properly.</li>
+<li>Look at <em>percent</em> of tickets issued within each type instead of <em>number</em> of tickets so that everything is on the same scale. If we looked at number of tickets, we couldn’t compare across types because types with the most tickets would automatically be darker.</li>
+</ol>
+<pre class="r"><code>tickets_heat_top5 &lt;- tickets %&gt;%
+  mutate(violation_group = str_to_title(fct_lump(violation_desc, 5))) %&gt;%
+  count(day_of_week, issue_hour, violation_group) %&gt;%
+  complete(day_of_week, issue_hour, violation_group, fill = list(n = 0)) %&gt;%
+  group_by(violation_group) %&gt;%
+  mutate(pct_of_group = n / sum(n)) %&gt;%
+  ungroup()
+
+tickets_heat_top5 %&gt;%
+  mutate(violation_group = fct_reorder(violation_group, pct_of_group, median)) %&gt;%
+  ggplot(aes(x = day_of_week, y = issue_hour, fill = pct_of_group)) +
+  geom_tile(col = &quot;gray90&quot;) +
+  scale_y_reverse(breaks = seq(0, 23, 2),
+                  labels = paste0(seq(0, 23, 2), &quot;:00&quot;),
+                  sec.axis = dup_axis()) +
+  scale_fill_gradient(low = &quot;white&quot;,
+                      high = &quot;#ae017e&quot;,
+                      labels = percent_format()) +
+  coord_fixed(ratio = 0.3) +
+  facet_wrap(~ violation_group) +
+  labs(title = &quot;Watch where you park&quot;,
+       subtitle = &quot;Nodes represent % of tickets issued for a given type of violation&quot;,
+       caption = &quot;Based on 2017 Philadelphia parking tickets&quot;,
+       x = &quot;&quot;,
+       y = &quot;&quot;,
+       fill = &quot;&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        panel.grid = element_blank(),
+        panel.border = element_blank(),
+        strip.text = element_text(colour = &quot;black&quot;, size = 11),
+        strip.background = element_blank(),
+        axis.text = element_text(size = 7),
+        axis.ticks.x = element_blank())</code></pre>
+<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>I’ll let you draw your own observations about the differences between violations. (And also identify the pitfalls of drawing conclusions from these heat maps!)<br />
+ </p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>I hope you enjoyed making heat maps and going deep into some of the ways we can tweak the <code>ggplot2</code> theme to get nicer, more polished graphs. If you liked this, check out the <a href="https://twitter.com/search?q=TidyTuesday&amp;src=typed_query">#TidyTuesday</a> hashtag on Twitter or, even better, <a href="https://github.com/rfordatascience/tidytuesday">participate yourself</a>!</p>
+</div>
+
+  
+  <h4><i class="fa-share-alt" aria-hidden="true"></i>&nbsp;Share!</h4>
+<ul class="share-buttons">
+	<li><a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2ftidytuesday-philadelphia-parking-tickets%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="https://twitter.com/intent/tweet?source=%2fpost%2ftidytuesday-philadelphia-parking-tickets%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="https://plus.google.com/share?url=%2fpost%2ftidytuesday-philadelphia-parking-tickets%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://www.tumblr.com/share?v=3&u=%2fpost%2ftidytuesday-philadelphia-parking-tickets%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://pinterest.com/pin/create/button/?url=%2fpost%2ftidytuesday-philadelphia-parking-tickets%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://www.reddit.com/submit?url=%2fpost%2ftidytuesday-philadelphia-parking-tickets%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
+	</li>
+</ul>
+
+
+<style>
+	ul.share-buttons{
+	  list-style: none;
+	  padding: 0;
+	}
+
+	ul.share-buttons li{
+	  display: inline;
+	}
+
+	ul.share-buttons .sr-only{
+	  position: absolute;
+	  clip: rect(1px 1px 1px 1px);
+	  clip: rect(1px, 1px, 1px, 1px);
+	  padding: 0;
+	  border: 0;
+	  height: 1px;
+	  width: 1px;
+	  overflow: hidden;
+	}
+</style>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="/post/tidytuesday-horror-movies/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="/post/tidytuesday-horror-movies/">TidyTuesday: Horror movies</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="/js/ui.js"></script>
+<script src="/js/menus.js"></script>
+
+
+<script>
+  
+  if (window.location.hostname != "localhost") {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-158906030-1', 'auto');
+    ga('send', 'pageview');
+  }
+</script>
+
+
+
+
+
+<script src="/js/math-code.js"></script>
+  <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+</body>
+</html>
+

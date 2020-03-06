@@ -377,7 +377,7 @@ Directed by David DeCoteau. With Eric Roberts, Jessica Morris, Jean Louise O’S
          plot = str_squish(str_remove(plot, &quot;Directed by.*?\\. With.*?\\.&quot;))) %&gt;%
   select(-movie_rating, -filming_locations, -budget, -release_date)</code></pre>
 <p> </p>
-<p>Great! We’re almost ready to build a model. We’re going to use a movie’s <strong>features</strong>, like director, genre, cast, and language, to predict its rating. To do that with LASSO regression, we need to build a matrix where <em>each row is a movie</em> and <em>each column is a feature</em>. The values in the matrix will answer the question, “Does [this movie] have [this feature]?” A 1 means “Yes” and 0 means “No”.</p>
+<p>Great! We’re almost ready to build a model. We’re going to use a movie’s <strong>features</strong>, like director, genre, cast, and language, to predict its rating. To do that with LASSO regression, we need to build a matrix where <em>each row is a movie</em> and <em>each column is a feature</em>. The values in the matrix will answer the question, “Does [this movie] have [this feature]?” A value of 1 means “Yes” and 0 means “No”.</p>
 <p>A matrix is two-dimensional, though (1 row + 1 column = 2 dimensions), so we need get our dataset into two dimensions before we convert it to a matrix. We want to end up with two fields – <code>id</code> and <code>feature</code> – that correspond to the rows and columns of the matrix. <code>id</code> is already its own field, but <code>feature</code> is spread across several different fields, so we need to collect them, which we’ll do in three steps:</p>
 <ol style="list-style-type: decimal">
 <li>Use the <code>pivot_longer</code> to turn data from a wide to a long format. This will get all features condensed to two fields: <code>feature</code>, which will be the former field name (e.g., country), and <code>value</code>, which will be the value for that observation (e.g., USA).</li>
@@ -428,7 +428,7 @@ Directed by David DeCoteau. With Eric Roberts, Jessica Morris, Jean Louise O’S
 ## 11  1722 Sorority Slaughterhouse    3.3 Cast: Vince Hill-Bedford    
 ## 12  1722 Sorority Slaughterhouse    3.3 Language: English           
 ## 13  1722 Sorority Slaughterhouse    3.3 Genre: Horror</code></pre>
-<p>Everything looks neat and tidy. We can see each feature that <em>Sorority Slaughterhouse</em> will get a 1 on once we convert this to a matrix. So let’s go ahead and create our matrix.</p>
+<p>Everything looks neat and tidy. We can see each feature that <em>Sorority Slaughterhouse</em> has. All of these will get a value of 1 once we convert this to a matrix. So let’s go ahead and create our matrix.</p>
 <pre class="r"><code>feature_matrix &lt;- by_feature %&gt;%
   # We don&#39;t technically need title, just id and feature
   select(id, feature) %&gt;%
@@ -496,8 +496,8 @@ cv_lasso_model_tidy</code></pre>
 ##  9 Language: Japanese      41   0.0602 0.0382     0.412
 ## 10 Genre: Mystery          41   0.204  0.0382     0.412
 ## # ... with 1,021 more rows</code></pre>
-<p>Our model has a whopping 1,030 predictors! <strong>(Intercept)</strong> shows the base score, then we add whatever value is in the <code>estimate</code> field for each feature that a movie has. We end up with that movie’s a predicted score. For example, if a movie is a <strong>Drama</strong> it will get 0.332 <em>added</em> to its predicted score, while a movie with <strong>Veronica Ricci</strong> in its cast will get 0.374 <em>subtracted</em> from its predicted score.</p>
-<p>If we join the <code>cv_lasso_model_tidy</code> to our <code>by_feature</code> dataset, we can get predicted values for each movie. Let’s see how <em>Sorority Slaugherhouse</em> does.</p>
+<p>Our model has a whopping 1,030 predictors! <strong>(Intercept)</strong> shows the “starting” rating before we take features into account. Then we add whatever value is in the <code>estimate</code> field for each feature that a movie has. We end up with that movie’s a predicted rating For example, if a movie is a <strong>Drama</strong> it will get 0.332 <em>added</em> to its predicted rating, while a movie with <strong>Veronica Ricci</strong> in its cast will get 0.374 <em>subtracted</em> from its predicted rating.</p>
+<p>If we join the <code>cv_lasso_model_tidy</code> dataset to our <code>by_feature</code> dataset, we can get predicted values for each movie. Let’s see how <em>Sorority Slaugherhouse</em> does.</p>
 <pre class="r"><code>sorority &lt;- by_feature %&gt;%
   filter(title == &quot;Sorority Slaughterhouse&quot;) %&gt;%
   left_join(cv_lasso_model_tidy, by = c(&quot;feature&quot; = &quot;term&quot;)) %&gt;%
@@ -556,7 +556,7 @@ by_feature %&gt;%
        x = &quot;&quot;,
        y = glue(&#39;Effect on predicted rating (starting with a base rating of {cv_lasso_model_tidy %&gt;% filter(term == &quot;(Intercept)&quot;) %&gt;% pull(estimate) %&gt;% round(1)})&#39;))</code></pre>
 <p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<p>Based on what our model is telling us, director has the biggest impact on predicted score. Almost every top feature, both positive and negative, is who directed it. I guess there’s something to be said for a director with (or without) a vision.</p>
+<p>Based on what our model is telling us, director has the biggest impact on predicted rating. Almost every top feature, both positive and negative, is who directed it. I guess there’s something to be said for a director with (or without) a vision.</p>
 <p>If Rob Hawk is the “best” director (according to our model) what movie should I watch this Halloween?</p>
 <pre class="r"><code>by_feature %&gt;%
   filter(feature == &quot;Director: Rob Hawk&quot;)</code></pre>
@@ -632,8 +632,14 @@ by_feature %&gt;%
   </div>
   <div class="pure-u-10-24">
     
+    <nav class="next">
+      <a href="/post/tidytuesday-philadelphia-parking-tickets/">TidyTuesday: Philadelphia parking tickets</a>
+    </nav>
+    
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
+    
+    <a href="/post/tidytuesday-philadelphia-parking-tickets/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>

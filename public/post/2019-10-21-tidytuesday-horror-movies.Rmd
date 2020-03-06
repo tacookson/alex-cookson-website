@@ -121,7 +121,7 @@ horror_movies <- horror_movies_raw %>%
 ```  
 \  
 
-Great! We're almost ready to build a model. We're going to use a movie's **features**, like director, genre, cast, and language, to predict its rating. To do that with LASSO regression, we need to build a matrix where *each row is a movie* and *each column is a feature*. The values in the matrix will answer the question, "Does [this movie] have [this feature]?" A 1 means "Yes" and 0 means "No".
+Great! We're almost ready to build a model. We're going to use a movie's **features**, like director, genre, cast, and language, to predict its rating. To do that with LASSO regression, we need to build a matrix where *each row is a movie* and *each column is a feature*. The values in the matrix will answer the question, "Does [this movie] have [this feature]?" A value of 1 means "Yes" and 0 means "No".
 
 A matrix is two-dimensional, though (1 row + 1 column = 2 dimensions), so we need get our dataset into two dimensions before we convert it to a matrix. We want to end up with two fields -- `id` and `feature` -- that correspond to the rows and columns of the matrix. `id` is already its own field, but `feature` is spread across several different fields, so we need to collect them, which we'll do in three steps:
 
@@ -164,7 +164,7 @@ by_feature %>%
   filter(title == "Sorority Slaughterhouse")
 ```
 
-Everything looks neat and tidy. We can see each feature that *Sorority Slaughterhouse* will get a 1 on once we convert this to a matrix. So let's go ahead and create our matrix.
+Everything looks neat and tidy. We can see each feature that *Sorority Slaughterhouse* has. All of these will get a value of 1 once we convert this to a matrix. So let's go ahead and create our matrix.
 
 ```{r}
 feature_matrix <- by_feature %>%
@@ -217,9 +217,9 @@ cv_lasso_model_tidy <- cv_lasso_model$glmnet.fit %>%
 cv_lasso_model_tidy
 ```
 
-Our model has a whopping `r comma(nrow(cv_lasso_model_tidy) - 1)` predictors! **(Intercept)** shows the base score, then we add whatever value is in the `estimate` field for each feature that a movie has. We end up with that movie's a predicted score. For example, if a movie is a **Drama** it will get 0.332 *added* to its predicted score, while a movie with **Veronica Ricci** in its cast will get 0.374 *subtracted* from its predicted score.
+Our model has a whopping `r comma(nrow(cv_lasso_model_tidy) - 1)` predictors! **(Intercept)** shows the "starting" rating before we take features into account. Then we add whatever value is in the `estimate` field for each feature that a movie has. We end up with that movie's a predicted rating For example, if a movie is a **Drama** it will get 0.332 *added* to its predicted rating, while a movie with **Veronica Ricci** in its cast will get 0.374 *subtracted* from its predicted rating.
 
-If we join the `cv_lasso_model_tidy` to our `by_feature` dataset, we can get predicted values for each movie. Let's see how *Sorority Slaugherhouse* does.
+If we join the `cv_lasso_model_tidy` dataset to our `by_feature` dataset, we can get predicted values for each movie. Let's see how *Sorority Slaugherhouse* does.
 
 ```{r}
 sorority <- by_feature %>%
@@ -286,7 +286,7 @@ cv_lasso_model_tidy %>%
        y = glue('Effect on predicted rating (starting with a base rating of {cv_lasso_model_tidy %>% filter(term == "(Intercept)") %>% pull(estimate) %>% round(1)})'))
 ```
 
-Based on what our model is telling us, director has the biggest impact on predicted score. Almost every top feature, both positive and negative, is who directed it. I guess there's something to be said for a director with (or without) a vision.
+Based on what our model is telling us, director has the biggest impact on predicted rating. Almost every top feature, both positive and negative, is who directed it. I guess there's something to be said for a director with (or without) a vision.
 
 If Rob Hawk is the "best" director (according to our model) what movie should I watch this Halloween?
 
@@ -302,5 +302,3 @@ by_feature %>%
 ## Conclusion
 
 If you liked this, check out the [#TidyTuesday](https://twitter.com/search?q=%23TidyTuesday) hashtag on Twitter. People make truly wonderful contributions every week. Even better would be to [participate in TidyTuesday](https://github.com/rfordatascience/tidytuesday). The R community is tremendously positive and supportive.
-
-
