@@ -10,12 +10,12 @@ topics: []
 ---  
 \  
 
-In this post, I create a heat map using the [Philly Parking Tickets](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-03) dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday). TidyTuesday a project that shares a new dataset each week to give R users a way to apply and practice their skills.
+In this post, I create **heat maps** using the [Philly Parking Tickets](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-03) dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday), a project that shares a new dataset each week to give R users a way to apply and practice their skills.
 
 Specifically, we'll cover:
 
 - Cleaning and aggregating the data that will go into our heat map
-- Creating a basic heat map
+- Creating a basic heat map with `ggplot2` defaults
 - Tweaking `ggplot2` theme components to get a much prettier heat map  
 \  
 
@@ -54,7 +54,7 @@ tickets_raw %>%
 
 The [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is a parking ticket, and we have over 1.2 million of them. I also see three categories of data:
 
-1. **Ticket**: the basics of the ticket, like what it was for, the fine amount, and who issued it
+1. **Ticket**: the basics of the ticket, like what it was for, the fine amount, and who issued it.
 2. **Time**: when it was issued. This dataset has tickets for 2017 only.
 3. **Location**: where it was issued.  
 \  
@@ -88,9 +88,9 @@ tickets_raw %>%
   sample_n(2)
 ```
 
-It looks like the main difference is the `fine` amount, but "PARKING PROHIBITED" (with its slightly different spelling) has a different `issuing_agency`. Some quick research makes me *think* that CC stands for "City Centre". That would jive with the higher fine amounts -- higher fines for violations downtown.
+The main difference is the `fine` amount, but "PARKING PROHIBITED" (with its slightly different spelling) has a different `issuing_agency`. Some quick research makes me *think* that CC stands for "City Centre". That would jive with the higher fine amounts -- higher fines for violations downtown.
 
-Fortunately, we have location data, so we can check this hypothesis. We're going to graph a crude map using longitude and latitude coordinates for each violation type (with CC vs. without CC) and see if the result are consistent with "CC" meaning "City Centre".
+Fortunately, we have location data, so we can test this hypothesis. We'll use longitude and latitude to make a crude map of violation types (with CC vs. without CC) and see if the results are consistent with "CC" meaning "City Centre".
 
 ```{r}
 tickets_raw %>%
@@ -111,7 +111,7 @@ Bingo! That concentration of blue dots looks like a city centre to me. I think w
 
 ## Research question
 
-I'm sure everyone has parked somewhere they shouldn't have. Whenever I've done that, I always worry: "Will I get away with it?" If I parked illegaly late at night on a Sunday, I'd be less worried about getting a ticket than if I parked illegaly on a Tuesday afternoon. Would I be right to be less worried? Let's **visualize the relationship between time and tickets with a heat map** to find out. Specifically, let's look at day of the week and time of the day.  
+I'm sure everyone has parked somewhere they shouldn't have. Whenever I've done that, I always worry: "Will I get away with it?" If I parked illegally late at night on a Sunday, I'd be less worried about getting a ticket than if I parked illegaly on a Tuesday afternoon. Would I be right to be less worried? Let's **visualize the relationship between time and tickets with a heat map** to find out. Specifically, let's look at day of the week and time of the day.  
 \  
 
 
@@ -148,7 +148,7 @@ It's a simple dataset, but it's all we need for a heat map.
 
 ## Visualizing
 
-People generally use the `geom_tile` function to create heat maps. After specifying our x and y dimensions (day-of-week and hour-of-day) we need to specify what represents the "heat". In our case, the heat is number of tickets for a given hour of a given day of the week.
+We can use the `geom_tile` function to create heat maps. After specifying our x and y dimensions (day-of-week and hour-of-day) we need to specify what represents the "heat". In our case, the heat is number of tickets for a given hour of a given day of the week.
 
 ```{r}
 tickets %>%
@@ -222,7 +222,7 @@ That looks pretty good! We can make a few immediate observations:
 
 This heat map includes all violations, regardless of what type they are. **What if we look at violation types individually?** We can still use a heat map, but break it into [small multiples](https://en.wikipedia.org/wiki/Small_multiple) to allow for easy comparison. Let's look at the five violations that racked up the most tickets. First, though, we need to do two extra steps:
 
-1. Use the `complete` function to turn *implicit* missing values into *explicit* missing values. For example, if a given violation type doesn't have any tickets for 2:00 a.m. on a Sunday, that will show up as "NA" (missing). We want it to show up as "0" instead, otherwise our heat map won't graph properly.
+1. Turn *implicit* missing values into *explicit* missing values. For example, if a given violation type doesn't have any tickets for 2:00 a.m. on a Sunday, that will show up as "NA" (missing). We want it to show up as "0" instead, otherwise our heat map won't graph properly. We can use the `complete` function to do this.
 2. Look at *percent* of tickets issued within each type instead of *number* of tickets so that everything is on the same scale. If we looked at number of tickets, we couldn't compare across types because types with the most tickets would automatically be darker.
 
 ```{r}

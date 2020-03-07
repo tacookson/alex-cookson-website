@@ -12,11 +12,11 @@ topics: []
 
 
 <p> </p>
-<p>In this post, I create a heat map using the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-03">Philly Parking Tickets</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>. TidyTuesday a project that shares a new dataset each week to give R users a way to apply and practice their skills.</p>
+<p>In this post, I create <strong>heat maps</strong> using the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-12-03">Philly Parking Tickets</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a project that shares a new dataset each week to give R users a way to apply and practice their skills.</p>
 <p>Specifically, we’ll cover:</p>
 <ul>
 <li>Cleaning and aggregating the data that will go into our heat map</li>
-<li>Creating a basic heat map</li>
+<li>Creating a basic heat map with <code>ggplot2</code> defaults</li>
 <li>Tweaking <code>ggplot2</code> theme components to get a much prettier heat map<br />
  </li>
 </ul>
@@ -56,7 +56,7 @@ tickets_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rforda
 ## $ zip_code       &lt;dbl&gt; 19149, 19127, 19127, 19127, 19102, NA, NA, 19106, 19...</code></pre>
 <p>The <a href="https://en.wikipedia.org/wiki/Unit_of_observation">unit of observation</a> is a parking ticket, and we have over 1.2 million of them. I also see three categories of data:</p>
 <ol style="list-style-type: decimal">
-<li><strong>Ticket</strong>: the basics of the ticket, like what it was for, the fine amount, and who issued it</li>
+<li><strong>Ticket</strong>: the basics of the ticket, like what it was for, the fine amount, and who issued it.</li>
 <li><strong>Time</strong>: when it was issued. This dataset has tickets for 2017 only.</li>
 <li><strong>Location</strong>: where it was issued.<br />
  </li>
@@ -97,8 +97,8 @@ tickets_raw %&gt;%
 ##  8 PARKING PROHBI~ 2017-08-25 14:08:00    51 PPA             40.0 -75.2    19103
 ##  9 PARKING PROHIB~ 2017-09-07 11:50:00    31 SEPTA           40.0 -75.1    19140
 ## 10 PARKING PROHIB~ 2017-08-12 06:50:00    31 TEMPLE          40.0 -75.2    19140</code></pre>
-<p>It looks like the main difference is the <code>fine</code> amount, but “PARKING PROHIBITED” (with its slightly different spelling) has a different <code>issuing_agency</code>. Some quick research makes me <em>think</em> that CC stands for “City Centre”. That would jive with the higher fine amounts – higher fines for violations downtown.</p>
-<p>Fortunately, we have location data, so we can check this hypothesis. We’re going to graph a crude map using longitude and latitude coordinates for each violation type (with CC vs. without CC) and see if the result are consistent with “CC” meaning “City Centre”.</p>
+<p>The main difference is the <code>fine</code> amount, but “PARKING PROHIBITED” (with its slightly different spelling) has a different <code>issuing_agency</code>. Some quick research makes me <em>think</em> that CC stands for “City Centre”. That would jive with the higher fine amounts – higher fines for violations downtown.</p>
+<p>Fortunately, we have location data, so we can test this hypothesis. We’ll use longitude and latitude to make a crude map of violation types (with CC vs. without CC) and see if the results are consistent with “CC” meaning “City Centre”.</p>
 <pre class="r"><code>tickets_raw %&gt;%
   filter(str_detect(violation_desc, &quot;METER EXPIRED&quot;),
          # Exclude outlier longitude values
@@ -115,7 +115,7 @@ tickets_raw %&gt;%
 </div>
 <div id="research-question" class="section level2">
 <h2>Research question</h2>
-<p>I’m sure everyone has parked somewhere they shouldn’t have. Whenever I’ve done that, I always worry: “Will I get away with it?” If I parked illegaly late at night on a Sunday, I’d be less worried about getting a ticket than if I parked illegaly on a Tuesday afternoon. Would I be right to be less worried? Let’s <strong>visualize the relationship between time and tickets with a heat map</strong> to find out. Specifically, let’s look at day of the week and time of the day.<br />
+<p>I’m sure everyone has parked somewhere they shouldn’t have. Whenever I’ve done that, I always worry: “Will I get away with it?” If I parked illegally late at night on a Sunday, I’d be less worried about getting a ticket than if I parked illegaly on a Tuesday afternoon. Would I be right to be less worried? Let’s <strong>visualize the relationship between time and tickets with a heat map</strong> to find out. Specifically, let’s look at day of the week and time of the day.<br />
  </p>
 </div>
 <div id="data-cleaning-and-preparation" class="section level2">
@@ -156,7 +156,7 @@ tickets %&gt;%
 </div>
 <div id="visualizing" class="section level2">
 <h2>Visualizing</h2>
-<p>People generally use the <code>geom_tile</code> function to create heat maps. After specifying our x and y dimensions (day-of-week and hour-of-day) we need to specify what represents the “heat”. In our case, the heat is number of tickets for a given hour of a given day of the week.</p>
+<p>We can use the <code>geom_tile</code> function to create heat maps. After specifying our x and y dimensions (day-of-week and hour-of-day) we need to specify what represents the “heat”. In our case, the heat is number of tickets for a given hour of a given day of the week.</p>
 <pre class="r"><code>tickets %&gt;%
   count(day_of_week, issue_hour) %&gt;%
   ggplot(aes(x = day_of_week, y = issue_hour, fill = n)) +
@@ -225,7 +225,7 @@ tickets_heat_overall %&gt;%
 </ul>
 <p>This heat map includes all violations, regardless of what type they are. <strong>What if we look at violation types individually?</strong> We can still use a heat map, but break it into <a href="https://en.wikipedia.org/wiki/Small_multiple">small multiples</a> to allow for easy comparison. Let’s look at the five violations that racked up the most tickets. First, though, we need to do two extra steps:</p>
 <ol style="list-style-type: decimal">
-<li>Use the <code>complete</code> function to turn <em>implicit</em> missing values into <em>explicit</em> missing values. For example, if a given violation type doesn’t have any tickets for 2:00 a.m. on a Sunday, that will show up as “NA” (missing). We want it to show up as “0” instead, otherwise our heat map won’t graph properly.</li>
+<li>Turn <em>implicit</em> missing values into <em>explicit</em> missing values. For example, if a given violation type doesn’t have any tickets for 2:00 a.m. on a Sunday, that will show up as “NA” (missing). We want it to show up as “0” instead, otherwise our heat map won’t graph properly. We can use the <code>complete</code> function to do this.</li>
 <li>Look at <em>percent</em> of tickets issued within each type instead of <em>number</em> of tickets so that everything is on the same scale. If we looked at number of tickets, we couldn’t compare across types because types with the most tickets would automatically be darker.</li>
 </ol>
 <pre class="r"><code>tickets_heat_top5 &lt;- tickets %&gt;%
