@@ -1,8 +1,10 @@
 ---
-title: 'TidyTuesday: New York pizza restaurants'
+title: "What are New York's best and worst pizza restaurants?"
+description: 'TidyTuesday: Pizza Party'
 author: Alex Cookson
 date: '2019-09-30'
 slug: tidytuesday-new-york-pizza-restaurants
+tags: ["TidyTuesday"]
 ---  
 \  
 

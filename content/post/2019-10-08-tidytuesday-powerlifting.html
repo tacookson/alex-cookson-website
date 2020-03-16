@@ -1,14 +1,16 @@
 ---
-title: 'TidyTuesday: Powerlifting'
+title: 'How much can professional powerlifters bench press?'
+description: 'TidyTuesday: Powerlifting'
 author: Alex Cookson
 date: '2019-10-08'
 slug: tidytuesday-powerlifting
+tags: ["TidyTuesday", "linear regression", "splines"]
 ---  
 
 
 
 <p> </p>
-<p>In this post, I analyze the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-08">Powerlifting</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about the <strong>results of powerlifting events</strong> that are part of the International Powerlifting Federation.<br />
+<p>In this post, I analyze the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-10-08">Powerlifting</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about the <strong>results of powerlifting events</strong> that are part of the International Powerlifting Federation. I will be predicting bench press weight with a <strong>multiple linear regression model</strong>. What’s more, I will be using <strong>natural cubic splines</strong> to incorporate non-linear trends into our model.<br />
  </p>
 <div id="setup" class="section level2">
 <h2>Setup</h2>
