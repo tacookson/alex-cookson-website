@@ -3,50 +3,55 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://alexcookson.com/</loc>
+    <loc>/</loc>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/mapping-san-francisco-trees/</loc>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/tidytuesday-philadelphia-parking-tickets/</loc>
     <lastmod>2019-12-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/</loc>
-    <lastmod>2019-12-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://alexcookson.com/post/</loc>
-    <lastmod>2019-12-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://alexcookson.com/post/tidytuesday-horror-movies/</loc>
+    <loc>/post/tidytuesday-horror-movies/</loc>
     <lastmod>2019-10-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://alexcookson.com/post/tidytuesday-powerlifting/</loc>
+    <loc>/post/tidytuesday-powerlifting/</loc>
     <lastmod>2019-10-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://alexcookson.com/post/tidytuesday-new-york-pizza-restaurants/</loc>
+    <loc>/post/tidytuesday-new-york-pizza-restaurants/</loc>
     <lastmod>2019-09-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://alexcookson.com/post/tidytuesday-us-national-parks/</loc>
+    <loc>/post/tidytuesday-us-national-parks/</loc>
     <lastmod>2019-09-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://alexcookson.com/about/</loc>
+    <loc>/about/</loc>
   </url>
   
   <url>
-    <loc>https://alexcookson.com/tidytuesday/</loc>
+    <loc>/tidytuesday/</loc>
   </url>
   
   <url>
-    <loc>https://alexcookson.com/topics/</loc>
+    <loc>/topics/</loc>
   </url>
   
 </urlset>
