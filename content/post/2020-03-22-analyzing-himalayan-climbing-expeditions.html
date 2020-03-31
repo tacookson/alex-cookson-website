@@ -1,0 +1,308 @@
+---
+title: Analyzing Himalayan peaks and first ascents
+author: Alex Cookson
+date: '2020-03-22'
+slug: analyzing-himalayan-peaks-first-ascents
+categories: []
+tags: []
+description: ''
+topics: []
+---  
+
+
+
+<p> </p>
+<p>In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including <a href="https://en.wikipedia.org/wiki/Mount_Everest">Mount Everest</a>, the highest mountain (above sea level) in the world.<br />
+ </p>
+<p>This is <em>Part 1</em> of a three-part series:</p>
+<ul>
+<li>Part 1 (this post) looks at Himalayan peaks and their first ascents</li>
+<li>Part 2 will look at Everest expeditions <em>(coming soon)</em></li>
+<li>Part 3 will look at Himalayan expeditions overall (excluding Mount Everest) <em>(coming soon)</em><br />
+ </li>
+</ul>
+<p>This post will focus on getting an overview of the Himalayan peaks, especially their height, whether they’ve been summitted, and (if it applies) when the first ascent was and who was involved.<br />
+ </p>
+<div id="the-himalayan-database" class="section level2">
+<h2>The Himalayan Database</h2>
+<p>The data comes from <a href="https://www.himalayandatabase.com/">The Himalayan Database</a>, a truly impressive and comprehensive dataset with records on over 10,000 climbing expeditions from 1905 to 2019 for more than 450 significant peaks in the Nepal Himalayas. According to the database website:</p>
+<blockquote>
+<p>The Himalayan Database is a compilation of records for all expeditions that have climbed in the Nepal Himalaya. The database is based on the expedition archives of Elizabeth Hawley, a longtime journalist based in Kathmandu, and it is supplemented by information gathered from books, alpine journals and correspondence with Himalayan climbers.</p>
+</blockquote>
+<p>You can download a program from the website to explore the database, but it uses Microsoft Visual FoxPro, an older program that Miscrosoft no longer supports. I couldn’t get it working, but I was able to read the database tables directly and convert them into CSV files.<br />
+ </p>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>First, we’ll load the <code>tidyverse</code> and some other useful packages:</p>
+<ul>
+<li><code>fishualize</code> for ggplot2 colour palettes <a href="https://cran.r-project.org/web/packages/fishualize/vignettes/overview_colors.html">inspired by fish</a>. A big thank you to <a href="https://twitter.com/NinaSchiett/status/1180070737471852545">Nina Schiettekatte</a> for making this package and <a href="https://twitter.com/MaiaPelletier/status/1242869023437664259">Maia Pelletier</a> for introducing it to me!</li>
+<li><code>scales</code> for turning ugly numbers into pretty numbers (e.g., 0.3 to 30%)</li>
+<li><code>extrafont</code> for additional fonts to use in graphs (I like <a href="https://en.wikipedia.org/wiki/DIN_1451">Bahnschrift / DIN 1451</a>)</li>
+</ul>
+<p>We’ll also set a default <code>ggplot2</code> theme and import our data. <code>peaks</code> has information on the peaks themselves, <code>expeditions</code> details individual expeditions, and <code>members</code> looks at individual members of those expeditions.</p>
+<pre class="r"><code>library(tidyverse)
+library(fishualize)
+library(scales)
+library(extrafont)
+
+theme_set(theme_light())
+
+peaks &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/data/master/himalayan-expeditions/peaks.csv&quot;)
+expeditions &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/data/master/himalayan-expeditions/expeditions.csv&quot;)
+members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/data/master/himalayan-expeditions/members.csv&quot;)</code></pre>
+<p> </p>
+</div>
+<div id="data-inspection" class="section level2">
+<h2>Data inspection</h2>
+<p>Even though we’re loading all the tables, our focus is on getting a general sense of the peaks, so we will almost exclusively use the <code>peaks</code> dataset. Let’s take a look.</p>
+<pre class="r"><code>peaks %&gt;%
+  glimpse()</code></pre>
+<pre><code>## Observations: 468
+## Variables: 8
+## $ peak_id                    &lt;chr&gt; &quot;AMAD&quot;, &quot;AMPG&quot;, &quot;ANN1&quot;, &quot;ANN2&quot;, &quot;ANN3&quot;, ...
+## $ peak_name                  &lt;chr&gt; &quot;Ama Dablam&quot;, &quot;Amphu Gyabjen&quot;, &quot;Annapurn...
+## $ peak_alternative_name      &lt;chr&gt; &quot;Amai Dablang&quot;, NA, NA, NA, NA, NA, NA, ...
+## $ height_metres              &lt;dbl&gt; 6814, 5630, 8091, 7937, 7555, 7525, 8026...
+## $ climbing_status            &lt;chr&gt; &quot;Climbed&quot;, &quot;Climbed&quot;, &quot;Climbed&quot;, &quot;Climbe...
+## $ first_ascent_year          &lt;dbl&gt; 1961, 1953, 1950, 1960, 1961, 1955, 1974...
+## $ first_ascent_country       &lt;chr&gt; &quot;New Zealand, USA, UK&quot;, &quot;UK&quot;, &quot;France&quot;, ...
+## $ first_ascent_expedition_id &lt;chr&gt; &quot;AMAD61101&quot;, &quot;AMPG53101&quot;, &quot;ANN150101&quot;, &quot;...</code></pre>
+<p>We have the name and height of the peaks (including any alternative names), whether they’ve been summitted, and the year and countries associated with the first ascent for peaks that <em>have</em> been summitted. Countries are listed if an expedition member who reached the summit was a citizen of that country. It’s possible for countries to have citizens in an expedition, but not listed here are part of the first ascent. For example, the first ascent of Mount Everest lists two countries – India (for Tenzing Norgay) and New Zealand (for Edmund Hillary) – even though non-summitting expedition members included people from the United Kingdom and Nepal.</p>
+<p>(Note: there is some <a href="https://en.wikipedia.org/wiki/Talk%3ATenzing_Norgay#Tenzing_Norgay&#39;s_nationality">debate about Tenzing Norgay’s nationality</a>. I’m not even close to an expert on this topic, so I will defer to the records in the Himalayan Database, which lists his citizenship as “India”.)<br />
+ </p>
+</div>
+<div id="how-tall-are-himalayan-peaks" class="section level2">
+<h2>How tall are Himalayan peaks?</h2>
+<p>People generally know that Mount Everest is the tallest mountain in the world, but I personally don’t know much about other Himalayan peaks. How tall are they?</p>
+<p>We’re going to use the “Pseudocheilinus_tetrataenia” palette from the <code>fishualize</code> package. I can’t get over how much I <em>love</em> the colours in this package. <a href="https://www.fishkeeper.co.uk/help-and-advice/marine/wrasses/four-lined-wrasse">Here</a> is a picture of the fish that inspired the palette we’re using.</p>
+<pre class="r"><code>peaks %&gt;%
+  ggplot(aes(height_metres)) +
+  geom_histogram(
+    binwidth = 200,
+    fill = fish(1, option = &quot;Pseudocheilinus_tetrataenia&quot;, direction = -1),
+    alpha = 0.8
+  ) +
+  annotate(&quot;text&quot;, 8450, 17, label = &quot;Mount Everest&quot;, family = &quot;Bahnschrift&quot;) +
+  annotate(
+    &quot;curve&quot;,
+    x = 8500,
+    y = 15,
+    xend = 8775,
+    yend = 2,
+    curvature = -0.25,
+    arrow = arrow(length = unit(2, &quot;mm&quot;))
+  ) +
+  labs(
+    title = &quot;How tall are Himalayan peaks?&quot;,
+    caption = &quot;Source: The Himalayan Database&quot;,
+    x = &quot;Height (m)&quot;,
+    y = &quot;Number of peaks&quot;
+  ) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
+<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Not surprisingly, Mount Everest is the tallest at almost 9,000 metres. There is a small group of other very tall mountains referred to as <a href="https://www.mountainiq.com/guides/eight-thousanders/">8000ers</a>, something I learned while researching for this post. Most peaks are between 6,000 and 7,000 metres, though – still crazy-high.<br />
+ </p>
+</div>
+<div id="how-many-himalayan-peaks-remain-unclimbed" class="section level2">
+<h2>How many Himalayan peaks remain unclimbed?</h2>
+<p>Before getting into <em>when</em> peaks were first climbed, let’s look at <em>if</em> they have been climbed at all!</p>
+<pre class="r"><code>peaks %&gt;%
+  ggplot(aes(climbing_status, fill = climbing_status)) +
+  geom_bar() +
+  scale_fill_fish(option = &quot;Pseudocheilinus_tetrataenia&quot;,
+                  discrete = TRUE,
+                  direction = -1) +
+  labs(
+    title = &quot;More than a quarter of Himalayan peaks remain unclimbed&quot;,
+    caption = &quot;Source: The Himalayan Database&quot;,
+    x = &quot;&quot;,
+    y = &quot;Number of peaks&quot;
+  ) +
+  theme(legend.position = &quot;none&quot;,
+        text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
+<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>More than a quarter of them haven’t been summitted yet. I wonder why. Maybe the routes are very technically challenging, the weather is very bad, or they are very remote? I know our focus is on peaks and first ascents, but let’s see if we can find the result of expeditions that attempted to climb these unclimbed peaks. There is a <code>termination_reason</code> field in the <code>expeditions</code> table that tells us why an expedition ended.</p>
+<pre class="r"><code>peaks %&gt;%
+  filter(climbing_status == &quot;Unclimbed&quot;) %&gt;%
+  inner_join(expeditions, by = &quot;peak_id&quot;) %&gt;%
+  count(termination_reason) %&gt;%
+  mutate(
+    # Truncating long descriptions
+    termination_reason = case_when(
+      str_detect(termination_reason, &quot;Route technically&quot;) ~ &quot;Route technically too difficult&quot;,
+      str_detect(termination_reason, &quot;Bad conditions&quot;) ~ &quot;Bad conditions&quot;,
+      TRUE ~ termination_reason
+    ),
+    termination_reason = fct_reorder(termination_reason, n)
+  ) %&gt;%
+  ggplot(aes(n, termination_reason, fill = termination_reason)) +
+  geom_col() +
+  scale_fill_fish(option = &quot;Pseudocheilinus_tetrataenia&quot;,
+                  discrete = TRUE) +
+  labs(
+    title = &quot;Technical routes a challenge for unclimbed peaks&quot;,
+    subtitle = &quot;Termination reasons for expeditions to unclimbed peaks&quot;,
+    caption = &quot;Source: The Himalayan Database&quot;,
+    x = &quot;Number of expeditions&quot;,
+    y = &quot;&quot;
+  ) +
+  theme(legend.position = &quot;none&quot;,
+        text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
+<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-5-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Aha! It looks like some of our theories are borne out by the data. The top reason for expeditions to unclimbed peaks to end is the route being technically too difficult. Bad conditions and bad weather also rank pretty high.</p>
+<p>I’m a bit concerned about the data we’re using to answer this question, though. Some expeditions are considered successes, but how can an expedition be successful and the peak still be considered unclimbed? Non-current data is a possibility, but it’s also very likely that I’m not interpreting these fields correctly. Since this is a detour, I’ll leave this for now. But I will dig deeper in a future post.<br />
+ </p>
+</div>
+<div id="when-were-himalayan-peaks-first-climbed" class="section level2">
+<h2>When were Himalayan peaks first climbed?</h2>
+<p>Now that we have some understanding of unclimbed peaks, let’s look at those that have been climbed – specifically, <em>when</em> they were climbed.</p>
+<pre class="r"><code>peaks %&gt;%
+  ggplot(aes(first_ascent_year)) +
+  geom_histogram(fill = fish(1, option = &quot;Pseudocheilinus_tetrataenia&quot;, direction = -1),
+                 alpha = 0.8) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
+<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>This is why creating a histogram is often a good idea. According to this, a small number of peaks (maybe just one) were first climbed around the year 200. Somehow I doubt this is accurate. Fortunately, the <code>peaks</code> table has a <code>first_ascent_expedition_id</code> field, so we can look up the date of that expedition.</p>
+<pre class="r"><code>peaks %&gt;%
+  filter(first_ascent_year &lt; 1000) %&gt;%
+  left_join(
+    expeditions %&gt;% select(expedition_id, year),
+    by = c(&quot;first_ascent_expedition_id&quot; = &quot;expedition_id&quot;)
+  ) %&gt;%
+  select(peak_name, first_ascent_year, first_ascent_expedition_id, year)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   peak_name  first_ascent_year first_ascent_expedition_id  year
+##   &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;                      &lt;dbl&gt;
+## 1 Sharphu II               201 SPH218301                   2018</code></pre>
+<p>That outlier on the histogram is just one peak – Sharpu II – that is miscoded as occurring in the year 201. The expedition is from 2018, so let’s create a new dataframe with a corrected date.</p>
+<pre class="r"><code>peaks_fixed &lt;- peaks %&gt;%
+  mutate(first_ascent_year = ifelse(peak_id == &quot;SPH2&quot;, 2018, first_ascent_year))</code></pre>
+<p> </p>
+<p>Let’s try the histogram again.</p>
+<pre class="r"><code>peaks_fixed %&gt;%
+  ggplot(aes(first_ascent_year)) +
+  geom_histogram(
+    binwidth = 5,
+    fill = fish(1, option = &quot;Pseudocheilinus_tetrataenia&quot;, direction = -1),
+    alpha = 0.8
+  ) +
+  scale_x_continuous(breaks = seq(1910, 2020, 10)) +
+  labs(title = &quot;Climbers are still summitting peaks for the first time&quot;,
+       subtitle = &quot;Year of first ascent for Himalayan peaks&quot;,
+       caption = &quot;Source: The Himalayan Database&quot;,
+       x = &quot;Year of first ascent (5-year bins)&quot;,
+       y = &quot;Number of first ascents&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        panel.grid.minor = element_blank())</code></pre>
+<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-9-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Much better. There weren’t many first ascents before 1950, but after that there was a flurry of activity. For reference, Edmund Hillary and Tenzing Norgay <a href="https://en.wikipedia.org/wiki/1953_British_Mount_Everest_expedition">first summitted Mount Everest in 1953</a>. I wonder whether their expedition reflected a greater interest in the Himalayas or whether the expedition itself resulted in more interest.</p>
+<p>Regardless of the answer, there have been many first ascents since 2000, which I found a bit surprising. Climbers are still accomplishing things that no one else has before. And, as we just saw, there are still many peaks the haven’t been climbed at all.<br />
+ </p>
+</div>
+<div id="which-countries-were-involved-in-first-ascents" class="section level2">
+<h2>Which countries were involved in first ascents?</h2>
+<p>I’ll admit that when I picture early climbing expeditions in the Himalayas, I imagine a bunch of Brits and Nepalese sherpas. Is this mental picture accurate, or is it a product of growing up with an Anglo-centric education?</p>
+<pre class="r"><code>top_20_countries &lt;- peaks_fixed %&gt;%
+  filter(!is.na(first_ascent_country)) %&gt;%
+  separate_rows(first_ascent_country, sep = &quot;,&quot;) %&gt;%
+  mutate(
+    # Get rid of whitespace after separate_rows
+    first_ascent_country = str_squish(first_ascent_country),
+    # Aggregate W Germany and Germany into &quot;Germany&quot;
+    first_ascent_country = ifelse(
+      first_ascent_country == &quot;W Germany&quot;,
+      &quot;Germany&quot;,
+      first_ascent_country
+    )
+  ) %&gt;%
+  count(first_ascent_country, name = &quot;first_ascents&quot;, sort = TRUE) %&gt;%
+  mutate(first_ascent_country = fct_reorder(first_ascent_country, first_ascents)) %&gt;%
+  top_n(20, wt = first_ascents)
+
+top_20_countries %&gt;%
+  ggplot(aes(first_ascents, first_ascent_country, fill = first_ascent_country)) +
+  geom_col() +
+  scale_x_continuous(breaks = seq(0, 150, 25)) +
+  scale_fill_fish(option = &quot;Pseudocheilinus_tetrataenia&quot;,
+                  discrete = TRUE) +
+  labs(
+    title = &quot;Nepal and Japan lead the way in first ascents&quot;,
+    subtitle = &quot;First ascents a country&#39;s citizen was involved in&quot;,
+    caption = &quot;Source: The Himalayan Database&quot;,
+    x = &quot;Number of first ascents&quot;,
+    y = &quot;&quot;
+  ) +
+  theme(
+    legend.position = &quot;none&quot;,
+    text = element_text(family = &quot;Bahnschrift&quot;),
+    panel.grid.minor = element_blank()
+  )</code></pre>
+<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The Nepalese part was right, but I had no idea Japanese climbers have been so involved in first ascents! I feel bad for having a biased mental picture, but I’m glad I’m learning new things through exploring this data.<br />
+ </p>
+<p>We saw above that there were two rough peaks in first ascents – one in the 1950s and 1960s and another in the 2000s and 2010s. Have the countries involved changed over time? By looking at the percentage of first ascents involving different countries’ citizens, we can answer that question. We look at percentage because we are interested in the <em>proportion</em> of ascents a country was involved in, not the absolute number. Using percentage let’s us compare decades that have different numbers of ascents.</p>
+<pre class="r"><code>countries_by_decade &lt;- peaks_fixed %&gt;%
+  filter(!is.na(first_ascent_country),
+         first_ascent_year &gt;= 1910) %&gt;%
+  separate_rows(first_ascent_country, sep = &quot;,&quot;) %&gt;%
+  mutate(
+    first_ascent_country = str_squish(first_ascent_country),
+    first_ascent_country = ifelse(
+      first_ascent_country == &quot;W Germany&quot;,
+      &quot;Germany&quot;,
+      first_ascent_country
+    ),
+    first_ascent_decade = first_ascent_year %/% 10 * 10,
+    first_ascent_country = fct_lump(first_ascent_country, 8)
+  ) %&gt;%
+  count(first_ascent_country,
+        first_ascent_decade,
+        name = &quot;first_ascents&quot;) %&gt;%
+  group_by(first_ascent_decade) %&gt;%
+  mutate(pct_of_ascents = first_ascents / sum(first_ascents)) %&gt;%
+  ungroup() %&gt;%
+  mutate(
+    first_ascent_country = fct_reorder(first_ascent_country, -first_ascents, sum),
+    first_ascent_country = fct_relevel(first_ascent_country, &quot;Other&quot;, after = Inf)
+  )
+
+countries_by_decade %&gt;%
+  ggplot(aes(first_ascent_decade, pct_of_ascents, fill = first_ascent_country)) +
+  geom_col() +
+  scale_x_continuous(breaks = seq(1930, 2010, 20)) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_fill_fish(option = &quot;Pseudocheilinus_tetrataenia&quot;,
+                  discrete = TRUE,
+                  direction = -1) +
+  facet_wrap( ~ first_ascent_country) +
+  labs(title = &quot;Nepal has been consistently involved in first ascents&quot;,
+       subtitle = &quot;Percent of first ascents involving a countries&#39; citizens&quot;,
+       caption = &quot;Source: The Himalayan Database&quot;,
+       x = &quot;Decade of first ascent&quot;,
+       y = &quot;&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        legend.position = &quot;none&quot;,
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(),
+        strip.text = element_text(colour = &quot;black&quot;),
+        strip.background = element_blank())</code></pre>
+<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>I see a few interesting things:</p>
+<ul>
+<li>Nepal has been fairly consistently involved in first ascents</li>
+<li>Japan too, though a little less so recently</li>
+<li>UK was involved in many early first ascents (pre-1960)</li>
+<li>US involvement has been slowly increasing since the mid-20th century</li>
+<li>Switzerland was climbing mountains like gangbusters in the 1940s – maybe other countries were too involved in World War II and rebuilding afterwards?<br />
+ </li>
+</ul>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>We’ve learned some interesting things about Himalayan peaks and some of the pioneering climbing expeditions that summitted those peaks for the first time. I don’t any more than the average person about mountain climbing, though, so please take this as what it is: the exploration of a non-expert. If you enjoyed this post, <a href="https://twitter.com/alexcookson">let me know</a> on Twitter and stay tuned for two future posts:</p>
+<ul>
+<li>Part 2 will look at Everest expeditions <em>(coming soon)</em></li>
+<li>Part 3 will look at Himalayan expeditions overall (excluding Mount Everest) <em>(coming soon)</em></li>
+</ul>
+</div>
