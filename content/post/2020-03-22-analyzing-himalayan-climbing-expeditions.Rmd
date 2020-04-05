@@ -10,7 +10,7 @@ topics: []
 ---  
 \  
 
-In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including [Mount Everest](https://en.wikipedia.org/wiki/Mount_Everest), the highest mountain (above sea level) in the world.  
+In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including [Mount Everest](https://en.wikipedia.org/wiki/Mount_Everest), the tallest mountain in the world.  
 \  
 
 This is *Part 1* of a three-part series:
@@ -107,7 +107,7 @@ peaks %>%
   theme(text = element_text(family = "Bahnschrift"))
 ```
 
-Not surprisingly, Mount Everest is the tallest at almost 9,000 metres. There is a small group of other very tall mountains referred to as [8000ers](https://www.mountainiq.com/guides/eight-thousanders/), something I learned while researching for this post. Most peaks are between 6,000 and 7,000 metres, though -- still crazy-high.  
+Not surprisingly, Mount Everest is the tallest at almost 9,000 metres. There is a small group of other very tall mountains that are part of a group referred to as [8000ers](https://www.mountainiq.com/guides/eight-thousanders/), something I learned while researching for this post. Most peaks are between 6,000 and 7,000 metres, though -- still crazy-high.  
 \  
 
 
