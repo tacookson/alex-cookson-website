@@ -12,7 +12,7 @@ topics: []
 
 
 <p> </p>
-<p>In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including <a href="https://en.wikipedia.org/wiki/Mount_Everest">Mount Everest</a>, the highest mountain (above sea level) in the world.<br />
+<p>In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including <a href="https://en.wikipedia.org/wiki/Mount_Everest">Mount Everest</a>, the tallest mountain in the world.<br />
  </p>
 <p>This is <em>Part 1</em> of a three-part series:</p>
 <ul>
@@ -58,8 +58,8 @@ members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/
 <p>Even though we’re loading all the tables, our focus is on getting a general sense of the peaks, so we will almost exclusively use the <code>peaks</code> dataset. Let’s take a look.</p>
 <pre class="r"><code>peaks %&gt;%
   glimpse()</code></pre>
-<pre><code>## Observations: 468
-## Variables: 8
+<pre><code>## Rows: 468
+## Columns: 8
 ## $ peak_id                    &lt;chr&gt; &quot;AMAD&quot;, &quot;AMPG&quot;, &quot;ANN1&quot;, &quot;ANN2&quot;, &quot;ANN3&quot;, ...
 ## $ peak_name                  &lt;chr&gt; &quot;Ama Dablam&quot;, &quot;Amphu Gyabjen&quot;, &quot;Annapurn...
 ## $ peak_alternative_name      &lt;chr&gt; &quot;Amai Dablang&quot;, NA, NA, NA, NA, NA, NA, ...
@@ -101,7 +101,7 @@ members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/
   ) +
   theme(text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
 <p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p>Not surprisingly, Mount Everest is the tallest at almost 9,000 metres. There is a small group of other very tall mountains referred to as <a href="https://www.mountainiq.com/guides/eight-thousanders/">8000ers</a>, something I learned while researching for this post. Most peaks are between 6,000 and 7,000 metres, though – still crazy-high.<br />
+<p>Not surprisingly, Mount Everest is the tallest at almost 9,000 metres. There is a small group of other very tall mountains that are part of a group referred to as <a href="https://www.mountainiq.com/guides/eight-thousanders/">8000ers</a>, something I learned while researching for this post. Most peaks are between 6,000 and 7,000 metres, though – still crazy-high.<br />
  </p>
 </div>
 <div id="how-many-himalayan-peaks-remain-unclimbed" class="section level2">
