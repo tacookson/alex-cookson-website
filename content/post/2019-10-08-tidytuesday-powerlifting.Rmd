@@ -4,7 +4,7 @@ description: 'TidyTuesday: Powerlifting'
 author: Alex Cookson
 date: '2019-10-08'
 slug: tidytuesday-powerlifting
-tags: ["TidyTuesday", "linear regression", "splines"]
+tags: ["TidyTuesday", "linear regression", "splines", "tutorial"]
 ---  
 \  
 

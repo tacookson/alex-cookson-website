@@ -4,7 +4,7 @@ author: Alex Cookson
 date: '2020-03-22'
 slug: analyzing-himalayan-peaks-first-ascents
 categories: []
-tags: []
+tags: ["data exploration", "bar graphs", "annotations"]
 description: ''
 topics: []
 ---  
@@ -13,11 +13,10 @@ topics: []
 In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including [Mount Everest](https://en.wikipedia.org/wiki/Mount_Everest), the tallest mountain in the world.  
 \  
 
-This is *Part 1* of a three-part series:
+This is *Part 1* of a two-part series:
 
 - Part 1 (this post) looks at Himalayan peaks and their first ascents
-- [Part 2 looks at how dangerous it is to climb Everest](https://www.alexcookson.com/post/how-dangerous-is-climbing-mount-everest/) (and other questions)
-- Part 3 will look at Himalayan expeditions overall (excluding Mount Everest) *(coming soon)*  
+- [Part 2 looks at how dangerous it is to climb Everest](https://www.alexcookson.com/post/how-dangerous-is-climbing-mount-everest/)  
 \  
 
 This post will focus on getting an overview of the Himalayan peaks, especially their height, whether they've been summitted, and (if it applies) when the first ascent was and who was involved.  
@@ -44,7 +43,7 @@ First, we'll load the `tidyverse` and some other useful packages:
 
 We'll also set a default `ggplot2` theme and import our data. `peaks` has information on the peaks themselves, `expeditions` details individual expeditions, and `members` looks at individual members of those expeditions.
 
-```{r, warning = FALSE, message = FALSE}
+```{r setup-and-import, warning = FALSE, message = FALSE}
 library(tidyverse)
 library(fishualize)
 library(scales)
@@ -63,7 +62,7 @@ members <- readr::read_csv("https://raw.githubusercontent.com/tacookson/data/mas
 
 Even though we're loading all the tables, our focus is on getting a general sense of the peaks, so we will almost exclusively use the `peaks` dataset. Let's take a look.
 
-```{r}
+```{r inspect-peaks}
 peaks %>%
   glimpse()
 ```
@@ -80,7 +79,7 @@ People generally know that Mount Everest is the tallest mountain in the world, b
 
 We're going to use the "Pseudocheilinus_tetrataenia" palette from the `fishualize` package. I can't get over how much I *love* the colours in this package. [Here](https://www.fishkeeper.co.uk/help-and-advice/marine/wrasses/four-lined-wrasse) is a picture of the fish that inspired the palette we're using.
 
-```{r, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
+```{r peak-heights, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 peaks %>%
   ggplot(aes(height_metres)) +
   geom_histogram(
@@ -115,7 +114,7 @@ Not surprisingly, Mount Everest is the tallest at almost 9,000 metres. There is 
 
 Before getting into *when* peaks were first climbed, let's look at *if* they have been climbed at all!
 
-```{r, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
+```{r climbed-vs-unclimbed, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 peaks %>%
   ggplot(aes(climbing_status, fill = climbing_status)) +
   geom_bar() +
@@ -134,7 +133,7 @@ peaks %>%
 
 More than a quarter of them haven't been summitted yet. I wonder why. Maybe the routes are very technically challenging, the weather is very bad, or they are very remote? I know our focus is on peaks and first ascents, but let's see if we can find the result of expeditions that attempted to climb these unclimbed peaks. There is a `termination_reason` field in the `expeditions` table that tells us why an expedition ended.
 
-```{r, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
+```{r top-termination-reasons, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 peaks %>%
   filter(climbing_status == "Unclimbed") %>%
   inner_join(expeditions, by = "peak_id") %>%
@@ -165,7 +164,7 @@ peaks %>%
 
 Aha! It looks like some of our theories are borne out by the data. The top reason for expeditions to unclimbed peaks to end is the route being technically too difficult. Bad conditions and bad weather also rank pretty high.
 
-I'm a bit concerned about the data we're using to answer this question, though. Some expeditions are considered successes, but how can an expedition be successful and the peak still be considered unclimbed? Non-current data is a possibility, but it's also very likely that I'm not interpreting these fields correctly. Since this is a detour, I'll leave this for now. But I will dig deeper in a future post.  
+I'm a bit concerned about the data we're using to answer this question, though. Some expeditions are considered successes, but how can an expedition be successful and the peak still be considered unclimbed? Non-current data is a possibility, but it's also very likely that I'm not interpreting these fields correctly. Since this is a detour, I'll leave this for now.  
 \  
 
 
@@ -173,7 +172,7 @@ I'm a bit concerned about the data we're using to answer this question, though. 
 
 Now that we have some understanding of unclimbed peaks, let's look at those that have been climbed -- specifically, *when* they were climbed.
 
-```{r, warning = FALSE, message = FALSE, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
+```{r first-ascent-years, warning = FALSE, message = FALSE, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 peaks %>%
   ggplot(aes(first_ascent_year)) +
   geom_histogram(fill = fish(1, option = "Pseudocheilinus_tetrataenia", direction = -1),
@@ -183,7 +182,7 @@ peaks %>%
 
 This is why creating a histogram is often a good idea. According to this, a small number of peaks (maybe just one) were first climbed around the year 200. Somehow I doubt this is accurate. Fortunately, the `peaks` table has a `first_ascent_expedition_id` field, so we can look up the date of that expedition.
 
-```{r}
+```{r find-first-ascent-year-error}
 peaks %>%
   filter(first_ascent_year < 1000) %>%
   left_join(
@@ -195,7 +194,7 @@ peaks %>%
 
 That outlier on the histogram is just one peak -- Sharpu II -- that is miscoded as occurring in the year 201. The expedition is from 2018, so let's create a new dataframe with a corrected date.
 
-```{r}
+```{r fix-first-ascent-year}
 peaks_fixed <- peaks %>%
   mutate(first_ascent_year = ifelse(peak_id == "SPH2", 2018, first_ascent_year))
 ```  
@@ -203,7 +202,7 @@ peaks_fixed <- peaks %>%
 
 Let's try the histogram again.
 
-```{r, warning = FALSE, message = FALSE, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
+```{r first-ascent-years-fixed, warning = FALSE, message = FALSE, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 peaks_fixed %>%
   ggplot(aes(first_ascent_year)) +
   geom_histogram(
@@ -231,7 +230,7 @@ Regardless of the answer, there have been many first ascents since 2000, which I
 
 I'll admit that when I picture early climbing expeditions in the Himalayas, I imagine a bunch of Brits and Nepalese sherpas. Is this mental picture accurate, or is it a product of growing up with an Anglo-centric education?
 
-```{r, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
+```{r top-first-ascent-countries, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 top_20_countries <- peaks_fixed %>%
   filter(!is.na(first_ascent_country)) %>%
   separate_rows(first_ascent_country, sep = ",") %>%
@@ -274,7 +273,7 @@ The Nepalese part was right, but I had no idea Japanese climbers have been so in
 
 We saw above that there were two rough peaks in first ascents -- one in the 1950s and 1960s and another in the 2000s and 2010s. Have the countries involved changed over time? By looking at the percentage of first ascents involving different countries' citizens, we can answer that question. We look at percentage because we are interested in the *proportion* of ascents a country was involved in, not the absolute number. Using percentage let's us compare decades that have different numbers of ascents.
 
-```{r, fig.align = 'center', fig.width = 8, fig.asp = 0.9}
+```{r first-ascent-countries-by-decade, fig.align = 'center', fig.width = 8, fig.asp = 0.9}
 countries_by_decade <- peaks_fixed %>%
   filter(!is.na(first_ascent_country),
          first_ascent_year >= 1910) %>%
@@ -334,8 +333,5 @@ I see a few interesting things:
 
 ## Conclusion
 
-We've learned some interesting things about Himalayan peaks and some of the pioneering climbing expeditions that summitted those peaks for the first time. I don't any more than the average person about mountain climbing, though, so please take this as what it is: the exploration of a non-expert. If you enjoyed this post, [let me know](https://twitter.com/alexcookson) on Twitter and stay tuned for two future posts:
-
-- [Part 2 looks at how dangerous it is to climb Everest](https://www.alexcookson.com/post/how-dangerous-is-climbing-mount-everest/) (and other questions)
-- Part 3 will look at Himalayan expeditions overall (excluding Mount Everest) *(coming soon)*
+We've learned some interesting things about Himalayan peaks and some of the pioneering climbing expeditions that summitted those peaks for the first time. I don't any more than the average person about mountain climbing, though, so please take this as what it is: the exploration of a non-expert. If you enjoyed this post, [let me know](https://twitter.com/alexcookson) on Twitter and consider reading *Part 2* of this series, which [looks at how dangerous it is to climb Everest](https://www.alexcookson.com/post/how-dangerous-is-climbing-mount-everest/) (and other questions).
 

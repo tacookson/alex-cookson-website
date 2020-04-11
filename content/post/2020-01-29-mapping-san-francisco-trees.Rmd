@@ -5,9 +5,7 @@ author: Alex Cookson
 date: '2020-01-29'
 slug: mapping-san-francisco-trees
 categories: []
-tags:
-  - TidyTuesday
-  - geographic maps
+tags: ["TidyTuesday", "geographic maps", "small multiples", "tutorial"]
 topics: []
 ---  
 \  
