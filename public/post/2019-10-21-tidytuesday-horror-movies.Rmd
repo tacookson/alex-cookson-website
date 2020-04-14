@@ -4,7 +4,7 @@ description: 'TidyTuesday: Horror movies'
 author: "Alex Cookson"
 date: '2019-10-21'
 slug: tidytuesday-horror-movies
-tags: ["TidyTuesday", "LASSO regression"]
+tags: ["TidyTuesday", "LASSO regression", "tutorial"]
 categories: []
 topics: []
 ---  

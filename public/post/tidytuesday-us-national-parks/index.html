@@ -233,7 +233,11 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/tidytuesday">TidyTuesday</a>
+      <a class="post-taxonomy-tag" href="/tags/tidytuesday">TidyTuesday</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/line-graphs">line graphs</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/tutorial">tutorial</a>
     
   </div>
   
@@ -247,7 +251,7 @@
 
 <p> </p>
 <p>In this post, I analyze the <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17">National Park Visits</a> dataset from <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday</a>, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about <strong>visitor numbers for US National Parks</strong>, going way back to 1904, when there were only six national parks.</p>
-<p>I’ve never been to a US national park, but I know about some of the famous ones like Yosemite and Yellowstone. Maybe this dataset will give me some ideas for lesser-known parks to visit!
+<p>I’ve never been to a US national park, but I know about some of the famous ones like Yosemite and Yellowstone. Maybe this dataset will give me some ideas for lesser-known parks to visit!<br />
  </p>
 <div id="setup" class="section level2">
 <h2>Setup</h2>
@@ -274,8 +278,8 @@ state_pop &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordata
 <p>Let’s take a look.</p>
 <pre class="r"><code>park_visits_raw %&gt;%
   glimpse()</code></pre>
-<pre><code>## Observations: 21,560
-## Variables: 12
+<pre><code>## Rows: 21,560
+## Columns: 12
 ## $ year              &lt;chr&gt; &quot;1904&quot;, &quot;1941&quot;, &quot;1961&quot;, &quot;1935&quot;, &quot;1982&quot;, &quot;1919&quot;, &quot;...
 ## $ gnis_id           &lt;chr&gt; &quot;1163670&quot;, &quot;1531834&quot;, &quot;2055170&quot;, &quot;1530459&quot;, &quot;2772...
 ## $ geometry          &lt;chr&gt; &quot;POLYGON&quot;, &quot;MULTIPOLYGON&quot;, &quot;MULTIPOLYGON&quot;, &quot;MULTI...
@@ -299,8 +303,8 @@ state_pop &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordata
 <p>Okay, what about <code>state_pop</code>?</p>
 <pre class="r"><code>state_pop %&gt;%
   glimpse()</code></pre>
-<pre><code>## Observations: 5,916
-## Variables: 3
+<pre><code>## Rows: 5,916
+## Columns: 3
 ## $ year  &lt;dbl&gt; 1900, 1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 1...
 ## $ state &lt;chr&gt; &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;...
 ## $ pop   &lt;dbl&gt; 1830000, 1907000, 1935000, 1957000, 1978000, 2012000, 2045000...</code></pre>

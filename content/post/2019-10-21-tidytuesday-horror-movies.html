@@ -4,7 +4,7 @@ description: 'TidyTuesday: Horror movies'
 author: "Alex Cookson"
 date: '2019-10-21'
 slug: tidytuesday-horror-movies
-tags: ["TidyTuesday", "LASSO regression"]
+tags: ["TidyTuesday", "LASSO regression", "tutorial"]
 categories: []
 topics: []
 ---  
@@ -42,8 +42,8 @@ horror_movies_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/
 <p>Let’s see what we have.</p>
 <pre class="r"><code>horror_movies_raw %&gt;%
   glimpse()</code></pre>
-<pre><code>## Observations: 3,328
-## Variables: 12
+<pre><code>## Rows: 3,328
+## Columns: 12
 ## $ title             &lt;chr&gt; &quot;Gut (2012)&quot;, &quot;The Haunting of Mia Moss (2017)&quot;, ...
 ## $ genres            &lt;chr&gt; &quot;Drama| Horror| Thriller&quot;, &quot;Horror&quot;, &quot;Horror&quot;, &quot;C...
 ## $ release_date      &lt;chr&gt; &quot;26-Oct-12&quot;, &quot;13-Jan-17&quot;, &quot;21-Oct-17&quot;, &quot;23-Apr-13...

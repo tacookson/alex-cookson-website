@@ -5,14 +5,14 @@ author: Alex Cookson
 date: '2019-09-16'
 slug: tidytuesday-us-national-parks
 categories: []
-tags: ["TidyTuesday"]
+tags: ["TidyTuesday", "line graphs", "tutorial"]
 topics: []
 ---  
 \  
 
 In this post, I analyze the [National Park Visits](https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17) dataset from [TidyTuesday](https://github.com/rfordatascience/tidytuesday), a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about **visitor numbers for US National Parks**, going way back to 1904, when there were only six national parks.
 
-I've never been to a US national park, but I know about some of the famous ones like Yosemite and Yellowstone. Maybe this dataset will give me some ideas for lesser-known parks to visit!
+I've never been to a US national park, but I know about some of the famous ones like Yosemite and Yellowstone. Maybe this dataset will give me some ideas for lesser-known parks to visit!  
 \  
 
 ## Setup

@@ -4,7 +4,7 @@ description: 'TidyTuesday: Pizza Party'
 author: Alex Cookson
 date: '2019-09-30'
 slug: tidytuesday-new-york-pizza-restaurants
-tags: ["TidyTuesday"]
+tags: ["TidyTuesday", "bar graphs", "small multiples", "tutorial"]
 ---  
 \  
 

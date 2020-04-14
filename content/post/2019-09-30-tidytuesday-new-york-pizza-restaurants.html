@@ -4,7 +4,7 @@ description: 'TidyTuesday: Pizza Party'
 author: Alex Cookson
 date: '2019-09-30'
 slug: tidytuesday-new-york-pizza-restaurants
-tags: ["TidyTuesday"]
+tags: ["TidyTuesday", "bar graphs", "small multiples", "tutorial"]
 ---  
 
 
@@ -27,8 +27,8 @@ pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com
 <p>Let’s take a look!</p>
 <pre class="r"><code>pizza_barstool_raw %&gt;%
   glimpse()</code></pre>
-<pre><code>## Observations: 463
-## Variables: 22
+<pre><code>## Rows: 463
+## Columns: 22
 ## $ name                                 &lt;chr&gt; &quot;Pugsley&#39;s Pizza&quot;, &quot;Williamsbu...
 ## $ address1                             &lt;chr&gt; &quot;590 E 191st St&quot;, &quot;265 Union A...
 ## $ city                                 &lt;chr&gt; &quot;Bronx&quot;, &quot;Brooklyn&quot;, &quot;New York...

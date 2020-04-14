@@ -4,7 +4,7 @@ description: 'TidyTuesday: Powerlifting'
 author: Alex Cookson
 date: '2019-10-08'
 slug: tidytuesday-powerlifting
-tags: ["TidyTuesday", "linear regression", "splines"]
+tags: ["TidyTuesday", "linear regression", "splines", "tutorial"]
 ---  
 
 
@@ -33,8 +33,8 @@ ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfor
 <p>What have we got?</p>
 <pre class="r"><code>ipf_lifts_raw %&gt;%
   glimpse()</code></pre>
-<pre><code>## Observations: 41,152
-## Variables: 16
+<pre><code>## Rows: 41,152
+## Columns: 16
 ## $ name             &lt;chr&gt; &quot;Hiroyuki Isagawa&quot;, &quot;David Mannering&quot;, &quot;Eddy Penge...
 ## $ sex              &lt;chr&gt; &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, ...
 ## $ event            &lt;chr&gt; &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;SBD&quot;, &quot;...

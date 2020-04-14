@@ -4,7 +4,7 @@ author: Alex Cookson
 date: '2020-04-06'
 slug: how-dangerous-is-climbing-mount-everest
 categories: []
-tags: []
+tags: ["data exploration", "annotations", "spineplots"]
 description: ''
 topics: []
 ---  
@@ -13,11 +13,10 @@ topics: []
 In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including [Mount Everest](https://en.wikipedia.org/wiki/Mount_Everest), the tallest mountain in the world.  
 \  
 
-This is *Part 2* of a three-part series:
+This is *Part 2* of a two-part series:
 
 - [Part 1 looked at Himalayan peaks and their first ascents](https://www.alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/)
-- Part 2 (this post) looks at Everest expeditions
-- Part 3 will look at Himalayan expeditions overall (excluding Mount Everest) *(coming soon)*  
+- Part 2 (this post) looks at Everest expeditions  
 \  
 
 This post will focus on expeditions to Mount Everest, the most famous Himalayan peak and the tallest mountain in the world. Everest expeditions have received some mainstream media attention fairly recently, with [reports](https://www.nationalgeographic.com/adventure/2019/05/everest-season-deaths-controversy-crowding/) [about](https://www.nytimes.com/2019/05/26/world/asia/mount-everest-deaths.html) [overcrowding](https://www.bbc.com/news/world-asia-48401491) and whether or not this overcrowding plays a role in the deaths of some climbers. (It's an interesting topic -- I recommend reading the linked articles.)
@@ -340,9 +339,4 @@ We've learned some things about Everest expeditions, including their rise in pop
 - Are there characteristics of climbers associated with higher or lower death rates? For example, are Sherpas -- presumably well-acclimated to high altitudes -- less likely to suffer from AMS?
 - What are the general trends in solo expeditions and the use of oxygen?
 
-If you're curious about these (or other questions!), please use this data to look into them yourself and [let me know](https://twitter.com/alexcookson) on Twitter.
-
-And, if you enjoyed this post, I encourage you to read the other posts analyzing this dataset:
-
-- [Part 1 looked at Himalayan peaks and their first ascents](https://www.alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/)
-- Part 3 will look at Himalayan expeditions overall (excluding Mount Everest) *(coming soon)*
+If you're curious about these (or other questions!), please use this data to look into them yourself and [let me know](https://twitter.com/alexcookson) on Twitter. And, if you enjoyed this post, I encourage you to read the other post analyzing this dataset, which [looks at Himalayan peaks and their first ascents](https://www.alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/).
