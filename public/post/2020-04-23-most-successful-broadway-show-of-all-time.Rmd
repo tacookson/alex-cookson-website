@@ -251,7 +251,7 @@ cumulative_grosses_by_year %>%
   geom_line(size = 1) +
   geom_label(
     aes(label = show_label),
-    size = 4,
+    size = 3,
     family = "Bahnschrift",
     fontface = "bold",
     hjust = 0,
@@ -278,8 +278,8 @@ cumulative_grosses_by_year %>%
     legend.position = "none",
     text = element_text(family = "Bahnschrift"),
     panel.grid.minor = element_blank(),
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 10)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 9)
   )
 ```  
 \  
