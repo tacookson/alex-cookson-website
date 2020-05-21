@@ -292,7 +292,7 @@ gift_words_tfidf %>%
 There are so many cool insights, but I'll just mention two:
 
 - Iceland seems to like gifting [*The Complete Sagas of Icelanders*](https://en.wikipedia.org/wiki/Sagas_of_Icelanders), which strikes me as an *extremely* Icelandic gift to give
-- Luxembourg likes to gift fox figurines, which *might* be related to Luxembourg's national epic, [*Reynard the Fox*](https://en.wikipedia.org/wiki/Reynard_the_Fox)
+- Luxembourg likes to gift fox figurines, which are almost certainly related to Luxembourg's national epic, [*Reynard the Fox*](https://en.wikipedia.org/wiki/Reynard_the_Fox) (Thank you [\@SophieHeloise](https://twitter.com/SophieHeloise) for confirming!)
 
 I'll leave it to you to figure out the significance of the other words. I had fun figuring out how these words were related to their countries. I also learned a ton about specific cultural aspects of some countries.  
 \  
