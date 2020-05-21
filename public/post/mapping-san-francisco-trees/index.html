@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,7 +52,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://alexcookson.comimg/favicon.ico" type="image/x-icon" />
 
   
   
@@ -71,7 +71,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -79,19 +79,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -233,13 +233,13 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/tidytuesday">TidyTuesday</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/tidytuesday">TidyTuesday</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/geographic-maps">geographic maps</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/geographic-maps">geographic maps</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/small-multiples">small multiples</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/small-multiples">small multiples</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/tutorial">tutorial</a>
+      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/tutorial">tutorial</a>
     
   </div>
   
@@ -297,7 +297,7 @@ sf_trees_raw &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rforda
 <pre class="r"><code>sf_trees_raw %&gt;%
   ggplot(aes(longitude, latitude)) +
   geom_point(shape = &quot;.&quot;)</code></pre>
-<p><img src="/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>That’s not very informative. There is a <em>tiny</em> cluster of dots in the lower-right, our latitude goes as high as around 47, and our longitude goes as low as around -135. There is data in these ranges, otherwise the graph wouldn’t extend the axes this far. I suspect that we have some miscoded outliers because, as a Canadian, I know for a fact that San Francisco is nowhere near the <a href="https://en.wikipedia.org/wiki/49th_parallel_north">49th parallel</a>.</p>
 <p>Let’s create boxplots of latitude and longitude. I want to see both graphs side-by-side, so we’ll use the <code>gather()</code> function to get them from having their own column to their own row. Then, we can use <code>facet_wrap()</code> to give each one its own graph.</p>
 <pre class="r"><code>sf_trees_raw %&gt;%
@@ -310,14 +310,14 @@ sf_trees_raw &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rforda
   # Set n.breaks = 30 so we got lots of labels
   scale_y_continuous(n.breaks = 30) +
   facet_wrap(~ measure, scales = &quot;free_y&quot;)</code></pre>
-<p><img src="/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>There are three clusters of outliers: one at a latitude around 47, another at a latitude of about 37.5, and another a longitude of -138. I’m pretty confident we’ll end up excluding this data, but if you’re not already very familiar with the data, you should always check it before excluding it. Let’s do that. We’re going to look at the observations that have a longitude in that outlier group, take a single random observation, and set up a new variable that we can plug into Google Maps.</p>
 <pre class="r"><code>sf_trees_raw %&gt;%
   filter(longitude &lt; -130) %&gt;%
   sample_n(1) %&gt;%
   mutate(lat_long = paste(latitude, longitude, sep = &quot;, &quot;)) %&gt;%
   pull(lat_long)</code></pre>
-<pre><code>## [1] &quot;47.2701255040516, -138.282046982267&quot;</code></pre>
+<pre><code>## [1] &quot;47.2700470263222, -138.279303834774&quot;</code></pre>
 <p>Feel free to copy-paste that and see where that random observation is – mine is <a href="https://www.google.com/maps/place/47%C2%B016&#39;12.0%22N+138%C2%B016&#39;50.6%22W/@49.351951,-146.811994,4z/data=!4m5!3m4!1s0x0:0x0!8m2!3d47.2699969!4d-138.2807169">a little far from San Francisco</a>. We’ll filter out these observations in our cleaning step.<br />
  </p>
 </div>
@@ -352,7 +352,7 @@ sf_trees_raw &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rforda
   geom_point(shape = &quot;.&quot;) +
   labs(title = &quot;London plane trees in San Francisco&quot;) +
   theme_void()</code></pre>
-<p><img src="/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>We get an okay sense of London planes from this map – it looks like they line streets or boulevards, especially in the city’s northeast. Having contextual clues, like land/water or roads, would make it easier to interpret. The downside of <em>not</em> having these clues becomes more obvious when looking at Ornamental Pear trees, which aren’t as common and tend not to line streets the same way London planes do.</p>
 <pre class="r"><code>sf_trees %&gt;%
   filter(common_name == &quot;Ornamental Pear&quot;) %&gt;%
@@ -360,7 +360,7 @@ sf_trees_raw &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rforda
   geom_point(shape = &quot;.&quot;) +
   labs(title = &quot;Ornamental Pear trees in San Francisco&quot;) +
   theme_void()</code></pre>
-<p><img src="/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>It’s almost useless, right? We need to know where the <em>roads</em> are.<br />
  </p>
 </div>
@@ -375,7 +375,7 @@ sf_trees_raw &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rforda
 <li><em>Polygons</em> to show the lake</li>
 </ul>
 <p align="center">
-<img src="/post/2020-01-29-mapping-san-francisco-trees_files/shapefile-example.png" title="fig:" alt="shapefile example" width="400" />
+<img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/shapefile-example.png" title="fig:" alt="shapefile example" width="400" />
 </p>
 <p> </p>
 </div>
@@ -402,7 +402,7 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
 <p>Now that we have our roads shapefile, let’s see what it looks like. <code>ggplot2</code> has a <code>geom_sf()</code> function for exactly these types of files. Unlike most other geometries, we don’t need to specify the <code>aes()</code> layer.</p>
 <pre class="r"><code>ggplot(sf_roads) +
   geom_sf()</code></pre>
-<p><img src="/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Looks great! This will add some useful context to our tree locations.<br />
  </p>
 </div>
@@ -430,7 +430,7 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
   coord_sf() +
   labs(title = &quot;Where are San Francisco&#39;s trees?&quot;) +
   theme_void()</code></pre>
-<p><img src="/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>We can see some clearn patterns, like a concentration of trees along a road in the western part of the city. This turns out to be Sunset Boulevard!<br />
  </p>
 </div>
@@ -468,7 +468,7 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
       t = 2, b = 2, unit = &quot;pt&quot;
     ))
   )</code></pre>
-<p><img src="/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="https://alexcookson.com/post/2020-01-29-mapping-san-francisco-trees_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>Personally, I think these small multiples of different species are more interesting and informative. For example, I wonder why London Plane and Indian Laurel Fig trees are so common in the northeast but relatively sparse in the south. That’s a question I wouldn’t know to ask if I were looking at the distribution of trees overall. I don’t know much about trees <em>or</em> San Francisco, so if you have any ideas, <a href="https://twitter.com/alexcookson">let me know</a> on Twitter.<br />
  </p>
 </div>
@@ -481,17 +481,17 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
   
   <h4><i class="fa-share-alt" aria-hidden="true"></i>&nbsp;Share!</h4>
 <ul class="share-buttons">
-	<li><a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
+	<li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2falexcookson.com%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://twitter.com/intent/tweet?source=%2fpost%2fmapping-san-francisco-trees%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
+	<li><a href="https://twitter.com/intent/tweet?source=https%3a%2f%2falexcookson.com%2fpost%2fmapping-san-francisco-trees%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://plus.google.com/share?url=%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
+	<li><a href="https://plus.google.com/share?url=https%3a%2f%2falexcookson.com%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.tumblr.com/share?v=3&u=%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
+	<li><a href="http://www.tumblr.com/share?v=3&u=https%3a%2f%2falexcookson.com%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://pinterest.com/pin/create/button/?url=%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
+	<li><a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2falexcookson.com%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.reddit.com/submit?url=%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
+	<li><a href="http://www.reddit.com/submit?url=https%3a%2f%2falexcookson.com%2fpost%2fmapping-san-francisco-trees%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
 	</li>
 </ul>
 
@@ -523,13 +523,13 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="/post/tidytuesday-philadelphia-parking-tickets/"><i class="fa fa-chevron-left"></i></a>
+    <a href="https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="/post/tidytuesday-philadelphia-parking-tickets/">Heat mapping the timing of Philadelphia parking tickets</a>
+      <a href="https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/">Heat mapping the timing of Philadelphia parking tickets</a>
     </nav>
     
   </div>
@@ -539,13 +539,13 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="/post/analyzing-himalayan-peaks-first-ascents/">Analyzing Himalayan peaks and first ascents</a>
+      <a href="https://alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/">Analyzing Himalayan peaks and first ascents</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="/post/analyzing-himalayan-peaks-first-ascents/"><i class="fa fa-chevron-right"></i></a>
+    <a href="https://alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -558,8 +558,8 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
-<script src="/js/menus.js"></script>
+<script src="https://alexcookson.comjs/ui.js"></script>
+<script src="https://alexcookson.comjs/menus.js"></script>
 
 
 <script>
@@ -579,7 +579,7 @@ sf_roads &lt;- read_sf(paste0(file.path(temp_unzip), &quot;/tl_2017_06075_roads.
 
 
 
-<script src="/js/math-code.js"></script>
+<script src="https://alexcookson.com/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 
