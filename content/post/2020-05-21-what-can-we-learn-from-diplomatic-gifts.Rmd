@@ -181,7 +181,7 @@ gift_words <- gift_words_raw %>%
          !is.na(donor_country))
 ```
 
-If we look again at the most common words used to describe gifts from Moldova, now that we have removed stop words, we see much more meaningful terms, like "cognac" and "[cricova](https://en.wikipedia.org/wiki/Cricova_(winery))" (a Moldovan winery). These are way better for answering our question!
+If we look again at the most common words used to describe gifts from Moldova, now that we have removed stop words, we see much more meaningful terms, like "cognac" and "[cricova](https://en.wikipedia.org/wiki/Cricova_(winery))" (a Moldovan winery). These are way better for answering our question.
 
 ```{r example-without-stop-words}
 gift_words %>%
@@ -198,7 +198,7 @@ So far we've been looking at the most common words -- the ones that appear in a 
 
 Since we're interested in gifts that are distinctive to a specific country, we want to know words that show up a lot in one country's descriptions (high *term frequency*) but don't show up a lot in other countries' descriptions. *Inverse document frequency* (the *IDF* in TF-IDF) does this for us: it tells us how common or rare a word is across all descriptions.
 
-Let's use our Moldova example again. If *lots* of descriptions (from any country) include the word "painting" and Moldovan descriptions also include many instances of "painting", then "painting" is not an especially Moldovan word. But if very *few* descriptions (again, from any country) include the word "cricova" and Moldovan descriptions have lots of instances of "cricova", then "cricova" probably *is* a Moldovan thing!
+Let's use our Moldova example again. If *lots* of descriptions (from any country) include the word "painting" and Moldovan descriptions also include many instances of "painting", then "painting" is not an especially Moldovan word. But if very *few* descriptions (again, from any country) include the word "cricova" and Moldovan descriptions have lots of instances of "cricova", then "cricova" probably *is* a Moldovan thing.
 
 TF-IDF quantifies what we demonstrated in the Moldova example: it is a number that describes how "distinctive" a word is, which turns out to be exactly what we're interested in. (I won't go into the formulas for TF-IDF, but if you're interested, check out [*Text Mining with R*](https://www.tidytextmining.com/tfidf.html).). With the `tidy_text` package, we can calculate TF-IDF in *one line* of code using `bind_tf_idf()`:
 
@@ -221,7 +221,7 @@ gift_words_tfidf %>%
   head(6)
 ```
 
-Would you look at that! "Cognac" and "cricova" are at the top of the list.  
+Would you look at that: "cognac" and "cricova" are at the top of the list.  
 \  
 
 
@@ -377,15 +377,15 @@ A few observations:
 
 - Mexico likes to give bottles of **tequila**!
 - South Korean gifts often feature **mother-of-pearl**
-- Russian gifts are strangely associated with the word "director's". This illustrates a shortcoming of the TF-IDF because this high TF-IDF score is a result of Louis Freeh, Director of the FBI, receiving fourteen gifts from a Russian minister, all of which were noted as being "on display in **director's** office".
+- Russian gifts are strangely associated with the word "director's"
 
-TF-IDF is useful, but's not perfect!  
+The Russian obsversation illustrates a shortcoming of TF-IDF. The high score for "director's" is a result of Louis Freeh, Director of the FBI, receiving fourteen gifts from a Russian minister, all of which were noted as being "on display in **director's** office". So instead of picking up on attributes of the gifts themselves, we picked up on what the recipient did with them. TF-IDF is quick and useful, but not perfect!  
 \  
 
 
 ## Conclusion
 
-We dove into the dry world of government reporting and came up with some interesting knowledge, like Japan's fondness of gifts featuring cranes Luxembourg's love of foxes. There are so many other questions we could answer with our data, though, including:
+We dove into the dry world of government reporting and came up with some interesting facts, like Japan's fondness of gifts featuring cranes and Luxembourg's love of foxes. There are so many other questions we could answer with our data, though, including:
 
 - Do some countries give more expensive gifts than others?
 - How has gift-giving changed over time?
@@ -397,8 +397,8 @@ We dove into the dry world of government reporting and came up with some interes
 
 We could also make our analysis more sophisticated:
 
-- Look at named entities instead of individual words. This would keep things like "leather briefcase" as a single entity, even though it's two words, instead of separating them into "leather" and "briefcase". The `spacyr`(https://spacyr.quanteda.io/articles/using_spacyr.html) package is a great option for this.
+- Look at named entities instead of individual words. This would keep things like "leather briefcase" as a single entity, even though it's two words, instead of separating them into "leather" and "briefcase". The [`spacyr`](https://spacyr.quanteda.io/articles/using_spacyr.html) package is a great option for this.
 - [Stem or lemmatize](https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html) words. This would combine words that the same meaning into a single term. For example, Kenya's descriptions included "elephant" and "elephants". They were two different terms in our analysis, but they're not different concepts, so stemming or lemmatization would combine them into a single term.  
 \  
 
-For now, though, I'm happy with the more straightforward, easy-to-implmenet TF-IDF approach. If you want to explore this dataset further, feel free to download the [raw data]((https://github.com/tacookson/data/tree/master/us-government-gifts)) and play around with it yourself. And, if you enjoyed this post, please [let me know](https://twitter.com/alexcookson) on Twitter.
+For now, though, I'm happy with the more straightforward, easy-to-implement TF-IDF approach. If you want to explore this dataset further, feel free to download the [raw data]((https://github.com/tacookson/data/tree/master/us-government-gifts)) and play around with it yourself. And, if you enjoyed this post, please [let me know](https://twitter.com/alexcookson) on Twitter.
