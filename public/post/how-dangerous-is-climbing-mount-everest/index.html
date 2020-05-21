@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
+  <link rel="stylesheet" href="/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
+  <link rel="stylesheet" href="/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,7 +52,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="https://alexcookson.comimg/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -71,7 +71,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -79,19 +79,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -233,11 +233,11 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/data-exploration">data exploration</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/data-exploration">data exploration</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/annotations">annotations</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/annotations">annotations</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/spineplots">spineplots</a>
+      <a class="post-taxonomy-tag" href="/tags/spineplots">spineplots</a>
     
   </div>
   
@@ -396,7 +396,7 @@ everest_members &lt;- members %&gt;%
     strip.text = element_text(size = 12, colour = &quot;black&quot;),
     strip.background = element_blank()
   )</code></pre>
-<p><img src="https://alexcookson.com/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-expeditions-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-expeditions-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>The graphs themselves look like mountains! Everest has become much more popular since the 1980s. For the past 20 years, a typical year would see about 75-100 expeditions comprising 800-1,200 climbers.<br />
  </p>
 </div>
@@ -430,7 +430,7 @@ everest_members &lt;- members %&gt;%
     strip.text = element_text(size = 12, colour = &quot;black&quot;),
     strip.background = element_blank()
   )</code></pre>
-<p><img src="https://alexcookson.com/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-seasons-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-seasons-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Spring expeditions are by far the most common. There are almost no expeditions during the summer, likely because it is <a href="https://iantaylortrekking.com/blog/what-is-the-best-time-of-year-to-trek-everest-base-camp/">monsoon season</a>, a period with obviously less-than-ideal conditions for an arduous, weather-dependent climb. In fact, according to <a href="https://www.popularmechanics.com/adventure/outdoors/a7725/why-does-everyone-climb-everest-in-may-9035510/">an article in Popular Mechanics</a>, May is generally considered the best month to climb because it has the best weather – lower wind speeds and higher temperatures. Our data supports this idea: looking at expeditions we have a highpoint date for, almost 80% of them are in May.</p>
 <pre class="r"><code>everest_expeditions %&gt;%
   filter(!is.na(highpoint_date)) %&gt;%
@@ -449,7 +449,7 @@ everest_members &lt;- members %&gt;%
   ) +
   theme(text = element_text(family = &quot;Bahnschrift&quot;),
         panel.grid.minor = element_blank())</code></pre>
-<p><img src="https://alexcookson.com/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-months-1.png" width="768" style="display: block; margin: auto;" />
+<p><img src="/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-months-1.png" width="768" style="display: block; margin: auto;" />
  </p>
 <p>However, <a href="https://en.wikipedia.org/wiki/Mount_Everest#Autumn_climbing">autumn climbing</a> was more popular in the late 20th century. In fact, in the 1980s, the majority of expeditions took place during autumn.</p>
 <pre class="r"><code>everest_expeditions %&gt;%
@@ -484,7 +484,7 @@ everest_members &lt;- members %&gt;%
     strip.text = element_text(size = 12, colour = &quot;black&quot;),
     strip.background = element_blank()
   )</code></pre>
-<p><img src="https://alexcookson.com/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-seasons-by-decade-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-seasons-by-decade-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Why? I don’t know, but I have a guess. A <a href="http://faculty.washington.edu/hueyrb/pdfs/AAJEverest2003.pdf">2003 article</a> in <em>The American Alpine Journal</em> notes that 1963-1990s was “an era of bold climbing”, with many climbers attempting alternative routes. Maybe these alternatives routes were more feasible in the autumn or bold climbers sought out the novelty and challenge of an autumn climb.<br />
  </p>
 </div>
@@ -531,7 +531,7 @@ everest_members &lt;- members %&gt;%
     panel.grid.minor.y = element_blank(),
     axis.text = element_text(size = 12)
   )</code></pre>
-<p><img src="https://alexcookson.com/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-death-count-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-death-count-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>It looks like 11 deaths in a season is a high, but not extraordinary, figure. Two seasons in the previous 5 years had <em>more</em> deaths. This includes 2014, the year with 17 deaths – the most ever in a single year – 16 of which were the result of <a href="https://www.nationalgeographic.com/news/2014/4/140422-sherpas-everest-avalanche-nepal-kathmandu/">a single avalanche</a>. Previous seasons with high death counts include 1996, when a group of climbers was <a href="https://en.wikipedia.org/wiki/1996_Mount_Everest_disaster">caught in a blizzard</a>, and 1922, when <a href="https://en.wikipedia.org/wiki/1922_British_Mount_Everest_expedition">an avalanche</a> killed 7 members of the British expedition attempting the summit.<br />
  </p>
 <p>These single-event catastrophes raise another question: <strong>What are the main causes of death?</strong> We have the data to answer that question, though we will limit our scope to make sure we have an effective visualization. First, we’ll look only at expeditions since the 1970s, since that is when we started seeing consistent expeditions every year.</p>
@@ -563,7 +563,7 @@ everest_members &lt;- members %&gt;%
   theme(text = element_text(family = &quot;Bahnschrift&quot;),
         axis.text = element_text(size = 12),
         panel.grid.minor = element_blank())</code></pre>
-<p><img src="https://alexcookson.com/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-death-causes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-04-06-how-dangerous-is-climbing-mount-everest_files/figure-html/graph-death-causes-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Overall, it looks like weather and conditions are the main thing to be worried about, with falls and avalanches being particularly deadly. (I’m guessing that falls are associated with windy or otherwise poor conditions, though perhaps they could also be associated with less experienced climbers.) In the 1980s, falls and avalanches were responsible for 3 in 4 deaths and in other decades they account for around half of deaths. It also looks like exhaustion and AMS – <a href="https://en.wikipedia.org/wiki/Altitude_sickness">Acute Mountain Sickness</a> – have become more prevalent in the last 20 years. Maybe this is a consequence of less experienced climbers attempting Everest and getting into situations they aren’t prepared for. If you are climbing Everest, there is a lot to wary of.<br />
  </p>
 </div>
@@ -582,17 +582,17 @@ everest_members &lt;- members %&gt;%
   
   <h4><i class="fa-share-alt" aria-hidden="true"></i>&nbsp;Share!</h4>
 <ul class="share-buttons">
-	<li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2falexcookson.com%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
+	<li><a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://twitter.com/intent/tweet?source=https%3a%2f%2falexcookson.com%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
+	<li><a href="https://twitter.com/intent/tweet?source=%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://plus.google.com/share?url=https%3a%2f%2falexcookson.com%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
+	<li><a href="https://plus.google.com/share?url=%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.tumblr.com/share?v=3&u=https%3a%2f%2falexcookson.com%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
+	<li><a href="http://www.tumblr.com/share?v=3&u=%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2falexcookson.com%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
+	<li><a href="http://pinterest.com/pin/create/button/?url=%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.reddit.com/submit?url=https%3a%2f%2falexcookson.com%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
+	<li><a href="http://www.reddit.com/submit?url=%2fpost%2fhow-dangerous-is-climbing-mount-everest%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
 	</li>
 </ul>
 
@@ -624,13 +624,13 @@ everest_members &lt;- members %&gt;%
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="https://alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/"><i class="fa fa-chevron-left"></i></a>
+    <a href="/post/analyzing-himalayan-peaks-first-ascents/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="https://alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/">Analyzing Himalayan peaks and first ascents</a>
+      <a href="/post/analyzing-himalayan-peaks-first-ascents/">Analyzing Himalayan peaks and first ascents</a>
     </nav>
     
   </div>
@@ -640,13 +640,13 @@ everest_members &lt;- members %&gt;%
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="https://alexcookson.com/post/most-successful-broadway-show-of-all-time/">What&#39;s the most successful Broadway show of all time?</a>
+      <a href="/post/most-successful-broadway-show-of-all-time/">What&#39;s the most successful Broadway show of all time?</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="https://alexcookson.com/post/most-successful-broadway-show-of-all-time/"><i class="fa fa-chevron-right"></i></a>
+    <a href="/post/most-successful-broadway-show-of-all-time/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -659,8 +659,8 @@ everest_members &lt;- members %&gt;%
 
 </div>
 </div>
-<script src="https://alexcookson.comjs/ui.js"></script>
-<script src="https://alexcookson.comjs/menus.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/menus.js"></script>
 
 
 <script>
@@ -680,7 +680,7 @@ everest_members &lt;- members %&gt;%
 
 
 
-<script src="https://alexcookson.com/js/math-code.js"></script>
+<script src="/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 

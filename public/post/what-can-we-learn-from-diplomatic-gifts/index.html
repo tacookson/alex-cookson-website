@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
+  <link rel="stylesheet" href="/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
+  <link rel="stylesheet" href="/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,7 +52,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="https://alexcookson.comimg/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -71,7 +71,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -79,19 +79,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -233,11 +233,11 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/data-exploration">data exploration</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/data-exploration">data exploration</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/nlp">nlp</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/nlp">nlp</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/tf-idf">tf-idf</a>
+      <a class="post-taxonomy-tag" href="/tags/tf-idf">tf-idf</a>
     
   </div>
   
@@ -422,7 +422,7 @@ custom_stop_words &lt;- tibble(stop_word = c(country_stop_words,
   # Numbers only aren&#39;t likely meaningful in our context
   filter(str_detect(word, &quot;[a-z]&quot;),
          !is.na(donor_country))</code></pre>
-<p>If we look again at the most common words used to describe gifts from Moldova, now that we have removed stop words, we see much more meaningful terms, like “cognac” and “<a href="https://en.wikipedia.org/wiki/Cricova_(winery)">cricova</a>” (a Moldovan winery). These are way better for answering our question!</p>
+<p>If we look again at the most common words used to describe gifts from Moldova, now that we have removed stop words, we see much more meaningful terms, like “cognac” and “<a href="https://en.wikipedia.org/wiki/Cricova_(winery)">cricova</a>” (a Moldovan winery). These are way better for answering our question.</p>
 <pre class="r"><code>gift_words %&gt;%
   filter(donor_country == &quot;Moldova&quot;) %&gt;%
   count(word, sort = TRUE) %&gt;%
@@ -448,7 +448,7 @@ custom_stop_words &lt;- tibble(stop_word = c(country_stop_words,
 <h3>Calculating TF-IDF</h3>
 <p>So far we’ve been looking at the most common words – the ones that appear in a country’s descriptions the most times. This measure is called <em>term frequency</em> (the <em>TF</em> in TF-IDF). But it’s a fairly crude measure: it doesn’t take into account that common words for one country could be common words for another country. For example, if we looked at common words – put differently, words with high <em>term frequency</em> – for Moldova and Croatia, we would see that “painting” appears on both lists. So giving a painting might not be a Moldovan thing. Maybe it’s more generally a diplomatic gift thing.</p>
 <p>Since we’re interested in gifts that are distinctive to a specific country, we want to know words that show up a lot in one country’s descriptions (high <em>term frequency</em>) but don’t show up a lot in other countries’ descriptions. <em>Inverse document frequency</em> (the <em>IDF</em> in TF-IDF) does this for us: it tells us how common or rare a word is across all descriptions.</p>
-<p>Let’s use our Moldova example again. If <em>lots</em> of descriptions (from any country) include the word “painting” and Moldovan descriptions also include many instances of “painting”, then “painting” is not an especially Moldovan word. But if very <em>few</em> descriptions (again, from any country) include the word “cricova” and Moldovan descriptions have lots of instances of “cricova”, then “cricova” probably <em>is</em> a Moldovan thing!</p>
+<p>Let’s use our Moldova example again. If <em>lots</em> of descriptions (from any country) include the word “painting” and Moldovan descriptions also include many instances of “painting”, then “painting” is not an especially Moldovan word. But if very <em>few</em> descriptions (again, from any country) include the word “cricova” and Moldovan descriptions have lots of instances of “cricova”, then “cricova” probably <em>is</em> a Moldovan thing.</p>
 <p>TF-IDF quantifies what we demonstrated in the Moldova example: it is a number that describes how “distinctive” a word is, which turns out to be exactly what we’re interested in. (I won’t go into the formulas for TF-IDF, but if you’re interested, check out <a href="https://www.tidytextmining.com/tfidf.html"><em>Text Mining with R</em></a>.). With the <code>tidy_text</code> package, we can calculate TF-IDF in <em>one line</em> of code using <code>bind_tf_idf()</code>:</p>
 <pre class="r"><code>gift_words_tfidf &lt;- gift_words %&gt;%
   distinct(id, donor_country, word) %&gt;%
@@ -471,7 +471,7 @@ custom_stop_words &lt;- tibble(stop_word = c(country_stop_words,
 ## 4 winery   Moldova           3 0.0201  5.18 0.104 
 ## 5 honorary Moldova           3 0.0201  3.80 0.0764
 ## 6 vintage  Moldova           3 0.0201  3.80 0.0764</code></pre>
-<p>Would you look at that! “Cognac” and “cricova” are at the top of the list.<br />
+<p>Would you look at that: “cognac” and “cricova” are at the top of the list.<br />
  </p>
 </div>
 </div>
@@ -534,7 +534,7 @@ gift_words_tfidf %&gt;%
         axis.text.y = element_text(size = 14),
         strip.background = element_blank(),
         strip.text = element_text(colour = &quot;black&quot;, face = &quot;bold&quot;))</code></pre>
-<p><img src="https://alexcookson.com/post/2020-05-21-what-can-we-learn-from-diplomatic-gifts_files/figure-html/top-tf-idf-overall-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-05-21-what-can-we-learn-from-diplomatic-gifts_files/figure-html/top-tf-idf-overall-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>There are so many cool insights, but I’ll just mention two:</p>
 <ul>
 <li>Iceland seems to like gifting <a href="https://en.wikipedia.org/wiki/Sagas_of_Icelanders"><em>The Complete Sagas of Icelanders</em></a>, which strikes me as an <em>extremely</em> Icelandic gift to give</li>
@@ -571,7 +571,7 @@ gift_words_tfidf %&gt;%
         axis.text.y = element_text(size = 14),
         strip.background = element_blank(),
         strip.text = element_text(colour = &quot;black&quot;, face = &quot;bold&quot;, size = 12))</code></pre>
-<p><img src="https://alexcookson.com/post/2020-05-21-what-can-we-learn-from-diplomatic-gifts_files/figure-html/g7-countries-tf-idf-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-05-21-what-can-we-learn-from-diplomatic-gifts_files/figure-html/g7-countries-tf-idf-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Again, I’ll make a few observations and leave it to you to look into the rest on your own:</p>
 <ul>
 <li>France does indeed like to give gifts from <strong>Hermès</strong></li>
@@ -611,20 +611,20 @@ gift_words_tfidf %&gt;%
         axis.text.y = element_text(size = 10),
         strip.background = element_blank(),
         strip.text = element_text(colour = &quot;black&quot;, face = &quot;bold&quot;, size = 10))</code></pre>
-<p><img src="https://alexcookson.com/post/2020-05-21-what-can-we-learn-from-diplomatic-gifts_files/figure-html/g20-countries-tf-idf-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/post/2020-05-21-what-can-we-learn-from-diplomatic-gifts_files/figure-html/g20-countries-tf-idf-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>A few observations:</p>
 <ul>
 <li>Mexico likes to give bottles of <strong>tequila</strong>!</li>
 <li>South Korean gifts often feature <strong>mother-of-pearl</strong></li>
-<li>Russian gifts are strangely associated with the word “director’s”. This illustrates a shortcoming of the TF-IDF because this high TF-IDF score is a result of Louis Freeh, Director of the FBI, receiving fourteen gifts from a Russian minister, all of which were noted as being “on display in <strong>director’s</strong> office”.</li>
+<li>Russian gifts are strangely associated with the word “director’s”</li>
 </ul>
-<p>TF-IDF is useful, but’s not perfect!<br />
+<p>The Russian obsversation illustrates a shortcoming of TF-IDF. The high score for “director’s” is a result of Louis Freeh, Director of the FBI, receiving fourteen gifts from a Russian minister, all of which were noted as being “on display in <strong>director’s</strong> office”. So instead of picking up on attributes of the gifts themselves, we picked up on what the recipient did with them. TF-IDF is quick and useful, but not perfect!<br />
  </p>
 </div>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
-<p>We dove into the dry world of government reporting and came up with some interesting knowledge, like Japan’s fondness of gifts featuring cranes Luxembourg’s love of foxes. There are so many other questions we could answer with our data, though, including:</p>
+<p>We dove into the dry world of government reporting and came up with some interesting facts, like Japan’s fondness of gifts featuring cranes and Luxembourg’s love of foxes. There are so many other questions we could answer with our data, though, including:</p>
 <ul>
 <li>Do some countries give more expensive gifts than others?</li>
 <li>How has gift-giving changed over time?</li>
@@ -636,27 +636,27 @@ gift_words_tfidf %&gt;%
 </ul>
 <p>We could also make our analysis more sophisticated:</p>
 <ul>
-<li>Look at named entities instead of individual words. This would keep things like “leather briefcase” as a single entity, even though it’s two words, instead of separating them into “leather” and “briefcase”. The <code>spacyr</code>(<a href="https://spacyr.quanteda.io/articles/using_spacyr.html" class="uri">https://spacyr.quanteda.io/articles/using_spacyr.html</a>) package is a great option for this.</li>
+<li>Look at named entities instead of individual words. This would keep things like “leather briefcase” as a single entity, even though it’s two words, instead of separating them into “leather” and “briefcase”. The <a href="https://spacyr.quanteda.io/articles/using_spacyr.html"><code>spacyr</code></a> package is a great option for this.</li>
 <li><a href="https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html">Stem or lemmatize</a> words. This would combine words that the same meaning into a single term. For example, Kenya’s descriptions included “elephant” and “elephants”. They were two different terms in our analysis, but they’re not different concepts, so stemming or lemmatization would combine them into a single term.<br />
  </li>
 </ul>
-<p>For now, though, I’m happy with the more straightforward, easy-to-implmenet TF-IDF approach. If you want to explore this dataset further, feel free to download the <a href="(https://github.com/tacookson/data/tree/master/us-government-gifts)">raw data</a> and play around with it yourself. And, if you enjoyed this post, please <a href="https://twitter.com/alexcookson">let me know</a> on Twitter.</p>
+<p>For now, though, I’m happy with the more straightforward, easy-to-implement TF-IDF approach. If you want to explore this dataset further, feel free to download the <a href="(https://github.com/tacookson/data/tree/master/us-government-gifts)">raw data</a> and play around with it yourself. And, if you enjoyed this post, please <a href="https://twitter.com/alexcookson">let me know</a> on Twitter.</p>
 </div>
 
   
   <h4><i class="fa-share-alt" aria-hidden="true"></i>&nbsp;Share!</h4>
 <ul class="share-buttons">
-	<li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2falexcookson.com%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
+	<li><a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://twitter.com/intent/tweet?source=https%3a%2f%2falexcookson.com%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
+	<li><a href="https://twitter.com/intent/tweet?source=%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://plus.google.com/share?url=https%3a%2f%2falexcookson.com%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
+	<li><a href="https://plus.google.com/share?url=%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.tumblr.com/share?v=3&u=https%3a%2f%2falexcookson.com%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
+	<li><a href="http://www.tumblr.com/share?v=3&u=%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2falexcookson.com%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
+	<li><a href="http://pinterest.com/pin/create/button/?url=%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.reddit.com/submit?url=https%3a%2f%2falexcookson.com%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
+	<li><a href="http://www.reddit.com/submit?url=%2fpost%2fwhat-can-we-learn-from-diplomatic-gifts%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
 	</li>
 </ul>
 
@@ -688,13 +688,13 @@ gift_words_tfidf %&gt;%
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="https://alexcookson.com/post/most-successful-broadway-show-of-all-time/"><i class="fa fa-chevron-left"></i></a>
+    <a href="/post/most-successful-broadway-show-of-all-time/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="https://alexcookson.com/post/most-successful-broadway-show-of-all-time/">What&#39;s the most successful Broadway show of all time?</a>
+      <a href="/post/most-successful-broadway-show-of-all-time/">What&#39;s the most successful Broadway show of all time?</a>
     </nav>
     
   </div>
@@ -717,8 +717,8 @@ gift_words_tfidf %&gt;%
 
 </div>
 </div>
-<script src="https://alexcookson.comjs/ui.js"></script>
-<script src="https://alexcookson.comjs/menus.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/menus.js"></script>
 
 
 <script>
@@ -738,7 +738,7 @@ gift_words_tfidf %&gt;%
 
 
 
-<script src="https://alexcookson.com/js/math-code.js"></script>
+<script src="/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 

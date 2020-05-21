@@ -2,13 +2,13 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Topics on Alex Cookson</title>
-    <link>https://alexcookson.com/topics/</link>
+    <link>/topics/</link>
     <description>Recent content in Topics on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     
-	<atom:link href="https://alexcookson.com/topics/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/topics/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>

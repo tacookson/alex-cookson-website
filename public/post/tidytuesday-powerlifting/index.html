@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
+  <link rel="stylesheet" href="/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
+  <link rel="stylesheet" href="/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,7 +52,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="https://alexcookson.comimg/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
 
   
   
@@ -71,7 +71,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -79,19 +79,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -230,13 +230,13 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/tidytuesday">TidyTuesday</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/tidytuesday">TidyTuesday</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/linear-regression">linear regression</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/linear-regression">linear regression</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/splines">splines</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="/tags/splines">splines</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="https://alexcookson.comtags/tutorial">tutorial</a>
+      <a class="post-taxonomy-tag" href="/tags/tutorial">tutorial</a>
     
   </div>
   
@@ -307,7 +307,7 @@ ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfor
   ggplot(aes(lift_type, kg_lifted, fill = equipment)) +
   geom_boxplot(outlier.alpha = 0.5) +
   facet_wrap(~ sex)</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Some competitors had <em>negative</em> lift weights – impressive! Investigating this gives us an excuse to use <code>filter_at</code>, which lets us apply the same filter to multiple fields at once.</p>
 <pre class="r"><code>ipf_lifts_raw %&gt;%
   filter_at(vars(best3squat_kg, best3bench_kg, best3deadlift_kg), # Fields to filter
@@ -339,7 +339,7 @@ ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfor
   ggplot(aes(lift_type, kg_lifted, fill = equipment)) +
   geom_boxplot(outlier.alpha = 0.5) +
   facet_wrap(~ sex)</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>We can already make a few observations on this dataset:</p>
 <ul>
 <li>Men tend to lift more than women</li>
@@ -399,7 +399,7 @@ ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfor
   ggplot(aes(weight_kg, bench_kg)) +
   geom_point(alpha = 0.2) +
   facet_grid(equipment ~ sex)</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>There’s a pretty clear linear relationship. You can also see that men tend have higher bench weights than women, there are more men over 150kg (compared to almost no women), and that there is more variation in bench weight when using single-ply equipment (among both sexes).<br />
  </p>
 <p>What if we look at age instead of weight?</p>
@@ -409,7 +409,7 @@ ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfor
   # Adding axis breaks every 10 years
   scale_x_continuous(breaks = seq(10, 90, 10)) +
   facet_grid(equipment ~ sex)</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>Interesting. There’s a clear relationship, but it’s not linear. It looks like competitors tend to lift more as they get older, until they peak in their 30s, then decline from there. Instead of eyeballing, though, we can add a <a href="http://r-statistics.co/Loess-Regression-With-R.html">loess-fitted smoothing line</a> with <code>geom_smooth</code> to get a sense of the general trend of the data.</p>
 <pre class="r"><code>ipf_lifts %&gt;%
   ggplot(aes(age, bench_kg)) +
@@ -419,7 +419,7 @@ ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfor
   geom_smooth(method = &quot;loess&quot;, col = &quot;red&quot;) +
   facet_grid(equipment ~ sex)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Now it’s <em>super</em> obvious, right?<br />
  </p>
 <p>Okay, last thing to explore before building our model is the relationship between age and weight. If they’re highly correlated then that can cause <a href="https://statisticsbyjim.com/regression/multicollinearity-in-regression-analysis/">issues</a> with our regression. We’ll check visually and mathematically (using the <code>cor</code> function).</p>
@@ -428,7 +428,7 @@ ipf_lifts_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfor
   geom_point(alpha = 0.2) +
   scale_x_continuous(breaks = seq(10, 90, 10)) +
   facet_wrap(~ sex)</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <pre class="r"><code>cor(ipf_lifts$age, ipf_lifts$weight_kg)</code></pre>
 <pre><code>## [1] 0.06776009</code></pre>
 <p>The correlation’s very low. Though it is interesting we see fewer heavier competitors as age increases.<br />
@@ -484,7 +484,7 @@ summary(first_model)</code></pre>
   geom_point(alpha = 0.2) +
   geom_hline(aes(yintercept = 0), col = &quot;red&quot;) +
   scale_x_continuous(breaks = seq(10, 90, 10))</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>But we <em>do</em> see a pattern. We’re overestimating bench weight for younger (in their teens and 20s) and older (aged 50+) competitors. Or, put another way, there is signal left over that our model hasn’t captured.<br />
  </p>
 </div>
@@ -503,7 +503,7 @@ splines %&gt;%
   geom_line(aes(y = .fitted), col = &quot;red&quot;) +
   scale_x_continuous(breaks = seq(10, 90, 10)) +
   facet_wrap(~ degrees_of_freedom)</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>One degree of freedom is just a straight line, but as we move to 2, 3, and more degrees of freedom, the line gets more wiggle. But you can also see reach a plateau where allowing for more degrees of freedom doesn’t help us that much. Once we get to 3 or 4, the wigglier lines don’t describe the trend much better.</p>
 <p>Good news! We can quantify how well each spline with different degrees of freedom fit the trend we see in each. Each of those red lines is its own linear regression, so we can use evaluation metrics like adjusted R-squared and Akaike Information Criterion (AIC). Both of these give a sense of how well a model fits a dataset while adjusting for overfitting. (Note: “better” models will have a higher adjusted R-squared and a lower AIC.)</p>
 <pre class="r"><code>splines %&gt;%
@@ -517,7 +517,7 @@ splines %&gt;%
   scale_x_continuous(breaks = 1:9) +
   facet_wrap(~ name, scales = &quot;free_y&quot;) +
   theme(panel.grid.minor = element_blank())</code></pre>
-<p><img src="https://alexcookson.com/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="/post/2019-10-08-tidytuesday-powerlifting_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>Both metrics tell a similar story – our fit gets better until we hit 3 degrees of freedom, then our model plateaus. This suggests that 3 degrees of freedom is a good predictor to use in our linear model. So let’s do that and see what we get.</p>
 <pre class="r"><code>splines_model &lt;- lm(bench_kg ~ sex + weight_kg + equipment + ns(age, 3),
                     data = ipf_lifts)
@@ -560,17 +560,17 @@ summary(splines_model)</code></pre>
   
   <h4><i class="fa-share-alt" aria-hidden="true"></i>&nbsp;Share!</h4>
 <ul class="share-buttons">
-	<li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2falexcookson.com%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
+	<li><a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://twitter.com/intent/tweet?source=https%3a%2f%2falexcookson.com%2fpost%2ftidytuesday-powerlifting%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
+	<li><a href="https://twitter.com/intent/tweet?source=%2fpost%2ftidytuesday-powerlifting%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="https://plus.google.com/share?url=https%3a%2f%2falexcookson.com%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
+	<li><a href="https://plus.google.com/share?url=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.tumblr.com/share?v=3&u=https%3a%2f%2falexcookson.com%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
+	<li><a href="http://www.tumblr.com/share?v=3&u=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2falexcookson.com%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
+	<li><a href="http://pinterest.com/pin/create/button/?url=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
 	</li>&nbsp;&nbsp;&nbsp;
-	<li><a href="http://www.reddit.com/submit?url=https%3a%2f%2falexcookson.com%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
+	<li><a href="http://www.reddit.com/submit?url=%2fpost%2ftidytuesday-powerlifting%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
 	</li>
 </ul>
 
@@ -602,13 +602,13 @@ summary(splines_model)</code></pre>
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="https://alexcookson.com/post/tidytuesday-new-york-pizza-restaurants/"><i class="fa fa-chevron-left"></i></a>
+    <a href="/post/tidytuesday-new-york-pizza-restaurants/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="https://alexcookson.com/post/tidytuesday-new-york-pizza-restaurants/">What are New York&#39;s best and worst pizza restaurants?</a>
+      <a href="/post/tidytuesday-new-york-pizza-restaurants/">What are New York&#39;s best and worst pizza restaurants?</a>
     </nav>
     
   </div>
@@ -618,13 +618,13 @@ summary(splines_model)</code></pre>
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="https://alexcookson.com/post/tidytuesday-horror-movies/">Predicting horror movie ratings with LASSO regression</a>
+      <a href="/post/tidytuesday-horror-movies/">Predicting horror movie ratings with LASSO regression</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="https://alexcookson.com/post/tidytuesday-horror-movies/"><i class="fa fa-chevron-right"></i></a>
+    <a href="/post/tidytuesday-horror-movies/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -637,8 +637,8 @@ summary(splines_model)</code></pre>
 
 </div>
 </div>
-<script src="https://alexcookson.comjs/ui.js"></script>
-<script src="https://alexcookson.comjs/menus.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/menus.js"></script>
 
 
 <script>
@@ -658,7 +658,7 @@ summary(splines_model)</code></pre>
 
 
 
-<script src="https://alexcookson.com/js/math-code.js"></script>
+<script src="/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 
