@@ -77,7 +77,7 @@ sf_trees_raw &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rforda
   sample_n(1) %&gt;%
   mutate(lat_long = paste(latitude, longitude, sep = &quot;, &quot;)) %&gt;%
   pull(lat_long)</code></pre>
-<pre><code>## [1] &quot;47.2700470263222, -138.279303834774&quot;</code></pre>
+<pre><code>## [1] &quot;47.2699510709683, -138.28203408065&quot;</code></pre>
 <p>Feel free to copy-paste that and see where that random observation is – mine is <a href="https://www.google.com/maps/place/47%C2%B016&#39;12.0%22N+138%C2%B016&#39;50.6%22W/@49.351951,-146.811994,4z/data=!4m5!3m4!1s0x0:0x0!8m2!3d47.2699969!4d-138.2807169">a little far from San Francisco</a>. We’ll filter out these observations in our cleaning step.<br />
  </p>
 </div>
@@ -135,7 +135,7 @@ sf_trees_raw &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rforda
 <li><em>Polygons</em> to show the lake</li>
 </ul>
 <p align="center">
-<img src="/post/2020-01-29-mapping-san-francisco-trees_files/shapefile-example.png" title="fig:" alt="shapefile example" width="400" />
+<img src="/post/2020-01-29-mapping-san-francisco-trees_files/shapefile-example.png" title="fig:" width="400" alt="shapefile example" />
 </p>
 <p> </p>
 </div>
