@@ -346,21 +346,21 @@ state_pop &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordata
   filter(region == &quot;NT&quot;) %&gt;%
   distinct(unit_name, unit_type, region)</code></pre>
 <pre><code>## # A tibble: 1 x 3
-##   unit_name          unit_type region
-##   &lt;chr&gt;              &lt;chr&gt;     &lt;chr&gt; 
-## 1 Blue Ridge Parkway Parkway   NT</code></pre>
+##   region unit_name          unit_type
+##   &lt;chr&gt;  &lt;chr&gt;              &lt;chr&gt;    
+## 1 NT     Blue Ridge Parkway Parkway</code></pre>
 <p>Blue Ridge Parkway. According to <a href="https://en.wikipedia.org/wiki/Blue_Ridge_Parkway">Blue Ridge’s Wikipedia page</a>, it is a parkway (duh) that runs through Virginia and North Carolina, which are in different NPS regions. (Virginia is in “Northeast” and North Carolina is in “Southeast”.) “NT” is probably a special classification or a code that means “not classified”.</p>
 <p>This discovery makes me question whether to include any parkways in our analysis. When I think of visiting national parks, I think of people getting out of their cars, going into visitors’ centres, and hiking trails. Are there any other parkways in our data?</p>
 <pre class="r"><code>park_visits %&gt;%
   filter(str_detect(unit_type, &quot;Parkway&quot;)) %&gt;%
   distinct(unit_name, unit_type, region)</code></pre>
 <pre><code>## # A tibble: 4 x 3
-##   unit_name                                  unit_type        region
-##   &lt;chr&gt;                                      &lt;chr&gt;            &lt;chr&gt; 
-## 1 Blue Ridge Parkway                         Parkway          NT    
-## 2 John D. Rockefeller, Jr., Memorial Parkway National Parkway IM    
-## 3 George Washington Memorial Parkway         National Parkway NC    
-## 4 Natchez Trace Parkway                      Parkway          SE</code></pre>
+##   region unit_name                                  unit_type       
+##   &lt;chr&gt;  &lt;chr&gt;                                      &lt;chr&gt;           
+## 1 NT     Blue Ridge Parkway                         Parkway         
+## 2 IM     John D. Rockefeller, Jr., Memorial Parkway National Parkway
+## 3 NC     George Washington Memorial Parkway         National Parkway
+## 4 SE     Natchez Trace Parkway                      Parkway</code></pre>
 <p>Yes, three more:</p>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/John_D._Rockefeller_Jr._Memorial_Parkway">John D. Rockefeller, Jr. Memorial Parkway</a></li>
@@ -390,7 +390,8 @@ state_pop &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordata
        y = &quot;&quot;) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.y = element_blank())</code></pre>
-<p><img src="/post/2019-09-16-tidytuesday-us-national-parks_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><img src="/post/2019-09-16-tidytuesday-us-national-parks_files/figure-html/1904-vs-2015-population-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>I’m interested in the <em>popularity</em> of national parks, not just their raw visitor numbers, so it wouldn’t be fair to compare 1904 visits to 2015 visits. There were way more people in 2015 to do the visiting! So I’m going to scale visitors by US population (e.g., “X visits per 1,000 US population”). Scaling this way doesn’t account for non-US visitors, but it should be approximate enough to account for the fact that fewer people were walking around in 1904 than 2015.</p>
 <pre class="r"><code>total_visits &lt;- state_pop %&gt;%
   group_by(year) %&gt;%
@@ -403,9 +404,10 @@ state_pop &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordata
             total_population = mean(total_population),
             visits_per_thousand = total_visitors / (total_population / 1000)) %&gt;%
   # Remove years that aren&#39;t state_pop dataset (post-2015)
-  filter(!is.na(total_population))
-
-total_visits %&gt;%
+  filter(!is.na(total_population))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>total_visits %&gt;%
   ggplot(aes(year, visits_per_thousand)) +
   geom_hline(yintercept = 1000, lty = 2) +
   geom_line(col = &quot;dark green&quot;, size = 1.5) +
@@ -416,7 +418,7 @@ total_visits %&gt;%
        subtitle = &quot;1904-2015. Dashed line represents an equal number of visitors and population&quot;,
        x = &quot;&quot;,
        y = &quot;Visitors per thousand US population&quot;)</code></pre>
-<p><img src="/post/2019-09-16-tidytuesday-us-national-parks_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/post/2019-09-16-tidytuesday-us-national-parks_files/figure-html/total-visits-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>(I saw <a href="https://fivethirtyeight.com/features/the-national-parks-have-never-been-more-popular/">FiveThirtyEight’s graph</a> and liked it so much I stole the aesthetics. They didn’t scale by population, though!)</p>
 <p>Visits in the early 20th century were low (real low!), with a notable dip during the US involvement in World War II. Then visits increase until they peak in the mid 1980s. After that, there is a steady-ish decline with a possible uptick in the mid-2010s.<br />
  </p>
@@ -435,9 +437,10 @@ total_visits %&gt;%
             total_population = mean(total_population),
             visits_per_thousand = mean(total_visitors / (total_population / 1000))) %&gt;%
   filter(!is.na(total_population)) %&gt;%
-  ungroup()
-
-visits_by_region %&gt;%
+  ungroup()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;year&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>visits_by_region %&gt;%
   # Add region labels for the max year
   mutate(region_label = ifelse(year == max(year), as.character(region_long), NA_character_),
          region_label = fct_reorder(region_label, visits_per_thousand, last, order_by = year)) %&gt;%
@@ -456,7 +459,7 @@ visits_by_region %&gt;%
        y = &quot;Visitors per thousand US population&quot;) +
   theme(legend.position = &quot;none&quot;,
         panel.grid.minor = element_blank())</code></pre>
-<p><img src="/post/2019-09-16-tidytuesday-us-national-parks_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/post/2019-09-16-tidytuesday-us-national-parks_files/figure-html/visits-by-region-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>When we break down by region, we see a few things:</p>
 <ul>
 <li>Alaska: few visits and a gradual, smooth increase since the 1960s</li>

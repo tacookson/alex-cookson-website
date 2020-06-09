@@ -29,7 +29,7 @@ We'll load a few packages in addition to the `tidyverse`:
 - `scales` to easily change number formats (e.g., 0.32 becomes 32%)
 - `viridis` as a nice alternative to default `ggplot2` colours
 
-```{r, warning = FALSE, message = FALSE}
+```{r setup-and-import, warning = FALSE, message = FALSE}
 library(tidyverse)
 library(lubridate)
 library(extrafont)
@@ -47,7 +47,7 @@ tickets_raw <- readr::read_csv("https://raw.githubusercontent.com/rfordatascienc
 
 Let's get into these parking tickets.
 
-```{r}
+```{r data-inspection}
 tickets_raw %>%
   glimpse()
 ```
@@ -61,7 +61,7 @@ The [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is 
 
 Which are the most common violations?
 
-```{r}
+```{r common-violations, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 tickets_raw %>%
   count(violation_desc, sort = TRUE) %>%
   head(20) %>%
@@ -76,7 +76,7 @@ tickets_raw %>%
 
 "METER EXPIRED" and "METER EXPIRED CC" are the two most common. Is there any difference between them? Other violations seem the same, too, except for that "CC" at the end. Let's use a cool trick to look at a couple of them: if we group by `violation_desc`, we can then use the `sample_n` function to get random observations from each group. It's handy for spot-checking or investigating weird values like these.
 
-```{r}
+```{r sample-similar-descriptions}
 # Set seed for reproducible sampling
 set.seed(24601)
 
@@ -92,7 +92,7 @@ The main difference is the `fine` amount, but "PARKING PROHIBITED" (with its sli
 
 Fortunately, we have location data, so we can test this hypothesis. We'll use longitude and latitude to make a crude map of violation types (with CC vs. without CC) and see if the results are consistent with "CC" meaning "City Centre".
 
-```{r}
+```{r map-violations, fig.align = 'center', fig.width = 8}
 tickets_raw %>%
   filter(str_detect(violation_desc, "METER EXPIRED"),
          # Exclude outlier longitude values
@@ -124,7 +124,7 @@ We're going to perform four cleaning steps:
 3. Derive day-of-week and hour-of-day from `issue_datetime`. We need these to be the nodes of our heat map.
 4. Ditch `fine`, `issuing_agency`, and location data. We won't be using these.
 
-```{r}
+```{r clean-data}
 tickets <- tickets_raw %>%
   # Remove "CC" and correct spelling
   mutate(violation_desc = str_squish(str_remove(violation_desc, " CC")),
@@ -150,7 +150,7 @@ It's a simple dataset, but it's all we need for a heat map.
 
 We can use the `geom_tile` function to create heat maps. After specifying our x and y dimensions (day-of-week and hour-of-day) we need to specify what represents the "heat". In our case, the heat is number of tickets for a given hour of a given day of the week.
 
-```{r}
+```{r heat-map-basic, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 tickets %>%
   count(day_of_week, issue_hour) %>%
   ggplot(aes(x = day_of_week, y = issue_hour, fill = n)) +
@@ -174,7 +174,7 @@ It's pretty cool we can get a heat map with a few lines of code, but it looks ro
 13. Adjust the x and y axes text sizes
 14. Get rid of axis ticks on the x-axis (we'll keep the ones on the y-axis)
 
-```{r}
+```{r heat-map-polished, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 tickets_heat_overall <- tickets %>%
   count(day_of_week, issue_hour)
 
@@ -225,7 +225,7 @@ This heat map includes all violations, regardless of what type they are. **What 
 1. Turn *implicit* missing values into *explicit* missing values. For example, if a given violation type doesn't have any tickets for 2:00 a.m. on a Sunday, that will show up as "NA" (missing). We want it to show up as "0" instead, otherwise our heat map won't graph properly. We can use the `complete` function to do this.
 2. Look at *percent* of tickets issued within each type instead of *number* of tickets so that everything is on the same scale. If we looked at number of tickets, we couldn't compare across types because types with the most tickets would automatically be darker.
 
-```{r}
+```{r heat-map-small-multiples, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 tickets_heat_top5 <- tickets %>%
   mutate(violation_group = str_to_title(fct_lump(violation_desc, 5))) %>%
   count(day_of_week, issue_hour, violation_group) %>%

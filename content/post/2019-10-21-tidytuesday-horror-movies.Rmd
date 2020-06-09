@@ -26,7 +26,7 @@ First, we'll load the `tidyverse` and a few other packages:
 - `scales` to turn numbers into pretty numbers (e.g., 3000 to 3,000)
 - `glue` to incorporate dynamic data into graph title and annotations
 
-```{r, echo = TRUE, results = 'hide', message = FALSE, warning = FALSE}
+```{r setup-and-import, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(lubridate)
 library(tidytext)
@@ -44,7 +44,7 @@ horror_movies_raw <- readr::read_csv("https://raw.githubusercontent.com/rfordata
 
 Let's see what we have.
 
-```{r}
+```{r data-inspection}
 horror_movies_raw %>%
   glimpse()
 ```
@@ -58,7 +58,7 @@ The [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is 
 
 Let's look at one of the plot descriptions by using the `sample_n` function to randomly select one row, then select just the `title` and `plot`. I quickly scanned the list and picked one out with a ridiculous title: *Sorority Slaughterhouse*.
 
-```{r}
+```{r sorority-slaughterhouse-synopsis}
 horror_movies_raw %>%
   filter(str_detect(title, "Sorority Slaughterhouse")) %>%
   select(title, plot) %>%
@@ -70,7 +70,7 @@ Wow. My idea of a horror movie is *The Sixth Sense*, which seems extremely tame 
 
 Let's move on and and check fields for missing values. Our `glimpse` above showed a few fields that looked like they had a lot of them.
 
-```{r}
+```{r missing-data}
 horror_movies_raw %>%
   summarise_all(~ mean(is.na(.))) %>%
   gather("field", "pct_missing") %>%
@@ -101,7 +101,7 @@ You may have noticed that this data is *a bit messy*, with numbers coded as char
 7. Ditch `movie_rating`, `filming_location`, and `budget`. They have too much missing data or are too messy to be immediately useful to us.
 8. Ditch `release_date`, too. The data looks fine -- but having just the release year will be enough for us.
 
-```{r, warning = FALSE}
+```{r clean-data, warning = FALSE}
 horror_movies <- horror_movies_raw %>%
   filter(!is.na(review_rating)) %>%
   distinct(title, plot, .keep_all = TRUE) %>%
@@ -128,7 +128,7 @@ A matrix is two-dimensional, though (1 row + 1 column = 2 dimensions), so we nee
 2. Use the `separate_rows` functions to further separate some fields. For example, `cast` has multiple cast members separated by a pipe charcter `|`.
 3. Combine the `feature` and `value` fields created in Step 1 so that we have a single field (e.g., "Country: USA") to turn into a matrix.
 
-```{r}
+```{r feature-dataset}
 by_feature <- horror_movies %>%
   # Select only fields we need, using transmute to rename and re-order
   transmute(id,
@@ -158,14 +158,14 @@ by_feature <- horror_movies %>%
 
 We're ready to build our LASSO model! Let's see what our pre-matrix dataset looks like for *Sorority Slaughterhouse*.
 
-```{r}
+```{r sorority-slaughterhouse-by-feature}
 by_feature %>%
   filter(title == "Sorority Slaughterhouse")
 ```
 
 Everything looks neat and tidy. We can see each feature that *Sorority Slaughterhouse* has. All of these will get a value of 1 once we convert this to a matrix. So let's go ahead and create our matrix.
 
-```{r}
+```{r feature-sparse-matrix}
 feature_matrix <- by_feature %>%
   # We don't technically need title, just id and feature
   select(id, feature) %>%
@@ -185,7 +185,7 @@ Looking at 10 sample rows of the matrix, we see how it is structured:
 
 One last step before we build the model. We have all our predictors in this matrix (the features), but we still need the rating -- the thing we're trying to predict! I don't know of an elegant way to do this, so we'll have to rely on some base R code instead of beautiful tidyverse functions.
 
-```{r}
+```{r add-ratings-to-feature-matrix}
 # Get vector of movie id, which are row names of our matrix
 ids <- as.integer(rownames(feature_matrix))
 
@@ -202,7 +202,7 @@ We can *finally* build our LASSO model, which we'll do using the `glmnet` packag
 
 After building our model, we're going to select version that has the lowest mean-squared error and get it into a nice format using the `broom` package's `tidy` function.
 
-```{r}
+```{r lasso-model}
 set.seed(24601)
 
 cv_lasso_model <- cv.glmnet(feature_matrix, # Predictors (features)
@@ -220,7 +220,7 @@ Our model has a whopping `r comma(nrow(cv_lasso_model_tidy) - 1)` predictors! **
 
 If we join the `cv_lasso_model_tidy` dataset to our `by_feature` dataset, we can get predicted values for each movie. Let's see how *Sorority Slaugherhouse* does.
 
-```{r}
+```{r sorority-slaughterhouse-lasso, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 sorority <- by_feature %>%
   filter(title == "Sorority Slaughterhouse") %>%
   left_join(cv_lasso_model_tidy, by = c("feature" = "term")) %>%
@@ -244,7 +244,7 @@ sorority %>%
 
 Amazing. Most features didn't have any effect on the predicted rating, which means they didn't make it into the LASSO model. But a few features had a big negative impact on the predicted rating. I guess movies in English, directed by David DeCoteau, with Eric Roberts in the cast haven't done so great in the past. How does our prediction stack up?
 
-```{r}
+```{r predict-sorority-slaugherhouse-rating}
 base_score <- cv_lasso_model_tidy %>%
   filter(term == "(Intercept)") %>%
   pull(estimate)
@@ -267,7 +267,7 @@ Let's look at our model in general. I want to know which of the `r comma(nrow(cv
 
 (Note: We're going to use the `glue` package, to dynamically give the number of movies and base score in our chosen LASSO model. This isn't strictly necessary -- we could look it up and hardcode it into our labels -- but it's a cool trick and makes for a slightly more reproduceable analysis. For a quick look at what `glue` does, check out Sharla Gelfand's example [here](https://twitter.com/sharlagelfand/status/1230973074306215937).)
 
-```{r}
+```{r top-lasso-features, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 cv_lasso_model_tidy %>%
   filter(term != "(Intercept)") %>%
   group_by(direction = ifelse(estimate > 0, "Positive", "Negative")) %>%
@@ -292,7 +292,8 @@ If Rob Hawk is the "best" director (according to our model) what movie should I 
 ```{r}
 by_feature %>%
   filter(feature == "Director: Rob Hawk")
-```
+```  
+\  
 
 *Take 2: The Audition* it is!  
 \  

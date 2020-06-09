@@ -15,7 +15,7 @@ In this post, I analyze the [Pizza Party](https://github.com/rfordatascience/tid
 
 First, let's load the `tidyverse`, change our default `ggplot2` theme, and load the data. (I named the dataframe **pizza_barstool_raw** because I'll probably add some cleaning steps and I like to have the original data on hand.)
 
-```{r, echo = TRUE, results = 'hide', message = FALSE, warning = FALSE}
+```{r setup-and-import, message = FALSE, warning = FALSE}
 library(tidyverse)
 
 theme_set(theme_light())
@@ -28,7 +28,7 @@ pizza_barstool_raw <- readr::read_csv("https://raw.githubusercontent.com/rfordat
 
 Let's take a look!
 
-```{r}
+```{r data-inspection}
 pizza_barstool_raw %>%
   glimpse()
 ```
@@ -58,7 +58,7 @@ Now that we have our research question, let's clean the data. We will:
 3. Ditch location data -- it doesn't help answer our question.
 4. Rename variables that start with `review_stats_`. They're cumbersome.
 
-```{r}
+```{r clean-data}
 pizza_barstool <- pizza_barstool_raw %>%
   filter(city %in% c("New York", # New York is coded two different ways
                      "New York City",
@@ -84,7 +84,7 @@ pizza_barstool <- pizza_barstool_raw %>%
 
 Two more cleaning steps. First, this data is in a **wide** format. I want it to be in a [**tidy**](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html) format, which is easier to work with. We can do this using `gather` and `spread`. After that, we we'll filter out data that isn't useful to us -- restaurants without zero reviews and the aggregated reviewer "all" (we want the reviewer type to stay unaggregated).
 
-```{r}
+```{r tidy-data}
 pizza_barstool_tidy <- pizza_barstool %>%
   gather("category", "value", provider_rating:dave_reviews) %>%
   separate(category, into = c("reviewer", "measure"), sep = "_") %>%
@@ -96,7 +96,7 @@ pizza_barstool_tidy <- pizza_barstool %>%
 
 We're looking at ratings, which is a continuous variable, so let's look at the distribution of average scores for each type of reviewer using histograms.
 
-```{r}
+```{r rating-histograms, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 pizza_barstool_tidy %>%
   ggplot(aes(rating)) +
   geom_histogram(binwidth = 1) +  # binwidth = 1 to get clean breaks in histogram
@@ -107,7 +107,7 @@ pizza_barstool_tidy %>%
 
 Most reviews are in the 7-8 range, except for **provider**, which has a lot of 3s and 4s and none over 5. I suspect **provider** ratings are on a 5-point scale.
 
-```{r}
+```{r rating-counts}
 pizza_barstool_tidy %>%
   filter(reviewer == "provider") %>%
   count(rating)
@@ -116,7 +116,7 @@ pizza_barstool_tidy %>%
 
 Yep. Let's double the provider scores so they are on the same scale as the other reviewers. We will lose some nuance, since people may score differently when presented with a 5-point scale compared to a 10-point scale, but I'm comfortable making the that trade-off to get all the scores on the same scale.
 
-```{r}
+```{r rescale-ratings}
 pizza_barstool_tidy <- pizza_barstool_tidy %>%
   filter(reviews > 0) %>%
   mutate(rating = if_else(reviewer == "provider", rating * 2, rating))
@@ -128,7 +128,7 @@ pizza_barstool_tidy <- pizza_barstool_tidy %>%
 
 We want to know, **What's the best (and worst) pizza in New York, for each price level?** One way to answer that is to determine a typical score for restaurants overall, then calculate which restaurants are farthest away from that typical score. I'm going to use the median as the typical score, since it is less susceptible to extreme values. (For example, some restaurants have a rating of zero and I prefer that those ratings not drag down the typical score too much.)
 
-```{r}
+```{r best-worst-new-york}
 new_york_pizza <- pizza_barstool_tidy %>%
   mutate(overall_median_rating = median(rating)) %>%
   group_by(pizzeria_id, pizzeria_name, overall_median_rating, price_level) %>%
@@ -152,7 +152,7 @@ Great! The data is in the right format to graph. Let's do a couple clean-up step
 4. Fiddle with some chart elements, like legend, gridlines, and text size.
 5. Add titles and annotations.
 
-```{r}
+```{r best-worst-small-multiples, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 library(tidytext) # Needed for reorder_within and scale_x_reordered functions
 
 new_york_extremes %>%

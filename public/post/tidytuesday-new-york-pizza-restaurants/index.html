@@ -350,7 +350,7 @@ pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com
   geom_histogram(binwidth = 1) +  # binwidth = 1 to get clean breaks in histogram
   facet_wrap(~ reviewer) +
   labs(title = &quot;How did different reviewers score restaurants?&quot;)</code></pre>
-<p><img src="/post/2019-09-30-tidytuesday-new-york-pizza-restaurants_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<p><img src="/post/2019-09-30-tidytuesday-new-york-pizza-restaurants_files/figure-html/rating-histograms-1.png" width="768" style="display: block; margin: auto;" />
  </p>
 <p>Most reviews are in the 7-8 range, except for <strong>provider</strong>, which has a lot of 3s and 4s and none over 5. I suspect <strong>provider</strong> ratings are on a 5-point scale.</p>
 <pre class="r"><code>pizza_barstool_tidy %&gt;%
@@ -381,9 +381,9 @@ pizza_barstool_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com
   group_by(pizzeria_id, pizzeria_name, overall_median_rating, price_level) %&gt;%
   summarise(avg_rating = weighted.mean(rating, reviews)) %&gt;%
   ungroup() %&gt;%
-  mutate(diff_from_median = avg_rating - overall_median_rating)
-
-new_york_extremes &lt;- new_york_pizza %&gt;%
+  mutate(diff_from_median = avg_rating - overall_median_rating)</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;pizzeria_id&#39;, &#39;pizzeria_name&#39;, &#39;overall_median_rating&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>new_york_extremes &lt;- new_york_pizza %&gt;%
   mutate(direction = ifelse(diff_from_median &gt; 0, &quot;higher&quot;, &quot;lower&quot;)) %&gt;%
   group_by(price_level, direction) %&gt;%
   top_n(5, wt = abs(diff_from_median)) %&gt;%  # Take top 5 best and worst
@@ -427,7 +427,7 @@ new_york_extremes %&gt;%
        x = &quot;&quot;,
        y = &quot;Score difference from the median&quot;,
        caption = &quot;Based on Barstool, community, critic, and Dave reviews&quot;)</code></pre>
-<p><img src="/post/2019-09-30-tidytuesday-new-york-pizza-restaurants_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+<p><img src="/post/2019-09-30-tidytuesday-new-york-pizza-restaurants_files/figure-html/best-worst-small-multiples-1.png" width="768" style="display: block; margin: auto;" />
  </p>
 <p>I’m definitely going to <strong>L’industrie Pizzeria</strong> next time I’m in New York!<br />
  </p>

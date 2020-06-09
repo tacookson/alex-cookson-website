@@ -25,7 +25,7 @@ First, we'll load the `tidyverse` and, because I cheated and looked ahead, a few
 
 In addition to visitor figures, TidyTuesday has state population data. This will be useful if we want to look at the relationship between park visitors and population (spoiler: we do exactly this).
 
-```{r, echo = TRUE, results = 'hide', message = FALSE, warning = FALSE}
+```{r setup-and-import, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(lubridate)
 library(ggrepel)
@@ -43,7 +43,7 @@ state_pop <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/
 
 Let's take a look.
 
-```{r}
+```{r inspect-visits}
 park_visits_raw %>%
   glimpse()
 ```
@@ -58,7 +58,7 @@ We have four types of data:
 
 Okay, what about `state_pop`?
 
-```{r}
+```{r inspect-populations}
 state_pop %>%
   glimpse()
 ```
@@ -79,7 +79,7 @@ I'm going to do four cleaning steps:
 3. `year` has a row for "Totals", so we will get rid of that. (If we need totals, we can calculate it ourselves.)
 4. Create long (more readable) version `region` codes to full names, based on [National Park Service (NPS) Regional Boundaries](https://www.arcgis.com/home/webmap/viewer.html?webmap=b12acc26ea42417eb38bb951f078961e).
 
-```{r}
+```{r clean-data}
 park_visits <- park_visits_raw %>%
   # 1. Ditch GIS fields and metadata artefact
   select(-number_of_records, -gnis_id, -geometry, -metadata) %>%
@@ -103,7 +103,7 @@ park_visits <- park_visits_raw %>%
 
 We've got cleaner, more workable data now. But there is still an issue I'd like to address. There is a region code that wasn't in the NPS legend: NT
 
-```{r}
+```{r investigate-nt-region}
 park_visits %>%
   filter(region == "NT") %>%
   distinct(unit_name, unit_type, region)
@@ -113,7 +113,7 @@ Blue Ridge Parkway. According to [Blue Ridge's Wikipedia page](https://en.wikipe
 
 This discovery makes me question whether to include any parkways in our analysis. When I think of visiting national parks, I think of people getting out of their cars, going into visitors' centres, and hiking trails. Are there any other parkways in our data?
 
-```{r}
+```{r investigate-parkway-park-type}
 park_visits %>%
   filter(str_detect(unit_type, "Parkway")) %>%
   distinct(unit_name, unit_type, region)
@@ -127,7 +127,7 @@ Yes, three more:
 
 I'm going to exclude these because, even though they are administered by the NPS, "visiting" a parkway doesn't fit with how I think of visiting a national park. (You can make the argument that I'm wrong to exclude them or that I should exclude *more* than just parkways based on my logic. I'm doing a quick exploration, so I'm comfortable making this decision based my assumption. But if I were analyzing this dataset in detail, I would do more research before making a decision to exclude data.)
 
-```{r}
+```{r filter-out-parkways}
 park_visits <- park_visits %>%
   filter(!str_detect(unit_type, "Parkway"))
 ```  
@@ -140,7 +140,7 @@ park_visits <- park_visits %>%
 
 Our question is, **How popular have national parks been over time?** Let's start with total visitors. But before we, do, we need to talk about US population. According to our `state_pop` dataset, the population was 82 million in 1904 (the earliest year we have park visit data) and 321 million in 2015 (the latest year we have population data).
 
-```{r}
+```{r 1904-vs-2015-population, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 state_pop %>%
   filter(year == 1904 | year == 2015) %>%
   group_by(year) %>%
@@ -158,7 +158,7 @@ state_pop %>%
 
 I'm interested in the *popularity* of national parks, not just their raw visitor numbers, so it wouldn't be fair to compare 1904 visits to 2015 visits. There were way more people in 2015 to do the visiting! So I'm going to scale visitors by US population (e.g., "X visits per 1,000 US population"). Scaling this way doesn't account for non-US visitors, but it should be approximate enough to account for the fact that fewer people were walking around in 1904 than 2015.
 
-```{r}
+```{r total-visits, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 total_visits <- state_pop %>%
   group_by(year) %>%
   summarise(total_population = sum(pop, na.rm = TRUE)) %>%
@@ -194,7 +194,7 @@ Visits in the early 20th century were low (real low!), with a notable dip during
 
 How does this time trend look when broken down by region? I'm going to do something similar to what we did for total visits, with one difference -- **aggregate visitors per thousand into five-year bins**. Graphing annually gives spiky, noisy lines. I'm more interested in the overall trend, so I'm going to sacrifice detail and accuracy to get a graph that's easier to read.
 
-```{r}
+```{r visits-by-region, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 visits_by_region <- state_pop %>%
   group_by(year) %>%
   summarise(total_population = sum(pop, na.rm = TRUE)) %>%

@@ -22,7 +22,7 @@ We'll keep things simple. We're going to map two things: **tree locations** and 
 
 We'll start by loading the `tidyverse` and the `sf` package, which we'll use to work with *shapefiles*, a common format for geospatial data. If the term shapefile is new to you, don't worry -- we'll cover what it is and how to use it.
 
-```{r, warning = FALSE, message = FALSE}
+```{r setup-and-import, warning = FALSE, message = FALSE}
 library(tidyverse)
 library(sf)
 
@@ -37,7 +37,7 @@ sf_trees_raw <- readr::read_csv('https://raw.githubusercontent.com/rfordatascien
 
 Let's take a look!
 
-```{r}
+```{r data-inspection}
 sf_trees_raw %>%
   glimpse()
 ```
@@ -51,7 +51,7 @@ Our [unit of observation](https://en.wikipedia.org/wiki/Unit_of_observation) is 
 
 We have longitude and latitude, which essentially correspond to the x-axis and y-axis, so let's start with a scatter plot of tree locations. We have almost 200,000 observations, so we'll use a period `.` as a custom shape to avoid overplotting.
 
-```{r, warning = FALSE}
+```{r rough-mapping, warning = FALSE, fig.align = 'center', fig.width = 8}
 sf_trees_raw %>%
   ggplot(aes(longitude, latitude)) +
   geom_point(shape = ".")
@@ -61,7 +61,7 @@ That's not very informative. There is a *tiny* cluster of dots in the lower-righ
 
 Let's create boxplots of latitude and longitude. I want to see both graphs side-by-side, so we'll use the `gather()` function to get them from having their own column to their own row. Then, we can use `facet_wrap()` to give each one its own graph.
 
-```{r, warning = FALSE}
+```{r lat-long-boxplots, warning = FALSE, fig.align = 'center', fig.width = 8, fig.asp = 0.618}
 sf_trees_raw %>%
   select(tree_id, latitude, longitude) %>%
   gather(measure, value, -tree_id) %>%
@@ -76,7 +76,7 @@ sf_trees_raw %>%
 
 There are three clusters of outliers: one at a latitude around 47, another at a latitude of about 37.5, and another a longitude of -138. I'm pretty confident we'll end up excluding this data, but if you're not already very familiar with the data, you should always check it before excluding it. Let's do that. We're going to look at the observations that have a longitude in that outlier group, take a single random observation, and set up a new variable that we can plug into Google Maps.
 
-```{r}
+```{r sample-outlier-lat-long}
 sf_trees_raw %>%
   filter(longitude < -130) %>%
   sample_n(1) %>%
@@ -97,7 +97,7 @@ So let's start cleaning. As a reminder, our goal is to map tree locations. Since
 3. Separate scientific name from common name. These are combined in the `species` field, separated by a double-colon `::`.
 4. When there is no common name, but there *is* a scientific name, use the scientific name as the common name.
 
-```{r}
+```{r clean-data}
 sf_trees <- sf_trees_raw %>%
   # 1. Remove outliers
   filter(longitude > -130,
@@ -117,7 +117,7 @@ sf_trees <- sf_trees_raw %>%
 
 Let's see what kind of map we can get with what we have. We'll plot the locations of the most common tree (other than `NA`): the London plane.
 
-```{r}
+```{r trees-no-roads-1, fig.align = 'center', fig.width = 8}
 sf_trees %>%
   filter(common_name == "Sycamore: London Plane") %>%
   ggplot(aes(longitude, latitude)) +
@@ -128,7 +128,7 @@ sf_trees %>%
 
 We get an okay sense of London planes from this map -- it looks like they line streets or boulevards, especially in the city's northeast. Having contextual clues, like land/water or roads, would make it easier to interpret. The downside of *not* having these clues becomes more obvious when looking at Ornamental Pear trees, which aren't as common and tend not to line streets the same way London planes do.
 
-```{r}
+```{r trees-no-roads-2, fig.align = 'center', fig.width = 8}
 sf_trees %>%
   filter(common_name == "Ornamental Pear") %>%
   ggplot(aes(longitude, latitude)) +
@@ -166,7 +166,7 @@ We need to download the zip file with all the files we need, then read the shape
 2. Create a second temporary directory and unzip the file to that location
 3. Use `read_sf()` to import the individual file we need
 
-```{r}
+```{r download-san-francisco-shapefile}
 # 1. Create a temp directory and download ZIP file from US Census
 temp_download <- tempfile()
 download.file("https://www2.census.gov/geo/tiger/TIGER2017//ROADS/tl_2017_06075_roads.zip", temp_download)
@@ -182,7 +182,7 @@ sf_roads <- read_sf(paste0(file.path(temp_unzip), "/tl_2017_06075_roads.shp"))
 
 Now that we have our roads shapefile, let's see what it looks like. `ggplot2` has a `geom_sf()` function for exactly these types of files. Unlike most other geometries, we don't need to specify the `aes()` layer.
 
-```{r}
+```{r roads-only-map, fig.align = 'center', fig.width = 8}
 ggplot(sf_roads) +
   geom_sf()
 ```
@@ -202,7 +202,7 @@ To combine our our tree location data and roads shapefile, we need to feed them 
 3. We use `coord_sf()` to get the right aspect ratio
 4. We use `theme_void()` as a "blank" theme, which is useful for maps
 
-```{r}
+```{r all-trees, fig.align = 'center', fig.width = 8}
 sf_trees %>%
   ggplot() +
   geom_sf(data = sf_roads, col = "grey90", alpha = 0.7) +
@@ -217,7 +217,7 @@ sf_trees %>%
   theme_void()
 ```
 
-We can see some clearn patterns, like a concentration of trees along a road in the western part of the city. This turns out to be Sunset Boulevard!  
+We can see some clear patterns, like a concentration of trees along a road in the western part of the city. This turns out to be Sunset Boulevard!  
 \  
 
 
@@ -225,7 +225,7 @@ We can see some clearn patterns, like a concentration of trees along a road in t
 
 I'm personally more curious about where different species of trees are, so let's create small multiples of the nine most common tree species. We'll do a few extra steps, like renaming one particularly long species name and adjusting the margins of some of the plot elements.
 
-```{r}
+```{r tree-small-multiples, fig.align = 'center', fig.width = 8}
 sf_trees %>%
   mutate(
     common_name = ifelse(

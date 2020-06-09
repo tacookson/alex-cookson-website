@@ -290,7 +290,7 @@ sorority %&gt;%
        subtitle = &quot;Based on a LASSO regression model&quot;,
        x = &quot;&quot;,
        y = &quot;Effect on predicted rating&quot;)</code></pre>
-<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/sorority-slaughterhouse-lasso-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Amazing. Most features didn’t have any effect on the predicted rating, which means they didn’t make it into the LASSO model. But a few features had a big negative impact on the predicted rating. I guess movies in English, directed by David DeCoteau, with Eric Roberts in the cast haven’t done so great in the past. How does our prediction stack up?</p>
 <pre class="r"><code>base_score &lt;- cv_lasso_model_tidy %&gt;%
   filter(term == &quot;(Intercept)&quot;) %&gt;%
@@ -302,6 +302,7 @@ by_feature %&gt;%
   group_by(title, rating) %&gt;%
   summarise(predicted_rating = base_score + sum(estimate)) %&gt;%
   ungroup()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;title&#39; (override with `.groups` argument)</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   title                   rating predicted_rating
 ##   &lt;chr&gt;                    &lt;dbl&gt;            &lt;dbl&gt;
@@ -328,7 +329,7 @@ by_feature %&gt;%
        subtitle = glue(&quot;Lasso fit model of ratings for {comma(length(ids))} horror movies&quot;),
        x = &quot;&quot;,
        y = glue(&#39;Effect on predicted rating (starting with a base rating of {cv_lasso_model_tidy %&gt;% filter(term == &quot;(Intercept)&quot;) %&gt;% pull(estimate) %&gt;% round(1)})&#39;))</code></pre>
-<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/top-lasso-features-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Based on what our model is telling us, director has the biggest impact on predicted rating. Almost every top feature, both positive and negative, is who directed it. I guess there’s something to be said for a director with (or without) a vision.</p>
 <p>If Rob Hawk is the “best” director (according to our model) what movie should I watch this Halloween?</p>
 <pre class="r"><code>by_feature %&gt;%
@@ -337,6 +338,7 @@ by_feature %&gt;%
 ##      id title                rating feature           
 ##   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             
 ## 1   671 Take 2: The Audition    9.3 Director: Rob Hawk</code></pre>
+<p> </p>
 <p><em>Take 2: The Audition</em> it is!<br />
  </p>
 </div>
