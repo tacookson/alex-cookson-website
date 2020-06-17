@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.64.0" />
+
+  <title>Rating children&#39;s books with empirical Bayes estimation &middot; Alex Cookson</title>
+
+    
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+ 
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/dracula.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/alexcookson" rel="me" target="_blank"><i class="fab fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://linkedin.com/in/alexcookson" rel="me" target="_blank"><i class="fab fa-linkedin"></i></i>LinkedIn</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/tacookson" rel="me" target="_blank"><i class="fab fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small>&copy; 2020. All rights reserved.</small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Rating children&#39;s books with empirical Bayes estimation</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>Jun 17, 2020</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="/tags/empirical-bayes-estimation">empirical Bayes estimation</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/dirichlet-multinomial-distribution">Dirichlet-multinomial distribution</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/animated-graphs">animated graphs</a>
+    
+  </div>
+  
+  
+
+</div>
+
+    
+
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<p> </p>
+<p>Ratings sites – like Rotten Tomatoes and IMDb for movies or Goodreads for books – are annoying. They each seem to have their norms where the same rating means different things on different sites. A rating of 60% on one site might be good, but 6/10 (equivalent to 60%) on another site might be terrible. So you need to do some extra mental work to set your expectations based on the specific site you’re on.</p>
+<p>Ratings also often don’t use their full scale. If you’ve bought something from Amazon, you’re probably familiar with this. The theoretical lower bound of ratings might be 1 star, but in reality, ratings rarely go below 3 stars. So you need to do a <em>second bit</em> of extra mental work to re-calculate the fact that “3 stars” <em>really</em> means “1 star”.</p>
+<p>Sometimes you do see an item with an unambiguously good or bad score, like 5 stars or 1 star…but then you see that only one or two people have rated it. So you need to do a <em>third bit</em> of extra mental work to take number of ratings into account, since an item with 4.8 stars and 10,000 ratings is probably better than an item with 5.0 stars and 2 ratings.</p>
+<p>The article <a href="https://www.freecodecamp.org/news/whose-reviews-should-you-trust-imdb-rotten-tomatoes-metacritic-or-fandango-7d1010c6cf19/"><em>Whose ratings should you trust?</em></a> by Alex Olteanu does a good job of capturing my frustration. I <em>want</em> ratings to look like this:</p>
+<p align="center">
+<img src="/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/movie-reviews-normal.png" title="fig:" width="600" alt="shapefile example" />
+</p>
+<p> </p>
+<p>But ratings <em>actually</em> look like this:</p>
+<p align="center">
+<img src="/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/movie-reviews-actual.png" title="fig:" width="600" alt="shapefile example" />
+</p>
+<p> </p>
+<p>In a two-post series, I will “fix” some of these ratings problems:</p>
+<ol style="list-style-type: decimal">
+<li>Address items with few ratings by using <strong>empirical Bayes estimation</strong> to estimate more reasonable ratings (this post)</li>
+<li><strong>Normalizing and re-scaling</strong> ratings so that they are easier to interpret (and look more like that nice, symmetrical normal curve pictured above) (<em>coming soon</em>)<br />
+ </li>
+</ol>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>First, we’ll load our packages and import the data. We’re going to use a dataset set of about 9,000 children’s books that have been rated from 1-5 stars. In terms of packages, in addition to the <code>tidyverse</code>, we’ll use:</p>
+<ul>
+<li><code>scales</code> for nicely-formatted numbers and useful re-scaling functions</li>
+<li><code>stats4</code> and <code>broom</code> to help us with our empirical Bayes estimation</li>
+<li><code>extrafont</code> and <code>fishualize</code> to make our graphs look nice</li>
+<li><code>gganimate</code> to visualize what exactly empirical Bayes estimation does to the ratings</li>
+<li><code>knitr</code> and <code>kableExtra</code> to get nicely-formatted tables for this post (not necessary if you’re just doing this in RStudio)</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(scales)
+library(stats4)
+library(broom)
+library(extrafont)
+library(fishualize)
+library(gganimate)
+library(knitr)
+library(kableExtra)
+
+theme_set(theme_light())
+
+books &lt;- read_tsv(&quot;https://raw.githubusercontent.com/tacookson/data/master/childrens-book-ratings/childrens-books.txt&quot;) %&gt;%
+  # Select only fields we&#39;re using (isbn, title, author, and ratings)
+  select(isbn:author, rating:rating_1)</code></pre>
+<p> </p>
+<p>We’re not doing any exploratory data analysis or feature engineering, so our data is simple: the book’s ISBN and title, the author, the raw overall rating, and the number of people who rated the book at each star level:</p>
+<pre class="r"><code># For reproducability
+set.seed(7829)
+
+books %&gt;%
+  sample_n(6) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+isbn
+</th>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+author
+</th>
+<th style="text-align:right;">
+rating
+</th>
+<th style="text-align:right;">
+rating_count
+</th>
+<th style="text-align:right;">
+rating_5
+</th>
+<th style="text-align:right;">
+rating_4
+</th>
+<th style="text-align:right;">
+rating_3
+</th>
+<th style="text-align:right;">
+rating_2
+</th>
+<th style="text-align:right;">
+rating_1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1495328481
+</td>
+<td style="text-align:left;">
+Calamity Chick: Moves away !
+</td>
+<td style="text-align:left;">
+Olivier Toppin
+</td>
+<td style="text-align:right;">
+4.80
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+194130267X
+</td>
+<td style="text-align:left;">
+Sheets
+</td>
+<td style="text-align:left;">
+Brenna Thummler
+</td>
+<td style="text-align:right;">
+3.76
+</td>
+<td style="text-align:right;">
+10933
+</td>
+<td style="text-align:right;">
+2997
+</td>
+<td style="text-align:right;">
+3743
+</td>
+<td style="text-align:right;">
+3097
+</td>
+<td style="text-align:right;">
+763
+</td>
+<td style="text-align:right;">
+333
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0689829531
+</td>
+<td style="text-align:left;">
+Olivia
+</td>
+<td style="text-align:left;">
+Ian Falconer
+</td>
+<td style="text-align:right;">
+4.14
+</td>
+<td style="text-align:right;">
+58456
+</td>
+<td style="text-align:right;">
+28141
+</td>
+<td style="text-align:right;">
+15848
+</td>
+<td style="text-align:right;">
+10290
+</td>
+<td style="text-align:right;">
+2713
+</td>
+<td style="text-align:right;">
+1464
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+152374720X
+</td>
+<td style="text-align:left;">
+Reflecto Girl: Book 1
+</td>
+<td style="text-align:left;">
+Violet Plum (Author)
+</td>
+<td style="text-align:right;">
+5.00
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1423116712
+</td>
+<td style="text-align:left;">
+Mustache!
+</td>
+<td style="text-align:left;">
+Mac Barnett, Kevin Cornell
+</td>
+<td style="text-align:right;">
+3.70
+</td>
+<td style="text-align:right;">
+851
+</td>
+<td style="text-align:right;">
+205
+</td>
+<td style="text-align:right;">
+286
+</td>
+<td style="text-align:right;">
+277
+</td>
+<td style="text-align:right;">
+68
+</td>
+<td style="text-align:right;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0553524267
+</td>
+<td style="text-align:left;">
+What Pet Should I Get?
+</td>
+<td style="text-align:left;">
+Dr. Seuss
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+4246
+</td>
+<td style="text-align:right;">
+1358
+</td>
+<td style="text-align:right;">
+1275
+</td>
+<td style="text-align:right;">
+1146
+</td>
+<td style="text-align:right;">
+353
+</td>
+<td style="text-align:right;">
+114
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+</div>
+<div id="what-do-the-raw-ratings-look-like" class="section level2">
+<h2>What do the raw ratings look like?</h2>
+<p>Before fixing the ratings, we need to know what we’re fixing! Let’s look at the distribution of ratings:</p>
+<pre class="r"><code>books %&gt;%
+  filter(!is.na(rating)) %&gt;%
+  ggplot(aes(rating)) +
+  geom_histogram(binwidth = 0.1, fill = &quot;#461220&quot;, alpha = 0.8) +
+  expand_limits(x = 1) +
+  labs(title = &quot;Empirically, an \&quot;average\&quot; book has a 4-star rating&quot;,
+       subtitle = &quot;And almost no books have fewer than 3 stars&quot;,
+       x = &quot;Star rating&quot;,
+       y = &quot;Number of books&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        plot.title = element_text(size = 18),
+        axis.text = element_text(size = 16))</code></pre>
+<p><img src="/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/figure-html/original-rating-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>This is fairly typical of crowd-sourced ratings:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Spike at the maximum</strong> 5-star rating</li>
+<li><strong>Ratings concentrated</strong> in one part of the range, with almost all books between 3 and 5 stars</li>
+<li><strong>High average rating</strong>, with a mean of 4.06 stars</li>
+</ol>
+<p>I find that all three issues come up in rating systems like this, but let’s focus on point 1 for now. What are these amazing 5-star books? Let’s look at one:</p>
+<pre class="r"><code># For reproducability
+set.seed(1867)
+
+# There are many 5-star books, so we will use sample_n() to get just one
+books %&gt;%
+  select(title, author, rating:rating_1) %&gt;%
+  filter(rating == 5) %&gt;%
+  sample_n(1) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+author
+</th>
+<th style="text-align:right;">
+rating
+</th>
+<th style="text-align:right;">
+rating_count
+</th>
+<th style="text-align:right;">
+rating_5
+</th>
+<th style="text-align:right;">
+rating_4
+</th>
+<th style="text-align:right;">
+rating_3
+</th>
+<th style="text-align:right;">
+rating_2
+</th>
+<th style="text-align:right;">
+rating_1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Pickles and Cake
+</td>
+<td style="text-align:left;">
+Laurie S. Johnson (Author)
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p>One of them is a book called <a href="https://books.google.ca/books/about/Pickles_and_Cake.html?id=t4UljwEACAAJ&amp;redir_esc=y"><em>Pickles and Cake</em></a>. This could be an amazing book – three people liked it enough to give it a 5-star rating. But how does it stack up against books where more people have weighed in? Let’s compare it to the top-rated book with at least, say, 10,000 ratings:</p>
+<pre class="r"><code>books %&gt;%
+  select(title, author, rating:rating_1) %&gt;%
+  filter(rating_count &gt;= 1e4) %&gt;%
+  top_n(1, wt = rating) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+author
+</th>
+<th style="text-align:right;">
+rating
+</th>
+<th style="text-align:right;">
+rating_count
+</th>
+<th style="text-align:right;">
+rating_5
+</th>
+<th style="text-align:right;">
+rating_4
+</th>
+<th style="text-align:right;">
+rating_3
+</th>
+<th style="text-align:right;">
+rating_2
+</th>
+<th style="text-align:right;">
+rating_1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+It’s a Magical World
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:right;">
+4.76
+</td>
+<td style="text-align:right;">
+25572
+</td>
+<td style="text-align:right;">
+20580
+</td>
+<td style="text-align:right;">
+3979
+</td>
+<td style="text-align:right;">
+905
+</td>
+<td style="text-align:right;">
+63
+</td>
+<td style="text-align:right;">
+45
+</td>
+</tr>
+</tbody>
+</table>
+<p>That book is <a href="https://calvinandhobbes.fandom.com/wiki/It%27s_a_Magical_World"><em>It’s a Magical World</em></a> by the peerless Bill Watterson, creator of Calvin &amp; Hobbes, with a rating of 4.76. It has a lower rating than <em>Pickles and Cake</em>’s 5 stars, so is <em>Pickles and Cake</em> the better book? Possibly, but I’m hesitant to make that conclusion. <em>It’s a Magical World</em> has more than 20,000 5-star ratings, while <em>Pickles and Cake</em> has three. I’d want to see more people to weigh in on <em>Pickles and Cake</em> before making that call.</p>
+<p>So we need more data to make a judgement about <em>Pickles and Cake</em>. But we don’t <em>have</em> more data. This illustrates a variation of the <a href="https://blog.dataiku.com/tackling-the-cold-start-problem"><em>cold start problem</em></a>, a common issue when building recommendation engines: a new book will have few or no ratings, so we can’t decide whether it’s good, bad, or average.</p>
+<p>We could wait for more ratings to roll in, but this approach has two issues. First, we’d need to set a threshold for how many ratings is “enough”, which is kind of arbitrary. Second, by setting a threshold, we would be ignoring useful data that we have about a book until it reaches that threshold. Say we decide that books need 100 ratings before we trust the star rating. If a book had 99 ratings, we’d say to ourselves, “Welp, no idea what to think about this one!” But we have more information on a book with 99 ratings than a book with 10 ratings. Or a book with 0 ratings.</p>
+<p>Fortunately, statistics can help us. <strong>We can initially assume a book is average until we get enough data to suggest otherwise.</strong> There are two important pieces to that sentence:</p>
+<ol style="list-style-type: decimal">
+<li><em>We can initially assume a book is average…</em>: This initial assumption is a <strong>Bayesian prior</strong>, which is what we believe before we have any data. If I learned of a new book and knew literally nothing about it, I wouldn’t assume it’s amazing or terrible. I’d assume it’s average until I learned more about it. (For a fun introduction to the topic, check out Will Kurt’s excellent blog post <a href="https://www.countbayesie.com/blog/2015/2/18/hans-solo-and-bayesian-priors"><em>Han Solo and Bayesian Priors</em></a>.)</li>
+<li><em>…until we get enough data to suggest otherwise</em>: The initial assumption is just that – an <em>initial</em> assumption. As more people rate a book, we’ll start to trust those ratings more than our assumption. As a book gets more and more ratings, our initial assumption will have less influence on what we think a book’s true rating is.</li>
+</ol>
+<p>This entire approach is called <strong>shrinkage</strong>, which David Robinson defines very well in <a href="http://varianceexplained.org/r/empirical-bayes-book/"><em>Introduction to Empirical Bayes</em></a>:</p>
+<blockquote>
+<p>[Shrinkage is] the process of moving all our estimates towards the average. How much it moves these estimates depends on how much evidence we have: if we have very little evidence [like three ratings for <em>Pickles and Cake</em>] we move it a lot, if we have a lot of evidence [like 20,000 ratings for <em>It’s a Magical World</em>] we move it only a little. That’s shrinkage in a nutshell: <em>Extraordinary outliers require extraordinary evidence</em>.</p>
+</blockquote>
+<p> </p>
+</div>
+<div id="determining-the-bayesian-prior" class="section level2">
+<h2>Determining the Bayesian prior</h2>
+<p>(Note: It will help if you know about the beta and binomial distributions, since what we are about to do is an extension of those ideas. If you’re not familiar, you’ll probably still get the gist, but might find some background research useful. Will Kurt’s blog post <a href="https://www.countbayesie.com/blog/2015/3/17/interrogating-probability-distributions"><em>Working with Probability Distributions</em></a> and David Robinson’s blog post <a href="http://varianceexplained.org/statistics/beta_distribution_and_baseball/"><em>Understanding the beta distribution (using baseball statistics)</em></a> are great primers.)<br />
+ </p>
+<div id="distribution-of-star-ratings" class="section level3">
+<h3>Distribution of star ratings</h3>
+<p>We already looked at the distribution of the <em>overall</em> rating, but to determine our prior, we’ll need to understand the distribution of ratings for <em>each star level</em>. Specifically, we’re going to look at the percent of a book’s ratings that are at each level.</p>
+<p><strong>Why is that important?</strong> It turns out that the distribution of ratings at each star level fits well with the <a href="https://en.wikipedia.org/wiki/Dirichlet_distribution">Dirichlet distribution</a>, which describes the range of possible probabilities for multiple outcomes. In our case, these outcomes are 1-star rating, 2-star rating, etc.</p>
+<p>If you’re familiar with the beta distribution, the Dirichlet is conceptually similar, except that the Dirichlet can apply to more than two outcomes, whereas the beta distribution applies <em>only</em> to situations with two outcomes. (In fact, the Dirichlet is just the more-than-two-outcomes generalization of the beta distribution. A two-outcome Dirichlet <em>is</em> a beta distribution.)</p>
+<p>Again, <strong>why is this important?</strong> If we look at books with enough ratings that their overall rating has “settled”, fitting a Dirichlet distribution will give us a sense of what a good estimate of the percent of a book’s ratings at each star level will be. Visualizing it will help. These are the distributions for books with at least 500 ratings:</p>
+<pre class="r"><code>rating_pct &lt;- books %&gt;%
+  filter(rating_count &gt; 0) %&gt;%
+  mutate_at(vars(rating_5:rating_1), ~ . / rating_count) %&gt;%
+  # Filter for books with at least 500 reviews
+  filter(rating_count &gt; 500) %&gt;%
+  pivot_longer(cols = rating_5:rating_1,
+               names_to = &quot;rating_level&quot;,
+               values_to = &quot;pct_of_ratings&quot;) %&gt;%
+  # Use Unicode symbol for full star (U+2605) and empty star (U+2606) as facet titles
+  mutate(rating_num = parse_number(rating_level),
+         stars_label = paste0(strrep(&quot;\U2605&quot;, rating_num),
+                              strrep(&quot;\u2606&quot;, 5 - rating_num)),
+         stars_label = fct_reorder(stars_label, rating_num)) %&gt;%
+  select(-rating_num)
+
+rating_pct %&gt;%
+  ggplot(aes(pct_of_ratings)) +
+  geom_histogram(binwidth = 0.025, fill = &quot;#461220&quot;, alpha = 0.8) +
+  facet_wrap(~ stars_label, nrow = 1) +
+  scale_x_continuous(labels = label_percent()) +
+  labs(title = &quot;Proportions of ratings at each star level have their own distributions&quot;,
+       x = &quot;% of ratings&quot;,
+       y = &quot;Number of books&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        axis.text = element_text(size = 9),
+        strip.text = element_text(size = 20, colour = &quot;black&quot;),
+        strip.background = element_blank(),
+        panel.grid.minor = element_blank())</code></pre>
+<p><img src="/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/figure-html/rating-pct-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The percent of a book’s ratings at each star level tends toward certain values. For example, 2-star ratings are likely to constitute 0-15% of ratings, while 4-star ratings are likely to constitute 20-50% of ratings. So, if a book got a new rating, we could look at these distributions to get an idea of how likely it is that this new rating will be for 1, 2, 3, 4, or 5 stars (1%, 4%, 20%, 30%, and 45%, respectively).</p>
+<p>We can now use this data to fit a <strong>Dirichlet-multinomial</strong> distribution that will give us an actual <strong>number</strong> of ratings at each star level instead of a probability for one rating. This, in effect, gives us “starter ratings” to use for each book. So we will treat a book with zero real ratings as having, say, 40 or 50 ratings that start the book off with an average overall rating. This is how our shrinkage works: a book’s first few ratings will be tempered by our “starter ratings”, but as a book gets more real ratings, those real ratings will have more of an effect on the overall rating.<br />
+ </p>
+</div>
+<div id="maximum-likelihood-estimation-of-the-dirichlet-multinomial-distribution" class="section level3">
+<h3>Maximum likelihood estimation of the Dirichlet-Multinomial distribution</h3>
+<p>We use <strong>maximum likelihood estimation</strong> (MLE) to estimate the parameters of the Dirichlet-Multinomial distribution using the <a href="http://bioconductor.org/packages/release/bioc/html/DirichletMultinomial.html"><code>DirichletMultinomial</code></a> package. (For an introduction to maximum likelihood estimation, I recommend this <a href="https://www.youtube.com/watch?v=Dn6b9fCIUpM">StatQuest video</a> by Josh Starmer.)</p>
+<pre class="r"><code># Create a matrix to feed our MLE of Dirichlet-Multinomial
+rating_matrix &lt;- books %&gt;%
+  filter(rating_count &gt; 500) %&gt;%
+  select(rating_5:rating_1) %&gt;%
+  as.matrix()
+
+# Fit a Dirichlet Multinomial distribution
+# Input is a matrix of rating counts at each star level
+dm_fit &lt;- DirichletMultinomial::dmn(rating_matrix, 1)
+
+# Write a function to tidy DMN object (which dm_fit is)
+# (broom&#39;s tidy() doesn&#39;t work on DMN objects)
+# Function from http://varianceexplained.org/r/empirical-bayes-book/
+tidy.DMN &lt;- function(x, ...) {
+  ret &lt;- as.data.frame(x@fit)
+  as_tibble(fix_data_frame(ret, c(&quot;conf.low&quot;, &quot;estimate&quot;, &quot;conf.high&quot;)))
+}
+
+# Tidy the DMN fit
+tidy_dm &lt;- tidy(dm_fit)
+
+# Get parameters into a useful format
+par &lt;- tidy_dm %&gt;%
+  separate(term, into = c(&quot;constant&quot;, &quot;rating_stars&quot;), sep = &quot;_&quot;, convert = TRUE) %&gt;%
+  select(rating_stars,
+         prior_ratings = estimate)
+
+# Calculate total prior ratings and mean (used for graphing)
+par_total &lt;- sum(par$prior_ratings)
+par_mean &lt;- par %&gt;%
+  summarise(prior_rating = sum(rating_stars * prior_ratings) / sum(prior_ratings)) %&gt;%
+  pull(prior_rating)</code></pre>
+<p> </p>
+<p>The result is a fairly simple dataframe with the number of starter ratings each star level gets:</p>
+<pre class="r"><code>par %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+rating_stars
+</th>
+<th style="text-align:right;">
+prior_ratings
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+21.290057
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+16.496105
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+9.838544
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2.399964
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.027657
+</td>
+</tr>
+</tbody>
+</table>
+<p>So a book with zero ratings, using our empirical Bayes estimate, will start with 21.29 5-star ratings, 16.50 4-star ratings, etc. (I know it doesn’t make sense to have fractions of ratings, but we’re not talking about real ratings – we can still calculate an overall rating with fractions.)</p>
+<p>Overall, our prior gives us about <strong>51 “starter ratings”</strong> and an <strong>overall rating of 4.07 stars</strong>. Again, this will change as a book gets real ratings, but we’ll be less likely to find ourselves in a <em>Pickles and Cake</em> situation where a few good ratings skyrockets a book up to a perfect 5-star rating.<br />
+ </p>
+<p>Here’s what the Dirichlet fits from MLE look like (light blue curves) compared to the actual distribution of ratings (red histograms):</p>
+<pre class="r"><code>dirichlet_density &lt;- tidy_dm %&gt;%
+  select(rating_level = term, estimate) %&gt;%
+  crossing(pct_of_ratings = seq(0, 0.8, by = 0.0125)) %&gt;%
+  mutate(density = dbeta(pct_of_ratings, estimate, par_total - estimate)) %&gt;%
+  # Use Unicode symbol for full star (U+2605) and empty star (U+2606) as facet titles
+  mutate(rating_num = parse_number(rating_level),
+         stars_label = paste0(strrep(&quot;\U2605&quot;, rating_num),
+                              strrep(&quot;\U2606&quot;, 5 - rating_num)),
+         stars_label = fct_reorder(stars_label, rating_num)) %&gt;%
+  select(-rating_num)
+
+rating_pct %&gt;%
+  ggplot(aes(pct_of_ratings)) +
+  geom_histogram(aes(y = ..density..), binwidth = 0.025, fill = &quot;#461220&quot;, alpha = 0.8) +
+  geom_area(data = dirichlet_density, aes(y = density), fill = &quot;#778DA9&quot;, alpha = 0.7) +
+  facet_wrap(~ stars_label, nrow = 1) +
+  scale_x_continuous(labels = label_percent()) +
+  labs(title = &quot;Maximum-Likelihood Estimates fit the data fairly well&quot;,
+       subtitle = &quot;Red histogram = Actual distribution | Blue curve = MLE fit&quot;,
+       x = &quot;% of ratings&quot;,
+       y = &quot;Density&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        axis.text = element_text(size = 9),
+        strip.text = element_text(size = 20, colour = &quot;black&quot;),
+        strip.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank())</code></pre>
+<p><img src="/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/figure-html/dirichlet-histograms-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The MLE fit tracks closely to the empirical distribution, so the overall fit is pretty good. One area where the fit isn’t great is the distribution of 5-star ratings: our MLE fit has under-estimated the variance. You can tell this by the MLE blue curve being narrower and taller than the empirical distribution. Even though it’s not perfect, I’m making the call that it’s good enough to use for our shrinkage purposes.<br />
+ </p>
+</div>
+<div id="incorporating-the-prior-into-ratings" class="section level3">
+<h3>Incorporating the prior into ratings</h3>
+<p>We can finally calculate the shrunk ratings. We just need need to add the prior “starter ratings” to each book’s existing real ratings.</p>
+<pre class="r"><code># Calculate empirical Bayes rating using our prior
+books_eb &lt;- books %&gt;%
+  pivot_longer(rating_5:rating_1,
+               names_to = c(&quot;rating_stars&quot;),
+               names_pattern = &quot;rating_(.*)&quot;,
+               names_transform = list(rating_stars = as.integer),
+               values_to = &quot;ratings&quot;) %&gt;%
+  left_join(par, by = &quot;rating_stars&quot;) %&gt;%
+  group_by(isbn, title, author, rating_count) %&gt;%
+  # Calculate original rating from scratch because rating field truncates after two decimal places
+  summarise(rating_calc = sum(rating_stars * ratings) / sum(ratings),
+            rating_eb = sum(rating_stars * (ratings + prior_ratings)) / sum(ratings + prior_ratings)) %&gt;%
+  ungroup()</code></pre>
+<p>And we end up with an adjusted rating for each book (<code>rating_eb</code>). Here are the top 10 books, according to our empirical Bayes estimate:</p>
+<pre class="r"><code>books_eb %&gt;%
+  select(-isbn, -rating_calc) %&gt;%
+  top_n(10, wt = rating_eb) %&gt;%
+  arrange(desc(rating_eb)) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+author
+</th>
+<th style="text-align:right;">
+rating_count
+</th>
+<th style="text-align:right;">
+rating_eb
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+100 Fun Bible Facts: The Exciting way to Learn (100 Bible Facts Book 1)
+</td>
+<td style="text-align:left;">
+Ginger Baum
+</td>
+<td style="text-align:right;">
+478
+</td>
+<td style="text-align:right;">
+4.893236
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jubal’s Field Trip To Heaven: Jubal and Chanan Enter Through the Narrow Gate (Jubal’s Divine Adventures #1)
+</td>
+<td style="text-align:left;">
+Ginger Baum
+</td>
+<td style="text-align:right;">
+382
+</td>
+<td style="text-align:right;">
+4.874187
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+It’s a Magical World
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:right;">
+25572
+</td>
+<td style="text-align:right;">
+4.757816
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+There’s Treasure Everywhere
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:right;">
+19516
+</td>
+<td style="text-align:right;">
+4.747868
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+The Indispensable Calvin and Hobbes
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:right;">
+19235
+</td>
+<td style="text-align:right;">
+4.736054
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+The Authoritative Calvin and Hobbes: A Calvin and Hobbes Treasury
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:right;">
+20598
+</td>
+<td style="text-align:right;">
+4.733524
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Homicidal Psycho Jungle Cat
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:right;">
+17584
+</td>
+<td style="text-align:right;">
+4.720359
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A Day in the Life of Marlon Bundo
+</td>
+<td style="text-align:left;">
+Jill Twiss (Author), E.G. Keller (Illustrator)
+</td>
+<td style="text-align:right;">
+13375
+</td>
+<td style="text-align:right;">
+4.718943
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+The Days Are Just Packed
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:right;">
+22159
+</td>
+<td style="text-align:right;">
+4.693765
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+The Undefeated
+</td>
+<td style="text-align:left;">
+Kwame Alexander, Kadir Nelson (Illustrator)
+</td>
+<td style="text-align:right;">
+2988
+</td>
+<td style="text-align:right;">
+4.687572
+</td>
+</tr>
+</tbody>
+</table>
+<p>Immediately, I’m more confident in these ratings than the originals, which had a bunch of books with 2 or 3 ratings that just happened to be 5 stars. Visually, this is what shrinkage did:</p>
+<pre class="r"><code># Format data properly for animation
+books_shrunk &lt;- books_eb %&gt;%
+  filter(rating_count &gt; 0) %&gt;%
+  select(isbn:author, rating_count, rating_calc, rating_eb) %&gt;%
+  pivot_longer(rating_calc:rating_eb, names_to = &quot;rating_type&quot;, values_to = &quot;rating&quot;) %&gt;%
+  mutate(rating_type = ifelse(rating_type == &quot;rating_calc&quot;, &quot;Original Rating&quot;, &quot;Empirical Bayes Rating&quot;))
+
+# Create base plot
+p &lt;- books_shrunk %&gt;%
+  filter(rating_count &lt;= 200) %&gt;%
+  ggplot(aes(rating_count, rating, col = rating_count)) +
+  geom_point(alpha = 0.4, size = 0.5) +
+  geom_hline(yintercept = par_mean,
+             lty = 2,
+             size = 0.8,
+             col = &quot;red&quot;) +
+  scale_colour_fish(option = &quot;Ostracion_whitleyi&quot;) +
+  scale_x_continuous(breaks = seq(0, 200, by = 25)) +
+  labs(subtitle = paste0(&quot;Dashed line shows Bayesian prior for a book with 0 ratings&quot;,
+                        &quot;\n&quot;,
+                        &quot;(Only books with 200 ratings or less shown)&quot;),
+       x = &quot;Number of ratings&quot;,
+       y = &quot;Rating&quot;) +
+  theme(legend.position = &quot;none&quot;,
+        text = element_text(family = &quot;Bahnschrift&quot;, size = 6),
+        plot.title = element_text(size = 8),
+        panel.grid.minor.x = element_blank())
+
+# Set animation parameters
+anim &lt;- p +
+  transition_states(rating_type,
+                    transition_length = 1.5,
+                    state_length = 1.5) +
+  ease_aes(&quot;cubic-in-out&quot;) +
+  ggtitle(&quot;{closest_state}&quot;)
+
+# Create animation
+anim</code></pre>
+<p><img src="/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/figure-html/animation-shrinkage-1.gif" style="display: block; margin: auto;" /></p>
+<p>The books with few ratings – less than 25 – were impact a lot by incorporating a Bayesian prior. But as we get more rating, the prior has less of an effect. You can imagine a book that has 1,000 or 10,000 ratings: our prior will barely move its score.</p>
+<p>Before wrapping up, we should note that still need to be careful when interpreting adjusted ratings. They are still susceptible to other forms of statistical bias. For example, the top-rated book is <em>100 Fun Bible Facts</em> by Ginger Baum. I’m sure it’s an excellent book, but not everyone might consider it excellent. People who took the time to read and rate this book are likely pre-disposed to enjoy books with biblical themes, making this a likely illustration of <a href="https://en.wikipedia.org/wiki/Self-selection_bias">self-selection bias</a>.<br />
+ </p>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>We’ve successfully used empirical Bayes estimation to get more reasonable ratings for our 9,000 children’s books! If you’d like to see the full dataset of adjusted ratings, feel free to download it <a href="https://raw.githubusercontent.com/tacookson/data/master/childrens-book-ratings/childrens-books-empirical-bayes-ratings.txt">here</a> (file is a .txt file with tab-separated values formatting). And, if you’re keen to see more adjustments of these ratings, stay tuned for a post where I will <strong>normalize and re-scale</strong> the ratings.</p>
+</div>
+
+  
+  <h4><i class="fa-share-alt" aria-hidden="true"></i>&nbsp;Share!</h4>
+<ul class="share-buttons">
+	<li><a href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2frating-childrens-books-with-empirical-bayes-estimation%2f" target="_blank" title="Share on Facebook"><i class="fa-facebook" aria-hidden="true"></i><span class="sr-only">Share on Facebook</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="https://twitter.com/intent/tweet?source=%2fpost%2frating-childrens-books-with-empirical-bayes-estimation%2f&via=HorribleGeek" target="_blank" title="Tweet"><i class="fa-twitter" aria-hidden="true"></i><span class="sr-only">Tweet</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="https://plus.google.com/share?url=%2fpost%2frating-childrens-books-with-empirical-bayes-estimation%2f" target="_blank" title="Share on Google+"><i class="fa-google-plus" aria-hidden="true"></i><span class="sr-only">Share on Google+</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://www.tumblr.com/share?v=3&u=%2fpost%2frating-childrens-books-with-empirical-bayes-estimation%2f" target="_blank" title="Post to Tumblr"><i class="fa-tumblr" aria-hidden="true"></i><span class="sr-only">Post to Tumblr</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://pinterest.com/pin/create/button/?url=%2fpost%2frating-childrens-books-with-empirical-bayes-estimation%2f" target="_blank" title="Pin it"><i class="fa-pinterest-p" aria-hidden="true"></i><span class="sr-only">Pin it</span></a>
+	</li>&nbsp;&nbsp;&nbsp;
+	<li><a href="http://www.reddit.com/submit?url=%2fpost%2frating-childrens-books-with-empirical-bayes-estimation%2f" target="_blank" title="Submit to Reddit"><i class="fa-reddit-alien" aria-hidden="true"></i><span class="sr-only">Submit to Reddit</span></a>
+	</li>
+</ul>
+
+
+<style>
+	ul.share-buttons{
+	  list-style: none;
+	  padding: 0;
+	}
+
+	ul.share-buttons li{
+	  display: inline;
+	}
+
+	ul.share-buttons .sr-only{
+	  position: absolute;
+	  clip: rect(1px 1px 1px 1px);
+	  clip: rect(1px, 1px, 1px, 1px);
+	  padding: 0;
+	  border: 0;
+	  height: 1px;
+	  width: 1px;
+	  overflow: hidden;
+	}
+</style>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="/post/what-can-we-learn-from-diplomatic-gifts/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="/post/what-can-we-learn-from-diplomatic-gifts/">What can we learn from a country&#39;s diplomatic gifts?</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="/js/ui.js"></script>
+<script src="/js/menus.js"></script>
+
+
+<script>
+  
+  if (window.location.hostname != "localhost") {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-158906030-1', 'auto');
+    ga('send', 'pageview');
+  }
+</script>
+
+
+
+
+
+<script src="/js/math-code.js"></script>
+  <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+</body>
+</html>
+
