@@ -633,6 +633,7 @@ Laurie S. Johnson (Author)
 </tr>
 </tbody>
 </table>
+<p> </p>
 <p>One of them is a book called <a href="https://books.google.ca/books/about/Pickles_and_Cake.html?id=t4UljwEACAAJ&amp;redir_esc=y"><em>Pickles and Cake</em></a>. This could be an amazing book – three people liked it enough to give it a 5-star rating. But how does it stack up against books where more people have weighed in? Let’s compare it to the top-rated book with at least, say, 10,000 ratings:</p>
 <pre class="r"><code>books %&gt;%
   select(title, author, rating:rating_1) %&gt;%
@@ -704,6 +705,7 @@ Bill Watterson
 </tr>
 </tbody>
 </table>
+<p> </p>
 <p>That book is <a href="https://calvinandhobbes.fandom.com/wiki/It%27s_a_Magical_World"><em>It’s a Magical World</em></a> by the peerless Bill Watterson, creator of Calvin &amp; Hobbes, with a rating of 4.76. It has a lower rating than <em>Pickles and Cake</em>’s 5 stars, so is <em>Pickles and Cake</em> the better book? Possibly, but I’m hesitant to make that conclusion. <em>It’s a Magical World</em> has more than 20,000 5-star ratings, while <em>Pickles and Cake</em> has three. I’d want to see more people to weigh in on <em>Pickles and Cake</em> before making that call.</p>
 <p>So we need more data to make a judgement about <em>Pickles and Cake</em>. But we don’t <em>have</em> more data. This illustrates a variation of the <a href="https://blog.dataiku.com/tackling-the-cold-start-problem"><em>cold start problem</em></a>, a common issue when building recommendation engines: a new book will have few or no ratings, so we can’t decide whether it’s good, bad, or average.</p>
 <p>We could wait for more ratings to roll in, but this approach has two issues. First, we’d need to set a threshold for how many ratings is “enough”, which is kind of arbitrary. Second, by setting a threshold, we would be ignoring useful data that we have about a book until it reaches that threshold. Say we decide that books need 100 ratings before we trust the star rating. If a book had 99 ratings, we’d say to ourselves, “Welp, no idea what to think about this one!” But we have more information on a book with 99 ratings than a book with 10 ratings. Or a book with 0 ratings.</p>

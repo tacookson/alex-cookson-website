@@ -123,7 +123,9 @@ books %>%
   sample_n(1) %>%
   kable(format = "html") %>%
   kable_styling()
-```
+```  
+\  
+
 
 One of them is a book called [*Pickles and Cake*](https://books.google.ca/books/about/Pickles_and_Cake.html?id=t4UljwEACAAJ&redir_esc=y). This could be an amazing book -- three people liked it enough to give it a 5-star rating. But how does it stack up against books where more people have weighed in? Let's compare it to the top-rated book with at least, say, 10,000 ratings:
 
@@ -134,7 +136,9 @@ books %>%
   top_n(1, wt = rating) %>%
   kable(format = "html") %>%
   kable_styling()
-```
+```  
+\  
+
 
 That book is [*It's a Magical World*](https://calvinandhobbes.fandom.com/wiki/It%27s_a_Magical_World) by the peerless Bill Watterson, creator of Calvin & Hobbes, with a rating of 4.76. It has a lower rating than *Pickles and Cake*'s 5 stars, so is *Pickles and Cake* the better book? Possibly, but I'm hesitant to make that conclusion. *It's a Magical World* has more than 20,000 5-star ratings, while *Pickles and Cake* has three. I'd want to see more people to weigh in on *Pickles and Cake* before making that call.
 
