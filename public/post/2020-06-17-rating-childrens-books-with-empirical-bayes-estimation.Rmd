@@ -214,7 +214,7 @@ We can now use this data to fit a **Dirichlet-multinomial** distribution that wi
 
 ### Maximum likelihood estimation of the Dirichlet-Multinomial distribution
 
-We use **maximum likelihood estimation** (MLE) to estimate the parameters of the Dirichlet-Multinomial distribution using the [`DirichletMultinomial`](http://bioconductor.org/packages/release/bioc/html/DirichletMultinomial.html) package. (For an introduction to maximum likelihood estimation, I recommend this [StatQuest video](https://www.youtube.com/watch?v=Dn6b9fCIUpM) by Josh Starmer.)
+We use **maximum likelihood estimation** (MLE) to estimate the parameters of the Dirichlet-Multinomial distribution using the [`DirichletMultinomial`](http://bioconductor.org/packages/release/bioc/html/DirichletMultinomial.html) package. (For an introduction to maximum likelihood estimation, I recommend this [StatQuest video](https://www.youtube.com/watch?v=Dn6b9fCIUpM) by Josh Starmer. I'll also note that I'm indebted to David Robinson's already-mentioned book [*Introduction to Empirical Bayes*](http://varianceexplained.org/r/empirical-bayes-book/), which I relied on heavily for the following chunk of code.)
 
 ```{r dirichlet-multinomial, message = FALSE}
 # Create a matrix to feed our MLE of Dirichlet-Multinomial

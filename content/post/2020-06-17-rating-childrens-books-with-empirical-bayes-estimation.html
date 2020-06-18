@@ -527,7 +527,7 @@ rating_pct %&gt;%
 </div>
 <div id="maximum-likelihood-estimation-of-the-dirichlet-multinomial-distribution" class="section level3">
 <h3>Maximum likelihood estimation of the Dirichlet-Multinomial distribution</h3>
-<p>We use <strong>maximum likelihood estimation</strong> (MLE) to estimate the parameters of the Dirichlet-Multinomial distribution using the <a href="http://bioconductor.org/packages/release/bioc/html/DirichletMultinomial.html"><code>DirichletMultinomial</code></a> package. (For an introduction to maximum likelihood estimation, I recommend this <a href="https://www.youtube.com/watch?v=Dn6b9fCIUpM">StatQuest video</a> by Josh Starmer.)</p>
+<p>We use <strong>maximum likelihood estimation</strong> (MLE) to estimate the parameters of the Dirichlet-Multinomial distribution using the <a href="http://bioconductor.org/packages/release/bioc/html/DirichletMultinomial.html"><code>DirichletMultinomial</code></a> package. (For an introduction to maximum likelihood estimation, I recommend this <a href="https://www.youtube.com/watch?v=Dn6b9fCIUpM">StatQuest video</a> by Josh Starmer. I’ll also note that I’m indebted to David Robinson’s already-mentioned book <a href="http://varianceexplained.org/r/empirical-bayes-book/"><em>Introduction to Empirical Bayes</em></a>, which I relied on heavily for the following chunk of code.)</p>
 <pre class="r"><code># Create a matrix to feed our MLE of Dirichlet-Multinomial
 rating_matrix &lt;- books %&gt;%
   filter(rating_count &gt; 500) %&gt;%
