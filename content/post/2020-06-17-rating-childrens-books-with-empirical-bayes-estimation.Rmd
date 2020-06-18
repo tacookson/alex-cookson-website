@@ -386,4 +386,4 @@ Before wrapping up, we should note that still need to be careful when interpreti
 
 ## Conclusion
 
-We've successfully used empirical Bayes estimation to get more reasonable ratings for our 9,000 children's books! If you'd like to see the full dataset of adjusted ratings, feel free to download it [here](https://raw.githubusercontent.com/tacookson/data/master/childrens-book-ratings/childrens-books-empirical-bayes-ratings.txt) (file is a .txt file with tab-separated values formatting). And, if you're keen to see more adjustments of these ratings, stay tuned for a post where I will **normalize and re-scale** the ratings.
+We've successfully used empirical Bayes estimation to get more reasonable ratings for our 9,000 children's books! If you'd like to see the full dataset of adjusted ratings, feel free to download it [here](https://github.com/tacookson/data/tree/master/childrens-book-ratings). And, if you're keen to see more adjustments of these ratings, stay tuned for a post where I will **normalize and re-scale** the ratings.
