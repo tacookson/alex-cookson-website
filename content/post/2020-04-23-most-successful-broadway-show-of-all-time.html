@@ -216,6 +216,7 @@ top_10_grossing &lt;- cumulative_grosses_by_year %&gt;%
   summarise(show_total_gross = sum(weekly_gross)) %&gt;%
   top_n(10, wt = show_total_gross) %&gt;%
   pull(show_and_run)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <p>Now that we have a vector of out top 10 shows, we can graph only those shows and add a bunch of code to fiddle with direct labels of the lines and text size.<br />
  </p>
 <pre class="r"><code>cumulative_grosses_by_year %&gt;%
@@ -275,13 +276,13 @@ top_10_grossing &lt;- cumulative_grosses_by_year %&gt;%
             avg_top_ticket_price = mean(top_ticket_price, na.rm = TRUE)) %&gt;%
   mutate(annotated = (show == &quot;The Producers&quot; &amp; between(year, 2002, 2003)) | show == &quot;Manilow on Broadway&quot;) %&gt;%
   ungroup() %&gt;%
-  mutate(is_hamilton = show == &quot;Hamilton&quot;)
-
-avg_top_tickets_by_year &lt;- top_tickets %&gt;%
+  mutate(is_hamilton = show == &quot;Hamilton&quot;)</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;year&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>avg_top_tickets_by_year &lt;- top_tickets %&gt;%
   group_by(year) %&gt;%
-  summarise(avg_top_ticket_price = mean(avg_top_ticket_price))
-  
-top_tickets %&gt;%
+  summarise(avg_top_ticket_price = mean(avg_top_ticket_price))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>top_tickets %&gt;%
   ggplot(aes(year, avg_top_ticket_price)) +
   geom_jitter(data = top_tickets %&gt;% filter(!annotated, !is_hamilton),
               position = position_jitter(width = 0.2),
@@ -334,13 +335,13 @@ top_tickets %&gt;%
   group_by(year, show) %&gt;%
   summarise(avg_ticket_price = mean(avg_ticket_price, na.rm = TRUE),
             performances = sum(performances)) %&gt;%
-  ungroup()
-
-avg_tickets_by_year &lt;- avg_tickets %&gt;%
+  ungroup()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;year&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>avg_tickets_by_year &lt;- avg_tickets %&gt;%
   group_by(year) %&gt;%
-  summarise(avg_ticket_price = weighted.mean(avg_ticket_price, w = performances))
-  
-avg_tickets %&gt;%
+  summarise(avg_ticket_price = weighted.mean(avg_ticket_price, w = performances))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>avg_tickets %&gt;%
   ggplot(aes(year, avg_ticket_price)) +
   geom_jitter(position = position_jitter(width = 0.2),
               shape = 19,
