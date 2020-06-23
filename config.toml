@@ -12,13 +12,14 @@ paginate = 10
   topic = "topics"
 
 [params]
+  custom_css = ["css/alexcookson.css"]
   # Shown in the home page
   subtitle = ""
   brand = "Alex Cookson"
   googleAnalytics = "UA-158906030-1"
   # disqus = ""
   # CSS name for highlight.js
-  highlightjs = "dracula"
+  highlightjs = "railscasts"
   highlightjs_extra_languages = ["r"]
   dateFormat = "Jan 2, 2006"
 
