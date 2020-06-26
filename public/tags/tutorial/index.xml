@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>TidyTuesday on Alex Cookson</title>
-    <link>/tags/tidytuesday/</link>
-    <description>Recent content in TidyTuesday on Alex Cookson</description>
+    <title>tutorial on Alex Cookson</title>
+    <link>/tags/tutorial/</link>
+    <description>Recent content in tutorial on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Wed, 29 Jan 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/tidytuesday/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/tutorial/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -20,6 +20,17 @@
       <guid>/post/mapping-san-francisco-trees/</guid>
       <description>In this post, I create some basic geographical maps using the San Francisco Trees dataset from TidyTuesday, a project that shares a new dataset each wee to give R users a way to apply and practice their skills.
 Getting started with geographical mapping in R can be daunting because there is a lot of terminology to describe a lot of methods that are specific to mapping. There is a whole discipline – Geographic Information Systems – dedicated to this stuff, so it’s no surprise that it can get complicated fast.</description>
+    </item>
+    
+    <item>
+      <title>Heat mapping the timing of Philadelphia parking tickets</title>
+      <link>/post/tidytuesday-philadelphia-parking-tickets/</link>
+      <pubDate>Thu, 05 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/tidytuesday-philadelphia-parking-tickets/</guid>
+      <description>In this post, I create heat maps using the Philly Parking Tickets dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills.
+Specifically, we’ll cover:
+Cleaning and aggregating the data that will go into our heat mapCreating a basic heat map with ggplot2 defaultsTweaking ggplot2 theme components to get a much prettier heat map</description>
     </item>
     
     <item>

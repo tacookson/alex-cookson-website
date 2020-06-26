@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dirichlet-multinomial distribution on Alex Cookson</title>
+    <link>/tags/dirichlet-multinomial-distribution/</link>
+    <description>Recent content in Dirichlet-multinomial distribution on Alex Cookson</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy; 2020. All rights reserved.</copyright>
+    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/dirichlet-multinomial-distribution/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Rating children&#39;s books with empirical Bayes estimation</title>
+      <link>/post/rating-childrens-books-with-empirical-bayes-estimation/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/rating-childrens-books-with-empirical-bayes-estimation/</guid>
+      <description>Ratings sites – like Rotten Tomatoes and IMDb for movies or Goodreads for books – are annoying. They each seem to have their norms where the same rating means different things on different sites. A rating of 60% on one site might be good, but 6/10 (equivalent to 60%) on another site might be terrible. So you need to do some extra mental work to set your expectations based on the specific site you’re on.</description>
+    </item>
+    
+  </channel>
+</rss>
