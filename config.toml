@@ -1,4 +1,4 @@
-baseurl = "https://alexcookson.com"
+baseurl = "https://alexcookson.com/"
 languageCode = "en-us"
 title = "Alex Cookson"
 theme = "blackburn"
@@ -8,7 +8,7 @@ canonifyurls = true
 paginate = 10
 
 [indexes]
-  tag = "TidyTuesday"
+  tag = "tags"
   topic = "topics"
 
 [params]
