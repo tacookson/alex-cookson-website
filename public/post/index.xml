@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
-    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Normalizing children&#39;s book ratings</title>
+      <link>/post/normalizing-childrens-book-ratings/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/normalizing-childrens-book-ratings/</guid>
+      <description>Note: this is the second part of a two-post series where I “fix” some of the problems with crowd-sourced ratings, like those you find for movies or books. (In this series, I look at children’s books.) In the first part, I incorporated a Bayesian prior into the rating calculation to address books with very few ratings sometimes having extreme scores (like 5 out of 5 stars) that likely don’t reflect their actual quality.</description>
+    </item>
     
     <item>
       <title>Rating children&#39;s books with empirical Bayes estimation</title>

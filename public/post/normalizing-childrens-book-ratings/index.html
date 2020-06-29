@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.64.0" />
+
+  <title>Normalizing children&#39;s book ratings &middot; Alex Cookson</title>
+
+    
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+ 
+  
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/railscasts.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+  
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+
+  
+    
+        <link rel="stylesheet" href="/css/alexcookson.css">
+    
+  
+  
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://twitter.com/alexcookson" rel="me" target="_blank"><i class="fab fa-twitter-square fa-fw"></i>Twitter</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://linkedin.com/in/alexcookson" rel="me" target="_blank"><i class="fab fa-linkedin"></i></i>LinkedIn</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/tacookson" rel="me" target="_blank"><i class="fab fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div>
+  <div class="small-print">
+    <small>&copy; 2020. All rights reserved.</small>
+  </div>
+  <div class="small-print">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>Normalizing children&#39;s book ratings</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>Jun 29, 2020</time>
+  </div>
+
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  <div>
+    <i class="fa fa-tags fa-fw"></i>
+    
+      <a class="post-taxonomy-tag" href="/tags/normalization">normalization</a>&nbsp;&#47;
+    
+      <a class="post-taxonomy-tag" href="/tags/animated-graphs">animated graphs</a>
+    
+  </div>
+  
+  
+
+</div>
+
+    
+
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<p> </p>
+<p><em>Note: this is the second part of a two-post series where I “fix” some of the problems with crowd-sourced ratings, like those you find for movies or books. (In this series, I look at children’s books.) In the <a href="https://www.alexcookson.com/post/rating-childrens-books-with-empirical-bayes-estimation/">first part</a>, I incorporated a Bayesian prior into the rating calculation to address books with very few ratings sometimes having extreme scores (like 5 out of 5 stars) that likely don’t reflect their actual quality.</em><br />
+ </p>
+<p>In part two of this two-part series, we will <strong>normalize and rescale</strong> children’s books ratings to them easier to interpret. To do this, we need to force our empirical distribution into a normal distribution. We will end up with something like this (just replace “movies” with “books” – image is from <a href="https://www.freecodecamp.org/news/whose-reviews-should-you-trust-imdb-rotten-tomatoes-metacritic-or-fandango-7d1010c6cf19/"><em>Whose ratings should you trust?</em></a>):</p>
+<p align="center">
+<img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/movie-reviews-normal.png" width="600" />
+</p>
+<p> </p>
+<p><strong>Why normalize ratings at all?</strong> Normal distributions have some properties that make them easy to interpret. First, the normal distribution has the same mean, median, and mode, three common <a href="https://en.wikipedia.org/wiki/Central_tendency">measures of central tendency</a>. This gives us a strong “typical rating” which we set in the middle of our range: 3 stars. So a perfectly average book will have a rating of exactly 3 stars. Plus, there will be an equal proportion of books above and below 3 stars.</p>
+<p>Second, the normal distribution has nice <a href="https://en.wikipedia.org/wiki/Statistical_dispersion">dispersion</a>: most books will be close to average, but we will have a few extremely bad or extremely good books that are close to 1 or 5 stars, respectively. This fits with the intuition of having extremely good or bad books being fairly rare.<br />
+ </p>
+<p>However, normalization is a judgement call. There are good arguments <em>against</em> normalizing ratings. One argument is that normalization forces ratings into how we <em>think</em> they should be distributed instead of how they actually <em>are</em> distributed. So by normalizing, we’re shifting and tweaking ratings in a way that makes them less accurate.</p>
+<p>Another argument is that the issues with ratings that we outlined in the first post are so common that people have already adjusted their mental models of ratings to take them into account. For example, on a 1-5 star scale, we would already expect an “average” books to be around 4 stars even though the middle of range is technically 3 stars; a 4-star average isn’t misleading because it’s expected. Under this argument, we’re messing with that existing mental model by aligning the average rating with the middle of the scale. We’re actually making ratings <em>harder</em> for people to interpret.<br />
+ </p>
+<p>I think the arguments for normalization are more compelling for the arguments against, so I’m comfortable making the call to do it. Just know that it shouldn’t be an automatic decision – you should consider whether it’s appropriate to the specific problem you want to solve.<br />
+ </p>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>Let’s start putting these concepts into action. We’ll load our packages and import our data. In addition to the <code>tidyverse</code>, we’ll use:</p>
+<ul>
+<li><code>bestNormalize</code> for normalization functions</li>
+<li><code>scales</code> for useful rescaling functions</li>
+<li><code>extrafont</code> to make our graphs look nice</li>
+<li><code>gganimate</code> to visualize what exactly empirical Bayes estimation does to the ratings</li>
+<li><code>knitr</code> and <code>kableExtra</code> to get nicely-formatted tables for this post (not necessary if you’re just doing this in RStudio)</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(bestNormalize)
+library(scales)
+library(extrafont)
+library(gganimate)
+library(knitr)
+library(kableExtra)
+
+theme_set(theme_light())
+
+# Data is the output of part one of this series
+books_eb &lt;- read_tsv(&quot;https://raw.githubusercontent.com/tacookson/data/master/childrens-book-ratings/childrens-books-empirical-bayes-ratings.txt&quot;) %&gt;%
+  select(-rating_count, -rating_calc)</code></pre>
+<p> </p>
+</div>
+<div id="whats-wrong-with-the-original-ratings" class="section level2">
+<h2>What’s wrong with the original ratings?</h2>
+<p>As a reminder, here is what our data looks like. We have some essential information about the book, like ISBN and title, and the empirical Bayes rating we calculated in the first post. (I’m going to call this the “Original” rating because we reference it a lot and it’s a bit cumbersome to write “Empirical Bayes rating” every time.)</p>
+<pre class="r"><code># For reproducability
+set.seed(24601)
+
+books_eb %&gt;%
+  sample_n(4) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+isbn
+</th>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+author
+</th>
+<th style="text-align:right;">
+rating_eb
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0979430224
+</td>
+<td style="text-align:left;">
+Giraffe Sounds?
+</td>
+<td style="text-align:left;">
+Debbie Buttar (Author), Christopher Davis (Illustrator)
+</td>
+<td style="text-align:right;">
+4.097605
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0590437852
+</td>
+<td style="text-align:left;">
+Meet Molly: An American Girl
+</td>
+<td style="text-align:left;">
+Valerie Tripp (Author)
+</td>
+<td style="text-align:right;">
+3.936307
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0385373112
+</td>
+<td style="text-align:left;">
+Earth Space Moon Base
+</td>
+<td style="text-align:left;">
+Ben Joel Price (Author)
+</td>
+<td style="text-align:right;">
+3.303913
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0140549072
+</td>
+<td style="text-align:left;">
+Something Else
+</td>
+<td style="text-align:left;">
+Kathryn Cave
+</td>
+<td style="text-align:right;">
+4.445791
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p>Ratings don’t have extreme values anymore, but the distribution is still tight and uses less than half of the full 1-5 star range. There are literally <em>no</em> books with a rating less than 3 stars, so, in practice, it is a 3-5 star range:</p>
+<pre class="r"><code>books_eb %&gt;%
+  ggplot(aes(rating_eb)) +
+  geom_histogram(binwidth = 0.1, fill = &quot;#461220&quot;, alpha = 0.8) +
+  scale_y_continuous(labels = label_comma()) +
+  expand_limits(x = 1) +
+  labs(title = &quot;Most of the 1-5 star range is unused&quot;,
+       subtitle = &quot;Ratings are concentrated around 4 stars, without much variance&quot;,
+       x = &quot;Original rating&quot;,
+       y = &quot;Number of books&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        plot.title = element_text(size = 18),
+        axis.text = element_text(size = 16))</code></pre>
+<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/eb-rating-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>That’s not very intuitive. If someone told me a book had a 3/5 star rating, I would think, “It sounds like an okay, but not great, book”. Under <em>this</em> distribution, a 3/5 star rating would make that book the <strong>worst one of over 9,000!</strong><br />
+ </p>
+</div>
+<div id="why-cant-we-just-rescale" class="section level2">
+<h2>Why can’t we just rescale?</h2>
+<p>Before we jump into normalization, it’s worth looking at what happens if we <strong>only rescale</strong> to use the full 1-5 scale, without normalizing. After all, our big issue is that we’re not using the full range. Can’t we extend our ratings to fit that range and not worry about messing around with normal distributions?</p>
+<p>Yes, we can.</p>
+<p>Think of rescaling as a two-step process:</p>
+<ol style="list-style-type: decimal">
+<li>“Squeezing” or “stretching” the data to fit our target range (“squeeze” to make the range smaller; “stretch” to make the range larger)</li>
+<li>“Shifting” the data up or down to fit our target minimum and maximum</li>
+</ol>
+<p>Our original ratings have a minimum of 3.05 and a maximum of 4.89, which means a range of 1.84. Our target distribution has a minimum of 1 and a maximum of 5, meaning a range of 4. So rescaling stretches the narrow (original) range to the wide (target) range, then shifts that stretched data so that it has a minimum of 1 and a maximum of 5.</p>
+<p>Fortunately, the <code>scales</code> package’s <code>rescale()</code> function takes care of the heavy lifting for us. (But if you’re curious about the specific calculation, look at this <a href="https://stackoverflow.com/questions/5294955/how-to-scale-down-a-range-of-numbers-with-a-known-min-and-max-value">StackOverflow thread</a>.)</p>
+<pre class="r"><code>scaled &lt;- books_eb %&gt;%
+  # Use the &quot;to&quot; argument to set target min and max (range is implicit)
+  mutate(scaled_eb = rescale(rating_eb, to = c(1, 5)))</code></pre>
+<p> </p>
+<p>We can also visualize the stretching step of rescaling by looking at the <em>mean-centred</em> values of the original vs. the rescaled data. Mean-centred values get rid of the effects of the shifting step, which we won’t go into detail on since it is more straightforward.</p>
+<pre class="r"><code># Get data in format to be animated
+scaled_anim &lt;- scaled %&gt;%
+  select(isbn, rating_eb, scaled_eb) %&gt;%
+  mutate(rating_eb_mean_centred = rating_eb - mean(rating_eb),
+         scaled_eb_mean_centred = scaled_eb - mean(scaled_eb)) %&gt;%
+  pivot_longer(rating_eb_mean_centred:scaled_eb_mean_centred, names_to = &quot;scale&quot;, values_to = &quot;rating&quot;) %&gt;%
+  mutate(scale = ifelse(scale == &quot;rating_eb_mean_centred&quot;, &quot;Original&quot;, &quot;Rescaled&quot;))
+
+# Create base plot
+p_rescaling &lt;- scaled_anim %&gt;%
+  ggplot(aes(rating)) +
+  geom_histogram(binwidth = 0.1, fill = &quot;#778DA9&quot;, alpha = 0.8) +
+  scale_y_continuous(labels = label_comma()) +
+  labs(subtitle = &quot;Rescaling \&quot;stretches\&quot; ratings to fill the wider range&quot;,
+       x = &quot;Mean-centred star rating&quot;,
+       y = &quot;Number of books&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;, size = 6),
+        plot.title = element_text(size = 9),
+        axis.text = element_text(size = 7),
+        panel.grid.minor.y = element_blank())
+
+# Set animation parameters
+anim_rescaling &lt;- p_rescaling +
+  transition_states(scale,
+                    transition_length = 1.5,
+                    state_length = 1.5) +
+  shadow_mark(past = TRUE, future = TRUE, alpha = 0.2) +
+  ggtitle(&quot;{previous_state}&quot;)
+
+# Create animation
+anim_rescaling</code></pre>
+<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/animation-rescaling-1.gif" style="display: block; margin: auto;" />
+ </p>
+<p>And here’s the completely rescaled data:</p>
+<pre class="r"><code># Calculate rescaled mean to add a reference line
+rescaled_mean &lt;- mean(scaled$scaled_eb)
+
+scaled %&gt;%
+  ggplot(aes(scaled_eb)) +
+  geom_histogram(binwidth = 0.1, fill = &quot;#461220&quot;, alpha = 0.8) +
+  geom_vline(xintercept = rescaled_mean, lty = 2, size = 1.5, col = &quot;white&quot;) +
+  expand_limits(x = 1) +
+  annotate(&quot;text&quot;, x = 3.12, y = 60,
+           label = paste0(&quot;Mean rating = &quot;, number(rescaled_mean, accuracy = 0.01)),
+           family = &quot;Bahnschrift&quot;,
+           colour = &quot;white&quot;,
+           size = 4.5,
+           hjust = 1) +
+  labs(title = &quot;Rescaled data is still skewed&quot;,
+       subtitle = &quot;Mean is still not centred at 3 stars&quot;,
+       x = &quot;Rescaled star rating&quot;,
+       y = &quot;Number of books&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;),
+        plot.title = element_text(size = 18),
+        axis.text = element_text(size = 16))</code></pre>
+<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/rescaled-rating-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>It looks pretty good! We’re using the full range, meaning it’s easier to discriminate between good and bad books (according to the ratings, at least). We could easily stop here and be happy with our result, but I’m <em>really</em> keen to have 3 stars be the exact middle of the distribution. On to normalization!<br />
+ </p>
+</div>
+<div id="normalizing-the-ratings" class="section level2">
+<h2>Normalizing the ratings</h2>
+<p>As discussed in the introduction, the normal distribution has strong, centred “typical rating” and symmetrical dispersion. But how do we actually convert the original distribution to a normal distribution?</p>
+<p>With <strong>ordered quantile normalization</strong>, that’s how! It sounds scary, but it’s not too bad. We take our original ratings, put them in order, then rank them from lowest to highest. Then, we create a new set of values that is normally-distributed and has the same number of data points. (In our case, 9,240 book ratings = 9,240 normally-distributed values.) We put <em>them</em> in order then rank them.</p>
+<p>Now we have two sets of ranks: our original ratings and some normally-distributed values. We use rank to match up our original ratings with the normally-distributed values. So the book with the 452nd-highest rating in the original data will match with the 452nd-highest value in the normally-distributed data. Whatever value we matched up to in the normally-distributed values is that book’s new rating. Easy! (But if you like, Josh Starmer explains it more thoroughly in this <a href="https://www.youtube.com/watch?v=ecjN6Xpv6SE">StatQuest video</a>.)</p>
+<p>That’s the concept. Now let’s talk implementation. We are going to use the <code>orderNorm()</code> function from Ryan Peterson’s <a href="https://cran.r-project.org/web/packages/bestNormalize/vignettes/bestNormalize.html#the-ordered-quantile-technique"><code>bestNormalize</code></a> package. Like <code>rescale()</code>, it takes care of the heavy lifting for us. Here’s the plan:</p>
+<ol style="list-style-type: decimal">
+<li>Create an ordered quantile regression model using our original ratings with <code>orderNorm()</code></li>
+<li>Get the normalized values from the model using <code>predict()</code></li>
+<li><code>rescale()</code> those normalized values to our desired range of 1-5 stars (the normalized values from (2) use a standard normal distribution, which is centred at zero)</li>
+<li>Add the normalized, rescaled ratings to our original dataset with <code>bind_cols()</code></li>
+</ol>
+<pre class="r"><code># Use orderNorm() from {bestNormalize} package for ordered quantile normalization
+ordered_quantile_model &lt;- orderNorm(books_eb$rating_eb, warn = FALSE)
+
+# Create tibble with normalized fitted values, then rescale those values to 1-5 range
+normalized &lt;- tibble(rating_norm = predict(ordered_quantile_model)) %&gt;%
+  transmute(scaled_norm = rescale(rating_norm, to = c(1, 5)))
+
+# Add normalized ratings as a field to our data 
+scaled_norm &lt;- bind_cols(scaled, normalized)</code></pre>
+<p>Now we have normalized ratings! They’re pretty close to the <em>rescale-only</em> ratings. But we’ve massaged them just a bit to get them to fit a normal curve:</p>
+<pre class="r"><code># Get data in format to be animated
+scaled_anim &lt;- scaled_norm %&gt;%
+  select(isbn, scaled_eb, scaled_norm) %&gt;%
+  pivot_longer(-isbn, names_to = &quot;scale&quot;, values_to = &quot;rating&quot;) %&gt;%
+  mutate(scale = ifelse(scale == &quot;scaled_eb&quot;, &quot;Rescaled&quot;, &quot;Rescaled + Normalized&quot;))
+
+# Create base plot
+p_normalizing &lt;- scaled_anim %&gt;%
+  ggplot(aes(rating)) +
+  geom_histogram(binwidth = 0.1, fill = &quot;#778DA9&quot;, alpha = 0.8) +
+  labs(subtitle = &quot;Normalization \&quot;squeezes\&quot; ratings to fill out the low end of the distribution&quot;,
+       x = &quot;Scaled star rating&quot;,
+       y = &quot;Number of books&quot;) +
+  theme(text = element_text(family = &quot;Bahnschrift&quot;, size = 6),
+        plot.title = element_text(size = 9),
+        axis.text = element_text(size = 7),
+        panel.grid.minor.y = element_blank())
+
+# Set animation parameters
+anim_normalizing &lt;- p_normalizing +
+  transition_states(scale,
+                    transition_length = 1.5,
+                    state_length = 1.5) +
+  shadow_mark(past = TRUE, future = TRUE, alpha = 0.2) +
+  ggtitle(&quot;{previous_state}&quot;)
+
+# Create animation
+anim_normalizing</code></pre>
+<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/animation-normalizing-1.gif" style="display: block; margin: auto;" />
+ </p>
+<p>And now we reap the benefits of our hard work! Here is a random selection <em>Terrible</em> to <em>Great</em> books according to our normalized ratings:</p>
+<pre class="r"><code># For reproducability
+set.seed(25624)
+
+scaled_norm %&gt;%
+  mutate(quality = case_when(scaled_norm &lt; 1.5 ~ &quot;Terrible&quot;,
+                             scaled_norm &lt; 2 ~ &quot;Bad&quot;,
+                             scaled_norm &lt; 3 ~ &quot;Below Average&quot;,
+                             scaled_norm &lt; 4 ~ &quot;Above Average&quot;,
+                             scaled_norm &lt; 4.5 ~ &quot;Good&quot;,
+                             TRUE ~ &quot;Great&quot;)) %&gt;%
+  group_by(quality) %&gt;%
+  sample_n(1) %&gt;%
+  ungroup() %&gt;%
+  arrange(scaled_norm) %&gt;%
+  transmute(Quality = quality,
+            Book = title,
+            Author = author,
+            Rating = number(scaled_norm, accuracy = 0.01)) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Quality
+</th>
+<th style="text-align:left;">
+Book
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Rating
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Terrible
+</td>
+<td style="text-align:left;">
+Earth Space Moon Base
+</td>
+<td style="text-align:left;">
+Ben Joel Price (Author)
+</td>
+<td style="text-align:left;">
+1.42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bad
+</td>
+<td style="text-align:left;">
+I Will Chomp You!
+</td>
+<td style="text-align:left;">
+Jory John, Bob Shea (Illustrator)
+</td>
+<td style="text-align:left;">
+1.88
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Below Average
+</td>
+<td style="text-align:left;">
+Possum and the Summer Storm
+</td>
+<td style="text-align:left;">
+Anne Hunter (Author)
+</td>
+<td style="text-align:left;">
+2.25
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Above Average
+</td>
+<td style="text-align:left;">
+Ice Cream Kitty
+</td>
+<td style="text-align:left;">
+Nerina DiBenedetto (Author), Martha Houghton (Illustrations)
+</td>
+<td style="text-align:left;">
+3.16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Good
+</td>
+<td style="text-align:left;">
+The Rabbit Listened
+</td>
+<td style="text-align:left;">
+Cori Doerrfeld
+</td>
+<td style="text-align:left;">
+4.23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Great
+</td>
+<td style="text-align:left;">
+Homicidal Psycho Jungle Cat
+</td>
+<td style="text-align:left;">
+Bill Watterson
+</td>
+<td style="text-align:left;">
+4.65
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>In the <a href="https://www.alexcookson.com/post/rating-childrens-books-with-empirical-bayes-estimation/">first post</a> of this series, we incorporated a Bayesian prior into our children’s book ratings. In this post, we normalized the ratings to use the full 1-5 star scale and follow a normal curve This made for a nice distribution of ratings, with values that are easy to interpret.</p>
+<p>If you’d like to explore or download the full dataset of normalized ratings, you can do so <a href="https://github.com/tacookson/data/tree/master/childrens-book-ratings">here</a>.</p>
+<p>In the meantime, why not check out some great children’s books? I hear <em>Homicidal Psycho Jungle Cat</em> is supposed to be pretty good!</p>
+</div>
+
+
+  
+<div class="prev-next-post pure-g">
+  <div class="pure-u-1-24" style="text-align: left;">
+    
+    <a href="/post/rating-childrens-books-with-empirical-bayes-estimation/"><i class="fa fa-chevron-left"></i></a>
+    
+  </div>
+  <div class="pure-u-10-24">
+    
+    <nav class="prev">
+      <a href="/post/rating-childrens-books-with-empirical-bayes-estimation/">Rating children&#39;s books with empirical Bayes estimation</a>
+    </nav>
+    
+  </div>
+  <div class="pure-u-2-24">
+    &nbsp;
+  </div>
+  <div class="pure-u-10-24">
+    
+  </div>
+  <div class="pure-u-1-24" style="text-align: right;">
+    
+  </div>
+</div>
+
+
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="/js/ui.js"></script>
+<script src="/js/menus.js"></script>
+
+
+<script>
+  
+  if (window.location.hostname != "localhost") {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-158906030-1', 'auto');
+    ga('send', 'pageview');
+  }
+</script>
+
+
+
+
+
+<script src="/js/math-code.js"></script>
+  <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+</body>
+</html>
+

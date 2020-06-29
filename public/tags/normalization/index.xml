@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>animated graphs on Alex Cookson</title>
-    <link>/tags/animated-graphs/</link>
-    <description>Recent content in animated graphs on Alex Cookson</description>
+    <title>normalization on Alex Cookson</title>
+    <link>/tags/normalization/</link>
+    <description>Recent content in normalization on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/animated-graphs/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/normalization/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,15 +19,6 @@
       
       <guid>/post/normalizing-childrens-book-ratings/</guid>
       <description>Note: this is the second part of a two-post series where I “fix” some of the problems with crowd-sourced ratings, like those you find for movies or books. (In this series, I look at children’s books.) In the first part, I incorporated a Bayesian prior into the rating calculation to address books with very few ratings sometimes having extreme scores (like 5 out of 5 stars) that likely don’t reflect their actual quality.</description>
-    </item>
-    
-    <item>
-      <title>Rating children&#39;s books with empirical Bayes estimation</title>
-      <link>/post/rating-childrens-books-with-empirical-bayes-estimation/</link>
-      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/post/rating-childrens-books-with-empirical-bayes-estimation/</guid>
-      <description>Ratings sites – like Rotten Tomatoes and IMDb for movies or Goodreads for books – are annoying. They each seem to have their norms where the same rating means different things on different sites. A rating of 60% on one site might be good, but 6/10 (equivalent to 60%) on another site might be terrible. So you need to do some extra mental work to set your expectations based on the specific site you’re on.</description>
     </item>
     
   </channel>
