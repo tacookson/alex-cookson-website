@@ -1,5 +1,5 @@
 ---
-title: Rating children's books with empirical Bayes estimation
+title: Rating children's books with empirical Bayes estimation (1 of 2)
 author: Alex Cookson
 date: '2020-06-17'
 slug: rating-childrens-books-with-empirical-bayes-estimation
@@ -20,7 +20,7 @@ Sometimes you do see an item with an unambiguously good or bad score, like 5 sta
 The article [*Whose ratings should you trust?*](https://www.freecodecamp.org/news/whose-reviews-should-you-trust-imdb-rotten-tomatoes-metacritic-or-fandango-7d1010c6cf19/) by Alex Olteanu does a good job of capturing my frustration. I *want* ratings to look like this:
 
 <p align = "center">
-![shapefile example](/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/movie-reviews-normal.png){width=600px}
+![](/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/movie-reviews-normal.png){width=600px}
 </p>  
 \  
 
@@ -28,7 +28,7 @@ The article [*Whose ratings should you trust?*](https://www.freecodecamp.org/new
 But ratings *actually* look like this:
 
 <p align = "center">
-![shapefile example](/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/movie-reviews-actual.png){width=600px}
+![](/post/2020-06-17-rating-childrens-books-with-empirical-bayes-estimation_files/movie-reviews-actual.png){width=600px}
 </p>  
 \  
 
@@ -36,7 +36,7 @@ But ratings *actually* look like this:
 In a two-post series, I will "fix" some of these ratings problems:
 
 1. Address items with few ratings by using **empirical Bayes estimation** to estimate more reasonable ratings (this post)
-1. **Normalizing and re-scaling** ratings so that they are easier to interpret (and look more like that nice, symmetrical normal curve pictured above) (*coming soon*)  
+1. **Normalizing and rescaling** ratings so that they are easier to interpret (and look more like that nice, symmetrical normal curve pictured above) ([link to post](https://www.alexcookson.com/post/normalizing-childrens-book-ratings/))
 \  
 
 
@@ -386,4 +386,4 @@ Before wrapping up, we should note that still need to be careful when interpreti
 
 ## Conclusion
 
-We've successfully used empirical Bayes estimation to get more reasonable ratings for our 9,000 children's books! If you'd like to see the full dataset of adjusted ratings, feel free to download it [here](https://github.com/tacookson/data/tree/master/childrens-book-ratings). And, if you're keen to see more adjustments of these ratings, stay tuned for a post where I will **normalize and re-scale** the ratings.
+We've successfully used empirical Bayes estimation to get more reasonable ratings for our 9,000 children's books! If you'd like to see the full dataset of adjusted ratings, feel free to download it [here](https://github.com/tacookson/data/tree/master/childrens-book-ratings). And, if you're keen to see more adjustments of these ratings, check out the [second post](https://www.alexcookson.com/post/normalizing-childrens-book-ratings/) of this series, where I **normalize and rescale** the ratings.
