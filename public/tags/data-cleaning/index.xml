@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>data cleaning on Alex Cookson</title>
-    <link>/tags/data-cleaning/</link>
+    <link>https://alexcookson.com/tags/data-cleaning/</link>
     <description>Recent content in data cleaning on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Thu, 23 Apr 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/data-cleaning/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://alexcookson.com/tags/data-cleaning/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>What&#39;s the most successful Broadway show of all time?</title>
-      <link>/post/most-successful-broadway-show-of-all-time/</link>
+      <link>https://alexcookson.com/post/most-successful-broadway-show-of-all-time/</link>
       <pubDate>Thu, 23 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/most-successful-broadway-show-of-all-time/</guid>
+      <guid>https://alexcookson.com/post/most-successful-broadway-show-of-all-time/</guid>
       <description>I love musicals! Who doesn’t?! That feeling when the lits dim at the beginning of the show. The intermission conversation (post-bathroom!) of which songs you enjoyed the most. Spending the rest of the week (maybe month?) humming your favourites to the annoyance of everyone around you.
 What’s that? Les Misérables is obviously the best musical? I know, I know. I mean, Hamilton is good and all that, and it deserves praise, but it’s no Les Mis (don’t @ me).</description>
     </item>

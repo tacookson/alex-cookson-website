@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,11 +52,11 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://alexcookson.com/img/favicon.ico" type="image/x-icon" />
 
   
     
-        <link rel="stylesheet" href="/css/alexcookson.css">
+        <link rel="stylesheet" href="https://alexcookson.com/css/alexcookson.css">
     
   
   
@@ -75,7 +75,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -83,19 +83,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -237,11 +237,11 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/tidy-tuesday">Tidy Tuesday</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/tidy-tuesday">Tidy Tuesday</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/heat-maps">heat maps</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/heat-maps">heat maps</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/tutorial">tutorial</a>
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/tutorial">tutorial</a>
     
   </div>
   
@@ -314,7 +314,7 @@ tickets_raw &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rforda
   scale_y_continuous(labels = comma_format()) +
   coord_flip() +
   theme(legend.position = &quot;none&quot;)</code></pre>
-<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/common-violations-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/common-violations-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>“METER EXPIRED” and “METER EXPIRED CC” are the two most common. Is there any difference between them? Other violations seem the same, too, except for that “CC” at the end. Let’s use a cool trick to look at a couple of them: if we group by <code>violation_desc</code>, we can then use the <code>sample_n</code> function to get random observations from each group. It’s handy for spot-checking or investigating weird values like these.</p>
 <pre class="r"><code># Set seed for reproducible sampling
 set.seed(24601)
@@ -351,7 +351,7 @@ tickets_raw %&gt;%
   ggplot(aes(lon, lat, col = violation_desc)) +
   # Shape of . is small, so it alleviates overplotting
   geom_point(shape = &quot;.&quot;)</code></pre>
-<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/map-violations-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/map-violations-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Bingo! That concentration of blue dots looks like a city centre to me. I think we’ve got a good enough feel for our data to decide what we want to do with it.<br />
  </p>
 </div>
@@ -403,7 +403,7 @@ tickets %&gt;%
   count(day_of_week, issue_hour) %&gt;%
   ggplot(aes(x = day_of_week, y = issue_hour, fill = n)) +
   geom_tile()</code></pre>
-<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/heat-map-basic-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/heat-map-basic-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>It’s pretty cool we can get a heat map with a few lines of code, but it looks rough and incomplete. We’re going to make a bunch of changes to get something more polished:</p>
 <ol style="list-style-type: decimal">
 <li>Add light borders to each node to distinguish them more easily</li>
@@ -457,7 +457,7 @@ tickets_heat_overall %&gt;%
         axis.text.y = element_text(size = 11),
         # 14. Eliminate x-axis ticks
         axis.ticks.x = element_blank())</code></pre>
-<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/heat-map-polished-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/heat-map-polished-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>That looks pretty good! We can make a few immediate observations:</p>
 <ul>
 <li>Most tickets are issued on weekdays during the day</li>
@@ -503,7 +503,7 @@ tickets_heat_top5 %&gt;%
         strip.background = element_blank(),
         axis.text = element_text(size = 7),
         axis.ticks.x = element_blank())</code></pre>
-<p><img src="/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/heat-map-small-multiples-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2019-12-05-tidytuesday-philadelphia-parking-tickets_files/figure-html/heat-map-small-multiples-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>I’ll let you draw your own observations about the differences between violations. (And also identify the pitfalls of drawing conclusions from these heat maps!)<br />
  </p>
 </div>
@@ -517,13 +517,13 @@ tickets_heat_top5 %&gt;%
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="/post/tidytuesday-horror-movies/"><i class="fa fa-chevron-left"></i></a>
+    <a href="https://alexcookson.com/post/tidytuesday-horror-movies/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="/post/tidytuesday-horror-movies/">Predicting horror movie ratings with LASSO regression</a>
+      <a href="https://alexcookson.com/post/tidytuesday-horror-movies/">Predicting horror movie ratings with LASSO regression</a>
     </nav>
     
   </div>
@@ -533,13 +533,13 @@ tickets_heat_top5 %&gt;%
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="/post/mapping-san-francisco-trees/">Mapping San Francisco&#39;s trees</a>
+      <a href="https://alexcookson.com/post/mapping-san-francisco-trees/">Mapping San Francisco&#39;s trees</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="/post/mapping-san-francisco-trees/"><i class="fa fa-chevron-right"></i></a>
+    <a href="https://alexcookson.com/post/mapping-san-francisco-trees/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -552,8 +552,8 @@ tickets_heat_top5 %&gt;%
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
-<script src="/js/menus.js"></script>
+<script src="https://alexcookson.com/js/ui.js"></script>
+<script src="https://alexcookson.com/js/menus.js"></script>
 
 
 <script>
@@ -573,7 +573,7 @@ tickets_heat_top5 %&gt;%
 
 
 
-<script src="/js/math-code.js"></script>
+<script src="https://alexcookson.com/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 

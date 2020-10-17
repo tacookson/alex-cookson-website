@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,11 +52,11 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://alexcookson.com/img/favicon.ico" type="image/x-icon" />
 
   
     
-        <link rel="stylesheet" href="/css/alexcookson.css">
+        <link rel="stylesheet" href="https://alexcookson.com/css/alexcookson.css">
     
   
   
@@ -75,7 +75,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -83,19 +83,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -237,11 +237,11 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/tidytuesday">TidyTuesday</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/tidytuesday">TidyTuesday</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/lasso-regression">LASSO regression</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/lasso-regression">LASSO regression</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/tutorial">tutorial</a>
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/tutorial">tutorial</a>
     
   </div>
   
@@ -532,7 +532,7 @@ sorority %&gt;%
        subtitle = &quot;Based on a LASSO regression model&quot;,
        x = &quot;&quot;,
        y = &quot;Effect on predicted rating&quot;)</code></pre>
-<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/sorority-slaughterhouse-lasso-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/sorority-slaughterhouse-lasso-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Amazing. Most features didn’t have any effect on the predicted rating, which means they didn’t make it into the LASSO model. But a few features had a big negative impact on the predicted rating. I guess movies in English, directed by David DeCoteau, with Eric Roberts in the cast haven’t done so great in the past. How does our prediction stack up?</p>
 <pre class="r"><code>base_score &lt;- cv_lasso_model_tidy %&gt;%
   filter(term == &quot;(Intercept)&quot;) %&gt;%
@@ -571,7 +571,7 @@ by_feature %&gt;%
        subtitle = glue(&quot;Lasso fit model of ratings for {comma(length(ids))} horror movies&quot;),
        x = &quot;&quot;,
        y = glue(&#39;Effect on predicted rating (starting with a base rating of {cv_lasso_model_tidy %&gt;% filter(term == &quot;(Intercept)&quot;) %&gt;% pull(estimate) %&gt;% round(1)})&#39;))</code></pre>
-<p><img src="/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/top-lasso-features-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2019-10-21-tidytuesday-horror-movies_files/figure-html/top-lasso-features-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Based on what our model is telling us, director has the biggest impact on predicted rating. Almost every top feature, both positive and negative, is who directed it. I guess there’s something to be said for a director with (or without) a vision.</p>
 <p>If Rob Hawk is the “best” director (according to our model) what movie should I watch this Halloween?</p>
 <pre class="r"><code>by_feature %&gt;%
@@ -594,13 +594,13 @@ by_feature %&gt;%
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="/post/tidytuesday-powerlifting/"><i class="fa fa-chevron-left"></i></a>
+    <a href="https://alexcookson.com/post/tidytuesday-powerlifting/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="/post/tidytuesday-powerlifting/">How much can professional powerlifters bench press?</a>
+      <a href="https://alexcookson.com/post/tidytuesday-powerlifting/">How much can professional powerlifters bench press?</a>
     </nav>
     
   </div>
@@ -610,13 +610,13 @@ by_feature %&gt;%
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="/post/tidytuesday-philadelphia-parking-tickets/">Heat mapping the timing of Philadelphia parking tickets</a>
+      <a href="https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/">Heat mapping the timing of Philadelphia parking tickets</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="/post/tidytuesday-philadelphia-parking-tickets/"><i class="fa fa-chevron-right"></i></a>
+    <a href="https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -629,8 +629,8 @@ by_feature %&gt;%
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
-<script src="/js/menus.js"></script>
+<script src="https://alexcookson.com/js/ui.js"></script>
+<script src="https://alexcookson.com/js/menus.js"></script>
 
 
 <script>
@@ -650,7 +650,7 @@ by_feature %&gt;%
 
 
 
-<script src="/js/math-code.js"></script>
+<script src="https://alexcookson.com/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 

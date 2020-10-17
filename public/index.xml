@@ -2,60 +2,60 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Alex Cookson</title>
-    <link>/</link>
+    <link>https://alexcookson.com/</link>
     <description>Recent content on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://alexcookson.com/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Normalizing and rescaling children&#39;s book ratings (2 of 2)</title>
-      <link>/post/normalizing-childrens-book-ratings/</link>
+      <link>https://alexcookson.com/post/normalizing-childrens-book-ratings/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/normalizing-childrens-book-ratings/</guid>
+      <guid>https://alexcookson.com/post/normalizing-childrens-book-ratings/</guid>
       <description>Note: this is the second part of a two-post series where I “fix” some of the problems with crowd-sourced ratings, like those you find for movies or books. (In this series, I look at children’s books.) In the first part, I incorporated a Bayesian prior into the rating calculation to address books with very few ratings sometimes having extreme scores (like 5 out of 5 stars) that likely don’t reflect their actual quality.</description>
     </item>
     
     <item>
       <title>Rating children&#39;s books with empirical Bayes estimation (1 of 2)</title>
-      <link>/post/rating-childrens-books-with-empirical-bayes-estimation/</link>
+      <link>https://alexcookson.com/post/rating-childrens-books-with-empirical-bayes-estimation/</link>
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/rating-childrens-books-with-empirical-bayes-estimation/</guid>
+      <guid>https://alexcookson.com/post/rating-childrens-books-with-empirical-bayes-estimation/</guid>
       <description>Ratings sites – like Rotten Tomatoes and IMDb for movies or Goodreads for books – are annoying. They each seem to have their norms where the same rating means different things on different sites. A rating of 60% on one site might be good, but 6/10 (equivalent to 60%) on another site might be terrible. So you need to do some extra mental work to set your expectations based on the specific site you’re on.</description>
     </item>
     
     <item>
       <title>What can we learn from a country&#39;s diplomatic gifts?</title>
-      <link>/post/what-can-we-learn-from-diplomatic-gifts/</link>
+      <link>https://alexcookson.com/post/what-can-we-learn-from-diplomatic-gifts/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/what-can-we-learn-from-diplomatic-gifts/</guid>
+      <guid>https://alexcookson.com/post/what-can-we-learn-from-diplomatic-gifts/</guid>
       <description>Have you ever brought a bottle of wine, flowers, or chocolate babka to a dinner party as a host/hostess gift? Or brought home a souvenir for your parents, partner, or kids after you’ve been travelling – like chocolate from Switzerland or, uh… Brazil nuts from Brazil? Countries do the same thing, kind of.
 Diplomatic gifts are often exchanged when dignitaries travel abroad or receive visitors. They can be lavish, like a $780,000 emerald and diamond jewellery set, given by King Abdullah of Saudi Arabia.</description>
     </item>
     
     <item>
       <title>What&#39;s the most successful Broadway show of all time?</title>
-      <link>/post/most-successful-broadway-show-of-all-time/</link>
+      <link>https://alexcookson.com/post/most-successful-broadway-show-of-all-time/</link>
       <pubDate>Thu, 23 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/most-successful-broadway-show-of-all-time/</guid>
+      <guid>https://alexcookson.com/post/most-successful-broadway-show-of-all-time/</guid>
       <description>I love musicals! Who doesn’t?! That feeling when the lits dim at the beginning of the show. The intermission conversation (post-bathroom!) of which songs you enjoyed the most. Spending the rest of the week (maybe month?) humming your favourites to the annoyance of everyone around you.
 What’s that? Les Misérables is obviously the best musical? I know, I know. I mean, Hamilton is good and all that, and it deserves praise, but it’s no Les Mis (don’t @ me).</description>
     </item>
     
     <item>
       <title>How dangerous is climbing Mount Everest?</title>
-      <link>/post/how-dangerous-is-climbing-mount-everest/</link>
+      <link>https://alexcookson.com/post/how-dangerous-is-climbing-mount-everest/</link>
       <pubDate>Mon, 06 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/how-dangerous-is-climbing-mount-everest/</guid>
+      <guid>https://alexcookson.com/post/how-dangerous-is-climbing-mount-everest/</guid>
       <description>In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including Mount Everest, the tallest mountain in the world.
 This is Part 2 of a two-part series:
 Part 1 looked at Himalayan peaks and their first ascentsPart 2 (this post) looks at Everest expeditions
@@ -64,10 +64,10 @@ This is Part 2 of a two-part series:
     
     <item>
       <title>Analyzing Himalayan peaks and first ascents</title>
-      <link>/post/analyzing-himalayan-peaks-first-ascents/</link>
+      <link>https://alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/</link>
       <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/analyzing-himalayan-peaks-first-ascents/</guid>
+      <guid>https://alexcookson.com/post/analyzing-himalayan-peaks-first-ascents/</guid>
       <description>In this series of posts, we will analyze climbing expeditions to the Himalayas, a mountain range comprising over 50 mountains, including Mount Everest, the tallest mountain in the world.
 This is Part 1 of a two-part series:
 Part 1 (this post) looks at Himalayan peaks and their first ascentsPart 2 looks at how dangerous it is to climb Everest
@@ -76,20 +76,20 @@ This is Part 1 of a two-part series:
     
     <item>
       <title>Mapping San Francisco&#39;s trees</title>
-      <link>/post/mapping-san-francisco-trees/</link>
+      <link>https://alexcookson.com/post/mapping-san-francisco-trees/</link>
       <pubDate>Wed, 29 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/mapping-san-francisco-trees/</guid>
+      <guid>https://alexcookson.com/post/mapping-san-francisco-trees/</guid>
       <description>In this post, I create some basic geographical maps using the San Francisco Trees dataset from TidyTuesday, a project that shares a new dataset each wee to give R users a way to apply and practice their skills.
 Getting started with geographical mapping in R can be daunting because there is a lot of terminology to describe a lot of methods that are specific to mapping. There is a whole discipline – Geographic Information Systems – dedicated to this stuff, so it’s no surprise that it can get complicated fast.</description>
     </item>
     
     <item>
       <title>Heat mapping the timing of Philadelphia parking tickets</title>
-      <link>/post/tidytuesday-philadelphia-parking-tickets/</link>
+      <link>https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/</link>
       <pubDate>Thu, 05 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-philadelphia-parking-tickets/</guid>
+      <guid>https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/</guid>
       <description>In this post, I create heat maps using the Philly Parking Tickets dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills.
 Specifically, we’ll cover:
 Cleaning and aggregating the data that will go into our heat mapCreating a basic heat map with ggplot2 defaultsTweaking ggplot2 theme components to get a much prettier heat map</description>
@@ -97,49 +97,49 @@ Specifically, we’ll cover:
     
     <item>
       <title>Predicting horror movie ratings with LASSO regression</title>
-      <link>/post/tidytuesday-horror-movies/</link>
+      <link>https://alexcookson.com/post/tidytuesday-horror-movies/</link>
       <pubDate>Mon, 21 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-horror-movies/</guid>
+      <guid>https://alexcookson.com/post/tidytuesday-horror-movies/</guid>
       <description>In this post, I look at the Horror movie ratings dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills.
 We’re going to run a LASSO regression, a type of regularization. Regularization is often used when you have lots of predictors (compared to your number of observations) or when your data has multi-collinearity – predictors that are highly correlated with one another.</description>
     </item>
     
     <item>
       <title>How much can professional powerlifters bench press?</title>
-      <link>/post/tidytuesday-powerlifting/</link>
+      <link>https://alexcookson.com/post/tidytuesday-powerlifting/</link>
       <pubDate>Tue, 08 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-powerlifting/</guid>
+      <guid>https://alexcookson.com/post/tidytuesday-powerlifting/</guid>
       <description>In this post, I analyze the Powerlifting dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about the results of powerlifting events that are part of the International Powerlifting Federation. I will be predicting bench press weight with a multiple linear regression model. What’s more, I will be using natural cubic splines to incorporate non-linear trends into our model.</description>
     </item>
     
     <item>
       <title>What are New York&#39;s best and worst pizza restaurants?</title>
-      <link>/post/tidytuesday-new-york-pizza-restaurants/</link>
+      <link>https://alexcookson.com/post/tidytuesday-new-york-pizza-restaurants/</link>
       <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-new-york-pizza-restaurants/</guid>
+      <guid>https://alexcookson.com/post/tidytuesday-new-york-pizza-restaurants/</guid>
       <description>In this post, I analyze the Pizza Party dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about survey ratings of New York pizza restaurants.
 SetupFirst, let’s load the tidyverse, change our default ggplot2 theme, and load the data. (I named the dataframe pizza_barstool_raw because I’ll probably add some cleaning steps and I like to have the original data on hand.</description>
     </item>
     
     <item>
       <title>Finding trends in US national park visits</title>
-      <link>/post/tidytuesday-us-national-parks/</link>
+      <link>https://alexcookson.com/post/tidytuesday-us-national-parks/</link>
       <pubDate>Mon, 16 Sep 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-us-national-parks/</guid>
+      <guid>https://alexcookson.com/post/tidytuesday-us-national-parks/</guid>
       <description>In this post, I analyze the National Park Visits dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about visitor numbers for US National Parks, going way back to 1904, when there were only six national parks.
 I’ve never been to a US national park, but I know about some of the famous ones like Yosemite and Yellowstone.</description>
     </item>
     
     <item>
       <title>About me</title>
-      <link>/about/</link>
+      <link>https://alexcookson.com/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/about/</guid>
+      <guid>https://alexcookson.com/about/</guid>
       <description>Hi! I’m Alex. I love data science, cycling, and cats.
 I currently work at the Royal Canadian Mint, where I help the marketing team make the most of their data. I’ve worked on many machine learning and business analytics projects, including predictive models for customer churn, recommendation engines, and self-service dashboards.
 I have Master’s degrees in International Business from HEC Paris and Queen’s University. I also earned my Bachelor’s degree from Queen’s University, where I studied commerce.</description>

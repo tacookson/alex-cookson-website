@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,11 +52,11 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://alexcookson.com/img/favicon.ico" type="image/x-icon" />
 
   
     
-        <link rel="stylesheet" href="/css/alexcookson.css">
+        <link rel="stylesheet" href="https://alexcookson.com/css/alexcookson.css">
     
   
   
@@ -75,7 +75,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -83,19 +83,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -237,11 +237,11 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/data-exploration">data exploration</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/data-exploration">data exploration</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/bar-graphs">bar graphs</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/bar-graphs">bar graphs</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/annotations">annotations</a>
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/annotations">annotations</a>
     
   </div>
   
@@ -341,7 +341,7 @@ members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/
     y = &quot;Number of peaks&quot;
   ) +
   theme(text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
-<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/peak-heights-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/peak-heights-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Not surprisingly, Mount Everest is the tallest at almost 9,000 metres. There is a small group of other very tall mountains that are part of a group referred to as <a href="https://www.mountainiq.com/guides/eight-thousanders/">8000ers</a>, something I learned while researching for this post. Most peaks are between 6,000 and 7,000 metres, though – still crazy-high.<br />
  </p>
 </div>
@@ -362,7 +362,7 @@ members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/
   ) +
   theme(legend.position = &quot;none&quot;,
         text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
-<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/climbed-vs-unclimbed-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/climbed-vs-unclimbed-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>More than a quarter of them haven’t been summitted yet. I wonder why. Maybe the routes are very technically challenging, the weather is very bad, or they are very remote? I know our focus is on peaks and first ascents, but let’s see if we can find the result of expeditions that attempted to climb these unclimbed peaks. There is a <code>termination_reason</code> field in the <code>expeditions</code> table that tells us why an expedition ended.</p>
 <pre class="r"><code>peaks %&gt;%
   filter(climbing_status == &quot;Unclimbed&quot;) %&gt;%
@@ -390,7 +390,7 @@ members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/
   ) +
   theme(legend.position = &quot;none&quot;,
         text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
-<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/top-termination-reasons-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/top-termination-reasons-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Aha! It looks like some of our theories are borne out by the data. The top reason for expeditions to unclimbed peaks to end is the route being technically too difficult. Bad conditions and bad weather also rank pretty high.</p>
 <p>I’m a bit concerned about the data we’re using to answer this question, though. Some expeditions are considered successes, but how can an expedition be successful and the peak still be considered unclimbed? Non-current data is a possibility, but it’s also very likely that I’m not interpreting these fields correctly. Since this is a detour, I’ll leave this for now.<br />
  </p>
@@ -403,7 +403,7 @@ members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/
   geom_histogram(fill = fish(1, option = &quot;Pseudocheilinus_tetrataenia&quot;, direction = -1),
                  alpha = 0.8) +
   theme(text = element_text(family = &quot;Bahnschrift&quot;))</code></pre>
-<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/first-ascent-years-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/first-ascent-years-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>This is why creating a histogram is often a good idea. According to this, a small number of peaks (maybe just one) were first climbed around the year 200. Somehow I doubt this is accurate. Fortunately, the <code>peaks</code> table has a <code>first_ascent_expedition_id</code> field, so we can look up the date of that expedition.</p>
 <pre class="r"><code>peaks %&gt;%
   filter(first_ascent_year &lt; 1000) %&gt;%
@@ -436,7 +436,7 @@ members &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/tacookson/
        y = &quot;Number of first ascents&quot;) +
   theme(text = element_text(family = &quot;Bahnschrift&quot;),
         panel.grid.minor = element_blank())</code></pre>
-<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/first-ascent-years-fixed-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/first-ascent-years-fixed-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Much better. There weren’t many first ascents before 1950, but after that there was a flurry of activity. For reference, Edmund Hillary and Tenzing Norgay <a href="https://en.wikipedia.org/wiki/1953_British_Mount_Everest_expedition">first summitted Mount Everest in 1953</a>. I wonder whether their expedition reflected a greater interest in the Himalayas or whether the expedition itself resulted in more interest.</p>
 <p>Regardless of the answer, there have been many first ascents since 2000, which I found a bit surprising. Climbers are still accomplishing things that no one else has before. And, as we just saw, there are still many peaks the haven’t been climbed at all.<br />
  </p>
@@ -479,7 +479,7 @@ top_20_countries %&gt;%
     text = element_text(family = &quot;Bahnschrift&quot;),
     panel.grid.minor = element_blank()
   )</code></pre>
-<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/top-first-ascent-countries-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/top-first-ascent-countries-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>The Nepalese part was right, but I had no idea Japanese climbers have been so involved in first ascents! I feel bad for having a biased mental picture, but I’m glad I’m learning new things through exploring this data.<br />
  </p>
 <p>We saw above that there were two rough peaks in first ascents – one in the 1950s and 1960s and another in the 2000s and 2010s. Have the countries involved changed over time? By looking at the percentage of first ascents involving different countries’ citizens, we can answer that question. We look at percentage because we are interested in the <em>proportion</em> of ascents a country was involved in, not the absolute number. Using percentage let’s us compare decades that have different numbers of ascents.</p>
@@ -528,7 +528,7 @@ countries_by_decade %&gt;%
         panel.grid.minor = element_blank(),
         strip.text = element_text(colour = &quot;black&quot;),
         strip.background = element_blank())</code></pre>
-<p><img src="/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/first-ascent-countries-by-decade-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-03-22-analyzing-himalayan-climbing-expeditions_files/figure-html/first-ascent-countries-by-decade-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>I see a few interesting things:</p>
 <ul>
 <li>Nepal has been fairly consistently involved in first ascents</li>
@@ -549,13 +549,13 @@ countries_by_decade %&gt;%
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="/post/mapping-san-francisco-trees/"><i class="fa fa-chevron-left"></i></a>
+    <a href="https://alexcookson.com/post/mapping-san-francisco-trees/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="/post/mapping-san-francisco-trees/">Mapping San Francisco&#39;s trees</a>
+      <a href="https://alexcookson.com/post/mapping-san-francisco-trees/">Mapping San Francisco&#39;s trees</a>
     </nav>
     
   </div>
@@ -565,13 +565,13 @@ countries_by_decade %&gt;%
   <div class="pure-u-10-24">
     
     <nav class="next">
-      <a href="/post/how-dangerous-is-climbing-mount-everest/">How dangerous is climbing Mount Everest?</a>
+      <a href="https://alexcookson.com/post/how-dangerous-is-climbing-mount-everest/">How dangerous is climbing Mount Everest?</a>
     </nav>
     
   </div>
   <div class="pure-u-1-24" style="text-align: right;">
     
-    <a href="/post/how-dangerous-is-climbing-mount-everest/"><i class="fa fa-chevron-right"></i></a>
+    <a href="https://alexcookson.com/post/how-dangerous-is-climbing-mount-everest/"><i class="fa fa-chevron-right"></i></a>
     
   </div>
 </div>
@@ -584,8 +584,8 @@ countries_by_decade %&gt;%
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
-<script src="/js/menus.js"></script>
+<script src="https://alexcookson.com/js/ui.js"></script>
+<script src="https://alexcookson.com/js/menus.js"></script>
 
 
 <script>
@@ -605,7 +605,7 @@ countries_by_decade %&gt;%
 
 
 
-<script src="/js/math-code.js"></script>
+<script src="https://alexcookson.com/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 

@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>tf-idf on Alex Cookson</title>
-    <link>/tags/tf-idf/</link>
+    <link>https://alexcookson.com/tags/tf-idf/</link>
     <description>Recent content in tf-idf on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Thu, 21 May 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/tf-idf/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://alexcookson.com/tags/tf-idf/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>What can we learn from a country&#39;s diplomatic gifts?</title>
-      <link>/post/what-can-we-learn-from-diplomatic-gifts/</link>
+      <link>https://alexcookson.com/post/what-can-we-learn-from-diplomatic-gifts/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/what-can-we-learn-from-diplomatic-gifts/</guid>
+      <guid>https://alexcookson.com/post/what-can-we-learn-from-diplomatic-gifts/</guid>
       <description>Have you ever brought a bottle of wine, flowers, or chocolate babka to a dinner party as a host/hostess gift? Or brought home a souvenir for your parents, partner, or kids after you’ve been travelling – like chocolate from Switzerland or, uh… Brazil nuts from Brazil? Countries do the same thing, kind of.
 Diplomatic gifts are often exchanged when dignitaries travel abroad or receive visitors. They can be lavish, like a $780,000 emerald and diamond jewellery set, given by King Abdullah of Saudi Arabia.</description>
     </item>

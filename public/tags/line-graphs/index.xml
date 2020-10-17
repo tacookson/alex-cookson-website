@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>line graphs on Alex Cookson</title>
-    <link>/tags/line-graphs/</link>
+    <link>https://alexcookson.com/tags/line-graphs/</link>
     <description>Recent content in line graphs on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Mon, 16 Sep 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/line-graphs/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://alexcookson.com/tags/line-graphs/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Finding trends in US national park visits</title>
-      <link>/post/tidytuesday-us-national-parks/</link>
+      <link>https://alexcookson.com/post/tidytuesday-us-national-parks/</link>
       <pubDate>Mon, 16 Sep 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-us-national-parks/</guid>
+      <guid>https://alexcookson.com/post/tidytuesday-us-national-parks/</guid>
       <description>In this post, I analyze the National Park Visits dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills. This week’s data is about visitor numbers for US National Parks, going way back to 1904, when there were only six national parks.
 I’ve never been to a US national park, but I know about some of the famous ones like Yosemite and Yellowstone.</description>
     </item>

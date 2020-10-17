@@ -23,13 +23,13 @@
   <!--<![endif]-->
 
   <!--[if lte IE 8]>
-  <link rel="stylesheet" href="/css/side-menu-old-ie.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu-old-ie.css">
   <![endif]-->
   <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" href="/css/side-menu.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/side-menu.css">
   <!--<![endif]-->
 
-  <link rel="stylesheet" href="/css/blackburn.css">
+  <link rel="stylesheet" href="https://alexcookson.com/css/blackburn.css">
 
   
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
@@ -52,11 +52,11 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="https://alexcookson.com/img/favicon.ico" type="image/x-icon" />
 
   
     
-        <link rel="stylesheet" href="/css/alexcookson.css">
+        <link rel="stylesheet" href="https://alexcookson.com/css/alexcookson.css">
     
   
   
@@ -75,7 +75,7 @@
 <div id="menu">
 
   
-  <a class="pure-menu-heading brand" href="/">Alex Cookson</a>
+  <a class="pure-menu-heading brand" href="https://alexcookson.com/">Alex Cookson</a>
 
 
   <div class="pure-menu">
@@ -83,19 +83,19 @@
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/"><i class='fa fa-home fa-fw'></i>Home</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/"><i class='fa fa-home fa-fw'></i>Home</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
       
         </li>
       
       
         <li class="pure-menu-item">
-          <a class="pure-menu-link" href="/about/"><i class='fa fa-user fa-fw'></i>About</a>
+          <a class="pure-menu-link" href="https://alexcookson.com/about/"><i class='fa fa-user fa-fw'></i>About</a>
       
         </li>
       
@@ -237,11 +237,11 @@
   <div>
     <i class="fa fa-tags fa-fw"></i>
     
-      <a class="post-taxonomy-tag" href="/tags/normalization">normalization</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/normalization">normalization</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/rescaling">rescaling</a>&nbsp;&#47;
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/rescaling">rescaling</a>&nbsp;&#47;
     
-      <a class="post-taxonomy-tag" href="/tags/animated-graphs">animated graphs</a>
+      <a class="post-taxonomy-tag" href="https://alexcookson.com/tags/animated-graphs">animated graphs</a>
     
   </div>
   
@@ -251,7 +251,7 @@
 
     
 
-<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+<script src="https://alexcookson.com/rmarkdown-libs/kePrint/kePrint.js"></script>
 
 
 <p> </p>
@@ -259,7 +259,7 @@
  </p>
 <p>In part two of this two-part series, we will <strong>normalize and rescale</strong> children’s books ratings to them easier to interpret. To do this, we need to force our empirical distribution into a normal distribution. We will end up with something like this (just replace “movies” with “books” – image is from <a href="https://www.freecodecamp.org/news/whose-reviews-should-you-trust-imdb-rotten-tomatoes-metacritic-or-fandango-7d1010c6cf19/"><em>Whose ratings should you trust?</em></a>):</p>
 <p align="center">
-<img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/movie-reviews-normal.png" width="600" />
+<img src="https://alexcookson.com/post/2020-06-29-normalizing-childrens-book-ratings_files/movie-reviews-normal.png" width="600" />
 </p>
 <p> </p>
 <p><strong>Why normalize ratings at all?</strong> Normal distributions have some properties that make them easy to interpret. First, the normal distribution has the same mean, median, and mode, three common <a href="https://en.wikipedia.org/wiki/Central_tendency">measures of central tendency</a>. This gives us a strong “typical rating” which we set in the middle of our range: 3 stars. So a perfectly average book will have a rating of exactly 3 stars. Plus, there will be an equal proportion of books above and below 3 stars.</p>
@@ -395,7 +395,7 @@ Kathryn Cave
   theme(text = element_text(family = &quot;Bahnschrift&quot;),
         plot.title = element_text(size = 18),
         axis.text = element_text(size = 16))</code></pre>
-<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/eb-rating-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/eb-rating-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>That’s not very intuitive. If someone told me a book had a 3/5 star rating, I would think, “It sounds like an okay, but not great, book”. Under <em>this</em> distribution, a 3/5 star rating would make that book the <strong>worst one of over 9,000!</strong><br />
  </p>
 </div>
@@ -446,7 +446,7 @@ anim_rescaling &lt;- p_rescaling +
 
 # Create animation
 anim_rescaling</code></pre>
-<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/animation-rescaling-1.gif" style="display: block; margin: auto;" />
+<p><img src="https://alexcookson.com/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/animation-rescaling-1.gif" style="display: block; margin: auto;" />
  </p>
 <p>And here’s the completely rescaled data:</p>
 <pre class="r"><code># Calculate rescaled mean to add a reference line
@@ -470,7 +470,7 @@ scaled %&gt;%
   theme(text = element_text(family = &quot;Bahnschrift&quot;),
         plot.title = element_text(size = 18),
         axis.text = element_text(size = 16))</code></pre>
-<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/rescaled-rating-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="https://alexcookson.com/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/rescaled-rating-distribution-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>It looks pretty good! We’re using the full range, meaning it’s easier to discriminate between good and bad books (according to the ratings, at least). We could easily stop here and be happy with our result, but I’m <em>really</em> keen to have 3 stars be the exact middle of the distribution. On to normalization!<br />
  </p>
 </div>
@@ -524,7 +524,7 @@ anim_normalizing &lt;- p_normalizing +
 
 # Create animation
 anim_normalizing</code></pre>
-<p><img src="/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/animation-normalizing-1.gif" style="display: block; margin: auto;" />
+<p><img src="https://alexcookson.com/post/2020-06-29-normalizing-childrens-book-ratings_files/figure-html/animation-normalizing-1.gif" style="display: block; margin: auto;" />
  </p>
 <p>And now we reap the benefits of our hard work! Here is a random selection <em>Terrible</em> to <em>Great</em> books according to our normalized ratings:</p>
 <pre class="r"><code># For reproducability
@@ -665,13 +665,13 @@ Bill Watterson
 <div class="prev-next-post pure-g">
   <div class="pure-u-1-24" style="text-align: left;">
     
-    <a href="/post/rating-childrens-books-with-empirical-bayes-estimation/"><i class="fa fa-chevron-left"></i></a>
+    <a href="https://alexcookson.com/post/rating-childrens-books-with-empirical-bayes-estimation/"><i class="fa fa-chevron-left"></i></a>
     
   </div>
   <div class="pure-u-10-24">
     
     <nav class="prev">
-      <a href="/post/rating-childrens-books-with-empirical-bayes-estimation/">Rating children&#39;s books with empirical Bayes estimation (1 of 2)</a>
+      <a href="https://alexcookson.com/post/rating-childrens-books-with-empirical-bayes-estimation/">Rating children&#39;s books with empirical Bayes estimation (1 of 2)</a>
     </nav>
     
   </div>
@@ -694,8 +694,8 @@ Bill Watterson
 
 </div>
 </div>
-<script src="/js/ui.js"></script>
-<script src="/js/menus.js"></script>
+<script src="https://alexcookson.com/js/ui.js"></script>
+<script src="https://alexcookson.com/js/menus.js"></script>
 
 
 <script>
@@ -715,7 +715,7 @@ Bill Watterson
 
 
 
-<script src="/js/math-code.js"></script>
+<script src="https://alexcookson.com/js/math-code.js"></script>
   <script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   
 

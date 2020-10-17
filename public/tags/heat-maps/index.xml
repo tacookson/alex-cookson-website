@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>heat maps on Alex Cookson</title>
-    <link>/tags/heat-maps/</link>
+    <link>https://alexcookson.com/tags/heat-maps/</link>
     <description>Recent content in heat maps on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Thu, 05 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/heat-maps/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://alexcookson.com/tags/heat-maps/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Heat mapping the timing of Philadelphia parking tickets</title>
-      <link>/post/tidytuesday-philadelphia-parking-tickets/</link>
+      <link>https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/</link>
       <pubDate>Thu, 05 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/tidytuesday-philadelphia-parking-tickets/</guid>
+      <guid>https://alexcookson.com/post/tidytuesday-philadelphia-parking-tickets/</guid>
       <description>In this post, I create heat maps using the Philly Parking Tickets dataset from TidyTuesday, a project that shares a new dataset each week to give R users a way to apply and practice their skills.
 Specifically, we’ll cover:
 Cleaning and aggregating the data that will go into our heat mapCreating a basic heat map with ggplot2 defaultsTweaking ggplot2 theme components to get a much prettier heat map</description>

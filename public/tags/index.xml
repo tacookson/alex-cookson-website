@@ -2,220 +2,220 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Alex Cookson</title>
-    <link>/tags/</link>
+    <link>https://alexcookson.com/tags/</link>
     <description>Recent content in Tags on Alex Cookson</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
     <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://alexcookson.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>animated graphs</title>
-      <link>/tags/animated-graphs/</link>
+      <link>https://alexcookson.com/tags/animated-graphs/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/animated-graphs/</guid>
+      <guid>https://alexcookson.com/tags/animated-graphs/</guid>
       <description></description>
     </item>
     
     <item>
       <title>normalization</title>
-      <link>/tags/normalization/</link>
+      <link>https://alexcookson.com/tags/normalization/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/normalization/</guid>
+      <guid>https://alexcookson.com/tags/normalization/</guid>
       <description></description>
     </item>
     
     <item>
       <title>rescaling</title>
-      <link>/tags/rescaling/</link>
+      <link>https://alexcookson.com/tags/rescaling/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/rescaling/</guid>
+      <guid>https://alexcookson.com/tags/rescaling/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Dirichlet-multinomial distribution</title>
-      <link>/tags/dirichlet-multinomial-distribution/</link>
+      <link>https://alexcookson.com/tags/dirichlet-multinomial-distribution/</link>
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/dirichlet-multinomial-distribution/</guid>
+      <guid>https://alexcookson.com/tags/dirichlet-multinomial-distribution/</guid>
       <description></description>
     </item>
     
     <item>
       <title>empirical Bayes estimation</title>
-      <link>/tags/empirical-bayes-estimation/</link>
+      <link>https://alexcookson.com/tags/empirical-bayes-estimation/</link>
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/empirical-bayes-estimation/</guid>
+      <guid>https://alexcookson.com/tags/empirical-bayes-estimation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>data exploration</title>
-      <link>/tags/data-exploration/</link>
+      <link>https://alexcookson.com/tags/data-exploration/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/data-exploration/</guid>
+      <guid>https://alexcookson.com/tags/data-exploration/</guid>
       <description></description>
     </item>
     
     <item>
       <title>nlp</title>
-      <link>/tags/nlp/</link>
+      <link>https://alexcookson.com/tags/nlp/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/nlp/</guid>
+      <guid>https://alexcookson.com/tags/nlp/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tf-idf</title>
-      <link>/tags/tf-idf/</link>
+      <link>https://alexcookson.com/tags/tf-idf/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tf-idf/</guid>
+      <guid>https://alexcookson.com/tags/tf-idf/</guid>
       <description></description>
     </item>
     
     <item>
       <title>data cleaning</title>
-      <link>/tags/data-cleaning/</link>
+      <link>https://alexcookson.com/tags/data-cleaning/</link>
       <pubDate>Thu, 23 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/data-cleaning/</guid>
+      <guid>https://alexcookson.com/tags/data-cleaning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>time series data</title>
-      <link>/tags/time-series-data/</link>
+      <link>https://alexcookson.com/tags/time-series-data/</link>
       <pubDate>Thu, 23 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/time-series-data/</guid>
+      <guid>https://alexcookson.com/tags/time-series-data/</guid>
       <description></description>
     </item>
     
     <item>
       <title>annotations</title>
-      <link>/tags/annotations/</link>
+      <link>https://alexcookson.com/tags/annotations/</link>
       <pubDate>Mon, 06 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/annotations/</guid>
+      <guid>https://alexcookson.com/tags/annotations/</guid>
       <description></description>
     </item>
     
     <item>
       <title>spineplots</title>
-      <link>/tags/spineplots/</link>
+      <link>https://alexcookson.com/tags/spineplots/</link>
       <pubDate>Mon, 06 Apr 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/spineplots/</guid>
+      <guid>https://alexcookson.com/tags/spineplots/</guid>
       <description></description>
     </item>
     
     <item>
       <title>bar graphs</title>
-      <link>/tags/bar-graphs/</link>
+      <link>https://alexcookson.com/tags/bar-graphs/</link>
       <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/bar-graphs/</guid>
+      <guid>https://alexcookson.com/tags/bar-graphs/</guid>
       <description></description>
     </item>
     
     <item>
       <title>geographic maps</title>
-      <link>/tags/geographic-maps/</link>
+      <link>https://alexcookson.com/tags/geographic-maps/</link>
       <pubDate>Wed, 29 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/geographic-maps/</guid>
+      <guid>https://alexcookson.com/tags/geographic-maps/</guid>
       <description></description>
     </item>
     
     <item>
       <title>small multiples</title>
-      <link>/tags/small-multiples/</link>
+      <link>https://alexcookson.com/tags/small-multiples/</link>
       <pubDate>Wed, 29 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/small-multiples/</guid>
+      <guid>https://alexcookson.com/tags/small-multiples/</guid>
       <description></description>
     </item>
     
     <item>
       <title>TidyTuesday</title>
-      <link>/tags/tidytuesday/</link>
+      <link>https://alexcookson.com/tags/tidytuesday/</link>
       <pubDate>Wed, 29 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tidytuesday/</guid>
+      <guid>https://alexcookson.com/tags/tidytuesday/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tutorial</title>
-      <link>/tags/tutorial/</link>
+      <link>https://alexcookson.com/tags/tutorial/</link>
       <pubDate>Wed, 29 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tutorial/</guid>
+      <guid>https://alexcookson.com/tags/tutorial/</guid>
       <description></description>
     </item>
     
     <item>
       <title>heat maps</title>
-      <link>/tags/heat-maps/</link>
+      <link>https://alexcookson.com/tags/heat-maps/</link>
       <pubDate>Thu, 05 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/heat-maps/</guid>
+      <guid>https://alexcookson.com/tags/heat-maps/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tidy Tuesday</title>
-      <link>/tags/tidy-tuesday/</link>
+      <link>https://alexcookson.com/tags/tidy-tuesday/</link>
       <pubDate>Thu, 05 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tidy-tuesday/</guid>
+      <guid>https://alexcookson.com/tags/tidy-tuesday/</guid>
       <description></description>
     </item>
     
     <item>
       <title>LASSO regression</title>
-      <link>/tags/lasso-regression/</link>
+      <link>https://alexcookson.com/tags/lasso-regression/</link>
       <pubDate>Mon, 21 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/lasso-regression/</guid>
+      <guid>https://alexcookson.com/tags/lasso-regression/</guid>
       <description></description>
     </item>
     
     <item>
       <title>linear regression</title>
-      <link>/tags/linear-regression/</link>
+      <link>https://alexcookson.com/tags/linear-regression/</link>
       <pubDate>Tue, 08 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/linear-regression/</guid>
+      <guid>https://alexcookson.com/tags/linear-regression/</guid>
       <description></description>
     </item>
     
     <item>
       <title>splines</title>
-      <link>/tags/splines/</link>
+      <link>https://alexcookson.com/tags/splines/</link>
       <pubDate>Tue, 08 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/splines/</guid>
+      <guid>https://alexcookson.com/tags/splines/</guid>
       <description></description>
     </item>
     
     <item>
       <title>line graphs</title>
-      <link>/tags/line-graphs/</link>
+      <link>https://alexcookson.com/tags/line-graphs/</link>
       <pubDate>Mon, 16 Sep 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/line-graphs/</guid>
+      <guid>https://alexcookson.com/tags/line-graphs/</guid>
       <description></description>
     </item>
     
