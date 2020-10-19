@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
-    <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://alexcookson.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Building an animation step-by-step with gganimate</title>
+      <link>https://alexcookson.com/post/2020-10-17-building-an-animation-step-by-step-with-gganimate/</link>
+      <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexcookson.com/post/2020-10-17-building-an-animation-step-by-step-with-gganimate/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Normalizing and rescaling children&#39;s book ratings (2 of 2)</title>
