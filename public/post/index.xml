@@ -7,18 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2020. All rights reserved.</copyright>
-    <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 19 Oct 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://alexcookson.com/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Building an animation step-by-step with gganimate</title>
-      <link>https://alexcookson.com/post/2020-10-17-building-an-animation-step-by-step-with-gganimate/</link>
-      <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
+      <link>https://alexcookson.com/post/2020-10-18-building-an-animation-step-by-step-with-gganimate/</link>
+      <pubDate>Mon, 19 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://alexcookson.com/post/2020-10-17-building-an-animation-step-by-step-with-gganimate/</guid>
-      <description></description>
+      <guid>https://alexcookson.com/post/2020-10-18-building-an-animation-step-by-step-with-gganimate/</guid>
+      <description>Getting started with with {gganimate} is tough. There’s a big set of new functions and behaviours to learn. And the path from idea to polished animation – if you’re like me – is riddled with dead-ends, error messages, and exclamations of “Why is it doing that?!”
+In this post, I want to be your {gganimate} guide and take you down one possible path that starts with an idea and ends with something beautiful.</description>
     </item>
     
     <item>
