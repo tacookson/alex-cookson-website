@@ -1,0 +1,789 @@
+---
+title: Applying PCA to fictional character personalities
+author: Alex Cookson
+date: '2020-11-20'
+slug: []
+categories: []
+tags: []
+description: ''
+topics: []
+---
+
+<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="index_files/anchor-sections/anchor-sections.js"></script>
+<script src="index_files/kePrint/kePrint.js"></script>
+<link href="index_files/lightable/lightable.css" rel="stylesheet" />
+<script src="index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="index_files/plotly-binding/plotly.js"></script>
+<script src="index_files/typedarray/typedarray.min.js"></script>
+<script src="index_files/jquery/jquery.min.js"></script>
+<link href="index_files/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="index_files/crosstalk/js/crosstalk.min.js"></script>
+<link href="index_files/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="index_files/plotly-main/plotly-latest.min.js"></script>
+
+
+<p>In this post, we’re going to apply Principal Component Analysis (PCA) to a dataset of fictional character personalities.</p>
+<p>PCA is a common technique for <a href="https://en.wikipedia.org/wiki/Dimensionality_reduction">dimensionality reduction</a>, which you might want to do if you are, say, trying to put together a classification model and you have a dataset with <em>a lot</em> of variables.</p>
+<p>The dataset we’re using is of crowdsourced scores of personality traits for 800 fictional characters from books/movies/TV shows like <em>Game of Thrones</em>, <em>Pride and Prejudice</em>, and <em>The Lion King</em>. The data comes from the <a href="https://openpsychometrics.org/">Open-Source Psychometrics Project</a>’s online <a href="https://openpsychometrics.org/tests/characters/">“Which Character” personality quiz</a>. You can learn more about that <a href="https://github.com/tacookson/data/tree/master/fictional-character-personalities">here</a>.<br />
+ </p>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<pre class="r"><code>library(tidyverse) # For data manipulation
+library(tidymodels) # For PCA
+library(tidytext) # For reorder_within()
+library(extrafont) # For custom fonts on graphs
+library(glue) # For creating strings from multiple pieces
+library(ggtext) # For fine-grained text formatting
+library(plotly) # For interactive graphs
+
+# These are to make tables look nice on the website
+# You probably won&#39;t need them
+library(knitr)
+library(kableExtra)
+
+theme_set(theme_void())
+
+personalities &lt;- read_tsv(&quot;https://raw.githubusercontent.com/tacookson/data/master/fictional-character-personalities/personalities.txt&quot;)</code></pre>
+<p> </p>
+</div>
+<div id="data-inspection" class="section level2">
+<h2>Data inspection</h2>
+<p>Let’s look at an example character: Captain Jean-Luc Picard from <em>Star Trek: The Next Generation</em>.</p>
+<pre class="r"><code>personalities %&gt;%
+  filter(character_name == &quot;Jean-Luc Picard&quot;) %&gt;%
+  head(8) %&gt;%
+  arrange(mean) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+character_code
+</th>
+<th style="text-align:left;">
+fictional_work
+</th>
+<th style="text-align:left;">
+character_name
+</th>
+<th style="text-align:left;">
+spectrum
+</th>
+<th style="text-align:left;">
+spectrum_low
+</th>
+<th style="text-align:left;">
+spectrum_high
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+ratings
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:left;">
+is_emoji
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP5
+</td>
+<td style="text-align:left;">
+charming
+</td>
+<td style="text-align:left;">
+awkward
+</td>
+<td style="text-align:right;">
+-33.9
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+14.6
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP7
+</td>
+<td style="text-align:left;">
+intellectual
+</td>
+<td style="text-align:left;">
+physical
+</td>
+<td style="text-align:right;">
+-28.3
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+23.9
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP8
+</td>
+<td style="text-align:left;">
+strict
+</td>
+<td style="text-align:left;">
+lenient
+</td>
+<td style="text-align:right;">
+-23.8
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+19.7
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP4
+</td>
+<td style="text-align:left;">
+masculine
+</td>
+<td style="text-align:left;">
+feminine
+</td>
+<td style="text-align:right;">
+-23.2
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+24.1
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP3
+</td>
+<td style="text-align:left;">
+cheery
+</td>
+<td style="text-align:left;">
+sorrowful
+</td>
+<td style="text-align:right;">
+2.6
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+21.1
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP1
+</td>
+<td style="text-align:left;">
+playful
+</td>
+<td style="text-align:left;">
+serious
+</td>
+<td style="text-align:right;">
+35.6
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+14.4
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP2
+</td>
+<td style="text-align:left;">
+shy
+</td>
+<td style="text-align:left;">
+bold
+</td>
+<td style="text-align:right;">
+42.2
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+9.3
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TNG/1
+</td>
+<td style="text-align:left;">
+Star Trek: The Next Generation
+</td>
+<td style="text-align:left;">
+Jean-Luc Picard
+</td>
+<td style="text-align:left;">
+BAP6
+</td>
+<td style="text-align:left;">
+lewd
+</td>
+<td style="text-align:left;">
+tasteful
+</td>
+<td style="text-align:right;">
+42.8
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+9.6
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+</tr>
+</tbody>
+</table>
+<p>The main fields we’re interested in are <code>spectrum_low</code>, <code>spectrum_high</code>, and <code>mean</code>:</p>
+<ul>
+<li>The spectrum fields tell us what trait is on each end of the spectrum being considered</li>
+<li><code>mean</code> is a score (from -50 to +50), where a score closer to -50 means the character is more like the <code>spectrum_low</code> trait and a score closer to +50 means the character is more like the <code>spectrum_high</code> trait</li>
+</ul>
+<p>If we look at some of Captain Picard’s strongest traits – that is, close to -50 or +50 – we see that he is <strong>charming</strong> and <strong>intellectual</strong> (low scores corresponding to <code>spectrum_low</code>), as well as <strong>bold</strong> and <strong>tasteful</strong> (high scores corresponding to <code>spectrum_high</code>). That rings true to me. I would certainly use those words to describe our dear Captain.</p>
+<p>Most of the other fields are to identify who the character is and what fictional world they come from. We also have the number of ratings (<code>ratings</code>) and standard deviation (<code>sd</code>) for that character-spectrum combination. And finally, we have a helper column, <code>is_emoji</code> that tells us if the traits on each end of the spectrum are emojis instead of words.</p>
+<p>Juuuust to make sure this data checks out – and because I’m really curious – let’s look at some more examples from <em>Pride and Prejudice</em> and <em>The Lion King</em>. We’ll look each character’s eight strongest traits. I’ve included the trait on the opposite end of the spectrum in parentheses for reference.<br />
+ </p>
+<div id="pride-and-prejudice" class="section level3">
+<h3><em>Pride and Prejudice</em></h3>
+<pre class="r"><code>pride_palette &lt;- c(&quot;#19313b&quot;, &quot;#3b636b&quot;, &quot;#bbb6a2&quot;,
+                    &quot;#ffc277&quot;, &quot;#bc652f&quot;, &quot;#472411&quot;)
+
+pride_example &lt;- personalities %&gt;%
+  filter(!is_emoji,
+         fictional_work == &quot;Pride and Prejudice&quot;,
+         character_name %in% c(&quot;Elizabeth Bennet&quot;, &quot;Jane Bennet&quot;, &quot;Lydia Bennet&quot;,
+                               &quot;Mr. Darcy&quot;, &quot;Mr. William Collins&quot;, &quot;George Wickham&quot;)) %&gt;%
+  mutate(character_name = ifelse(character_name == &quot;Mr. William Collins&quot;, &quot;Mr. Collins&quot;, character_name)) %&gt;%
+  group_by(character_name) %&gt;%
+  top_n(8, abs(mean)) %&gt;%
+  ungroup() %&gt;%
+  mutate(spectrum_label = ifelse(mean &gt; 0,
+                                 glue(&quot;{spectrum_high}&lt;br&gt;&lt;span style=&#39;font-size:8pt&#39;&gt;({spectrum_low})&lt;/span&gt;&quot;),
+                                 glue(&quot;{spectrum_low}&lt;br&gt;&lt;span style=&#39;font-size:8pt&#39;&gt;({spectrum_high})&lt;/span&gt;&quot;)),
+         mean = abs(mean),
+         spectrum_label = reorder_within(spectrum_label, mean, character_name))
+
+pride_example %&gt;%
+  ggplot() +
+  geom_col(aes(mean, spectrum_label, fill = character_name), show.legend = FALSE) +
+  geom_vline(xintercept = seq(0, 50, by = 10), colour = &quot;#FFF1E6&quot;, size = 0.1) +
+  scale_y_reordered() +
+  scale_fill_manual(values = pride_palette) +
+  expand_limits(x = c(0, 50)) +
+  facet_wrap(~ character_name, scales = &quot;free_y&quot;) +
+  labs(title = &quot;Pride and Prejudice&quot;,
+       caption = &quot;Visualization: @alexcookson | Data: Open Source Psychometrics Project&quot;) +
+  theme(plot.title = element_text(family = &quot;JaneAusten&quot;, face = &quot;bold&quot;, size = 30,
+                                  hjust = 0.5, margin = margin(t = 10, b = 20)),
+        plot.background = element_rect(fill = &quot;#FFF1E6&quot;, colour = NA),
+        plot.margin = margin(10, 10, 10, 10),
+        plot.caption = element_text(family = &quot;Sylfaen&quot;, size = 8, colour = &quot;grey50&quot;, margin = margin(t = 10)),
+        strip.text = element_text(family = &quot;JaneAusten&quot;, size = 12, margin = margin(b = 10)),
+        axis.text.x = element_text(family = &quot;Sylfaen&quot;, size = 10, hjust = 0.5),
+        axis.text.y = element_markdown(family = &quot;Sylfaen&quot;, size = 11, hjust = 1))</code></pre>
+<p><img src="index_files/figure-html/pride-and-prejudice-example-1.png" width="768" style="display: block; margin: auto;" />
+ </p>
+<p>Some traits are pretty flippant, like Elizabeth Bennet’s top trait, “treasure”, which has “trash” at the other end of the spectrum. Keep in mind that this data is from an online quiz, not a rigorous scientific study – it’s just a bit of fun!</p>
+<p>The traits for the rest of the characters are spot-on: <strong>selfish</strong> George Wickham, <strong>kind</strong> Jane, <strong>foolish</strong> Lydia, <strong>awkward</strong> Mr. Collins, and <strong>rich</strong> and <strong>reserved</strong> Mr. Darcy.<br />
+ </p>
+</div>
+<div id="the-lion-king" class="section level3">
+<h3><em>The Lion King</em></h3>
+<pre class="r"><code>lion_king_palette &lt;- c(&quot;#FFBA08&quot;, &quot;#FCA311&quot;, &quot;#E85D04&quot;,
+                       &quot;#DC2F02&quot;, &quot;#791901&quot;, &quot;#38160D&quot;)
+
+lion_king_example &lt;- personalities %&gt;%
+  filter(!is_emoji,
+         fictional_work == &quot;The Lion King&quot;) %&gt;%
+  group_by(character_name) %&gt;%
+  top_n(8, abs(mean)) %&gt;%
+  ungroup() %&gt;%
+  mutate(spectrum_label = ifelse(mean &gt; 0,
+                                 glue(&quot;{spectrum_high}&lt;br&gt;&lt;span style=&#39;font-size:8pt&#39;&gt;({spectrum_low})&lt;/span&gt;&quot;),
+                                 glue(&quot;{spectrum_low}&lt;br&gt;&lt;span style=&#39;font-size:8pt&#39;&gt;({spectrum_high})&lt;/span&gt;&quot;)),
+         mean = abs(mean),
+         spectrum_label = reorder_within(spectrum_label, mean, character_name))
+
+lion_king_example %&gt;%
+  ggplot() +
+  geom_col(aes(mean, spectrum_label, fill = character_name), show.legend = FALSE) +
+  geom_vline(xintercept = seq(0, 50, by = 10), colour = &quot;#FFFBEB&quot;, size = 0.1) +
+  scale_y_reordered() +
+  scale_fill_manual(values = lion_king_palette) +
+  expand_limits(x = c(0, 50)) +
+  facet_wrap(~ character_name, scales = &quot;free_y&quot;) +
+  labs(title = &quot;The Lion King&quot;,
+       caption = &quot;Visualization: @alexcookson | Data: Open Source Psychometrics Project&quot;) +
+  theme(plot.title = element_text(family = &quot;African&quot;, size = 30, hjust = 0.5, margin = margin(t = 10, b = 20)),
+        plot.background = element_rect(fill = &quot;#FFFBEB&quot;, colour = NA),
+        plot.margin = margin(10, 10, 10, 10),
+        plot.caption = element_text(family = &quot;IBM Plex Sans&quot;, size = 8, colour = &quot;grey50&quot;, margin = margin(t = 10)),
+        strip.text = element_text(family = &quot;African&quot;, size = 12, margin = margin(b = 10)),
+        axis.text.x = element_text(family = &quot;IBM Plex Sans&quot;, size = 10, hjust = 0.5),
+        axis.text.y = element_markdown(family = &quot;IBM Plex Sans&quot;, size = 11, hjust = 1))</code></pre>
+<p><img src="index_files/figure-html/lion-king-example-1.png" width="768" style="display: block; margin: auto;" />
+ </p>
+<p>Scar has great traits for a villain (including the very on-the-nose <strong>villainous</strong>!). Timon is <strong>thin</strong> and Pumbaa is <strong>thick</strong>. And Nala’s top trait is <strong>beautiful</strong>, which I find a bit weird for an animated lion. (In fact, it gives some hints at how characters of different genders are portrayed and perceived in media, something I plan to analyze more in a future post.)<br />
+ </p>
+</div>
+</div>
+<div id="principal-component-analysis-pca" class="section level2">
+<h2>Principal Component Analysis (PCA)</h2>
+<p>Now that we have a sense of the data, let’s get into principal component analysis. There are some great resources out there already, like Julia Silge’s <a href="https://juliasilge.com/blog/best-hip-hop/">PCA walkthrough using hip hop songs</a> to see how it can be applied, <a href="https://recipes.tidymodels.org/reference/step_pca.html"><code>tidymodels</code> documentation</a> to see how <code>tidymodels</code> approaches PCA, and StatQuest’s <a href="https://www.youtube.com/watch?v=FgakZw6K1QQ">step-by-step guide to PCA</a> to understand some of the underlying mathematics.<br />
+ </p>
+<div id="helper-datasets" class="section level3">
+<h3>Helper datasets</h3>
+<p>Before we get started, let’s create create some helper datasets that will help us down the line. Why? We’ll be conducting PCA with just code fields to identify characters and spectrums. Once the PCA is done, we’ll want to inspect the results and it’s not very informative to see character “HP/2” or spectrum “BAP209”. Instead, we want to see “Harry Potter” or “city-slicker to country-bumpkin”.</p>
+<pre class="r"><code>character_list &lt;- personalities %&gt;%
+  distinct(character_code, fictional_work, character_name)
+
+spectrum_list &lt;- personalities %&gt;%
+  distinct(spectrum, spectrum_low, spectrum_high)</code></pre>
+<p> </p>
+</div>
+<div id="pca-with-tidymodels" class="section level3">
+<h3>PCA with <code>tidymodels</code></h3>
+<p><code>tidymodels</code> makes PCA <em>very</em> straightforward – in this case, it takes about 10 lines of code to set up the data properly and run the PCA.</p>
+<p>First, let’s convert our data to a format that’s closer to a matrix than a dataframe. We want each row to correspond to a character and each column to correspond to a spectrum. We’ll also have a special column with <code>character_code</code> so that we know who’s who once we’re done!</p>
+<p>This is what the data we’re feeding into <code>tidymodels</code> looks like:</p>
+<pre class="r"><code>pca_data &lt;- personalities %&gt;%
+  filter(!is_emoji) %&gt;%
+  select(character_code, spectrum, mean) %&gt;%
+  pivot_wider(names_from = spectrum, values_from = mean)
+
+pca_data %&gt;%
+  head(6) %&gt;%
+  select(1:5) %&gt;%
+  kable(format = &quot;html&quot;) %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+character_code
+</th>
+<th style="text-align:right;">
+BAP1
+</th>
+<th style="text-align:right;">
+BAP2
+</th>
+<th style="text-align:right;">
+BAP3
+</th>
+<th style="text-align:right;">
+BAP4
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+A/4
+</td>
+<td style="text-align:right;">
+41.4
+</td>
+<td style="text-align:right;">
+11.1
+</td>
+<td style="text-align:right;">
+22.4
+</td>
+<td style="text-align:right;">
+-16.9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A/1
+</td>
+<td style="text-align:right;">
+19.1
+</td>
+<td style="text-align:right;">
+24.6
+</td>
+<td style="text-align:right;">
+10.1
+</td>
+<td style="text-align:right;">
+-34.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A/2
+</td>
+<td style="text-align:right;">
+35.0
+</td>
+<td style="text-align:right;">
+39.2
+</td>
+<td style="text-align:right;">
+21.2
+</td>
+<td style="text-align:right;">
+-5.6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A/3
+</td>
+<td style="text-align:right;">
+8.4
+</td>
+<td style="text-align:right;">
+-0.4
+</td>
+<td style="text-align:right;">
+15.3
+</td>
+<td style="text-align:right;">
+4.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A/6
+</td>
+<td style="text-align:right;">
+-23.9
+</td>
+<td style="text-align:right;">
+30.9
+</td>
+<td style="text-align:right;">
+-22.5
+</td>
+<td style="text-align:right;">
+-31.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+A/5
+</td>
+<td style="text-align:right;">
+33.9
+</td>
+<td style="text-align:right;">
+42.1
+</td>
+<td style="text-align:right;">
+17.8
+</td>
+<td style="text-align:right;">
+0.1
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p>Second, we’ll create a recipe that specifies <code>character_code</code> as the <code>id</code> column, normalizes the scores (this is <em>very</em> important in PCA), and runs the PCA itself.</p>
+<pre class="r"><code># Write recipe for PCA
+pca_recipe &lt;- recipe(~ ., data = pca_data) %&gt;%
+  # Specify character_code as key/id column
+  update_role(character_code, new_role = &quot;id&quot;) %&gt;%
+  # Normalize sets mean to zero and standard deviation of one
+  step_normalize(all_predictors()) %&gt;%
+  # PCA is done here
+  # Use threshold to specify we want to capture 90% of variance in the data
+  step_pca(all_predictors(),
+           threshold = 0.9)
+
+# prep() implements the recipe
+# bake() applies the PCA model to a dataset
+personality_pca &lt;- prep(pca_recipe) %&gt;%
+  bake(new_data = pca_data)</code></pre>
+<p>That’s it. The PCA is done. (Really!)<br />
+ </p>
+</div>
+<div id="what-is-a-principal-component" class="section level3">
+<h3>What is a principal component?</h3>
+<p>You can think of each principal component (PC) as bundling many spectrums that tell us similar information into a single variable. Consider Mr. Darcy’s top traits:</p>
+<pre class="r"><code>pride_example %&gt;%
+  filter(character_name == &quot;Mr. Darcy&quot;) %&gt;%
+  mutate(spectrum_label = str_replace(spectrum_label, &quot;8pt&quot;, &quot;10pt&quot;),
+         spectrum_label = fct_reorder(spectrum_label, mean)) %&gt;%
+  ggplot() +
+  geom_col(aes(mean, spectrum_label),
+           fill = &quot;#472411&quot;, show.legend = FALSE) +
+  geom_vline(xintercept = seq(0, 50, by = 10), colour = &quot;#FFF1E6&quot;, size = 0.1) +
+  expand_limits(x = c(0, 50)) +
+  scale_y_reordered() +
+  labs(title = &quot;Mr. Darcy&quot;) +
+  theme(plot.title = element_text(family = &quot;JaneAusten&quot;, face = &quot;bold&quot;, size = 30, hjust = 0.5),
+        plot.background = element_rect(fill = &quot;#FFF1E6&quot;, colour = NA),
+        plot.margin = margin(10, 10, 10, 10),
+        axis.text.x = element_text(family = &quot;Sylfaen&quot;, size = 12, hjust = 0.5),
+        axis.text.y = element_markdown(family = &quot;Sylfaen&quot;, size = 16, hjust = 1))</code></pre>
+<p><img src="index_files/figure-html/mr-darcy-example-1.png" width="672" style="display: block; margin: auto;" />
+ </p>
+<p>He’s reserved, private, guarded, reclusive, confidential, and an introvert. All of these are getting at the same thing. If we already know that Mr. Darcy is <strong>reserved</strong>, do we learn that much more about him if we also know he’s <strong>private</strong>? Not really, right? These two traits tend to go together (if you’re curious, their correlation is 0.909).</p>
+<p>Intuitively, <em>all</em> the reserved-type traits go together. So let’s bundle them all together into a single, new variable. Why don’t we call it, oh, I don’t know, a <strong><em>principal component</em></strong>? If we knew what Mr. Darcy’s score was on this new principal component that bundles together reserved, private, etc., we’d still have a pretty good idea of what type of person he is, even though we wouldn’t know his scores for each individual trait. <em>This is what PCA does</em>, except on a larger scale and with math instead of with intuition, as we just did with Mr. Darcy.<br />
+ </p>
+</div>
+<div id="what-do-the-top-principal-components-tell-us" class="section level3">
+<h3>What do the top principal components tell us?</h3>
+<p>We can see the composition of each principal component, which tells us which traits have been bundled together. Here are the top six PCs:</p>
+<pre class="r"><code># Custom colour palette
+top_pc_palette &lt;- c(&quot;#264653&quot;, &quot;#2A9D8F&quot;, &quot;#8AB17D&quot;,
+                    &quot;#E9C46A&quot;, &quot;#F4A261&quot;, &quot;#E76F51&quot;)
+
+# Inspect a few principal components to see what they capture
+prep(pca_recipe) %&gt;%
+  # Inspect the recipe after it has completed step 2
+  tidy(type = &quot;coef&quot;, number = 2) %&gt;%
+  # Add interpretable names of spectrums
+  left_join(spectrum_list, by = c(&quot;terms&quot; = &quot;spectrum&quot;)) %&gt;%
+  # Take the end of the spectrum that the principal component value is closest to
+  mutate(label = ifelse(value &gt; 0,
+                        glue(&quot;{spectrum_high} &lt;span style=&#39;font-size:7pt&#39;&gt;({spectrum_low})&lt;/span&gt;&quot;),
+                        glue(&quot;{spectrum_low} &lt;span style=&#39;font-size:7pt&#39;&gt;({spectrum_high})&lt;/span&gt;&quot;)),
+         abs_value = abs(value)) %&gt;%
+  # Look at the first six components
+  filter(component %in% paste0(&quot;PC&quot;, 1:6)) %&gt;%
+  # Look at the 8 strongest elements of each component
+  group_by(component) %&gt;%
+  top_n(8, abs_value) %&gt;%
+  ungroup() %&gt;%
+  # Reorder spectrum labels so that they will be graphed from highest to lowest
+  # reorder_within() is useful for when you want things ordered in a facetted graph
+  mutate(text_label = label,
+         label = reorder_within(label, by = abs_value, within = component)) %&gt;%
+  ggplot() +
+  geom_col(aes(abs_value, label, fill = component),
+           show.legend = FALSE) +
+  geom_richtext(aes(x = 0, y = label, label = text_label),
+            hjust = 0, nudge_x = 0.002, family = &quot;IBM Plex Sans&quot;,
+            colour = &quot;white&quot;, size = 3.7, fontface = &quot;bold&quot;,
+            fill = NA, label.colour = NA) +
+  scale_x_continuous(breaks = seq(0, 0.2, by = 0.05),
+                     expand = c(0, 0)) +
+  scale_y_reordered() +
+  scale_fill_manual(values = top_pc_palette) +
+  facet_wrap(~ component, scales = &quot;free_y&quot;, ncol = 2) +
+  labs(title = &quot;What are the top principal components?&quot;,
+       subtitle = paste(&quot;Each component is shown with the eight traits that contribute most to that component.&quot;,
+                        &quot;The opposing trait is shown in parentheses for context.&quot;,
+                        sep = &quot;\n&quot;)) +
+  theme(text = element_text(family = &quot;IBM Plex Sans&quot;),
+        plot.title = element_text(size = 24, margin = margin(t = 10)),
+        plot.subtitle = element_text(size = 10, margin = margin(t = 10, b = 20)),
+        plot.margin = margin(0, 20, 20, 20),
+        panel.spacing.y = unit(20, &quot;points&quot;),
+        strip.text = element_text(size = 12, hjust = 0, margin = margin(0, 5, 5, 5)),
+        axis.text.x = element_text(size = 9, hjust = 0.5))</code></pre>
+<p><img src="index_files/figure-html/top-components-1.png" width="768" style="display: block; margin: auto;" />
+ </p>
+<p>I won’t rehash what’s in the graph, so inspect it yourself. But I can imagine characters from some of my favourite books and shows fitting nicely into some of these PCs.</p>
+<p>In fact, why don’t we see which characters score highest and lowest among these components?</p>
+<pre class="r"><code>component_descriptions &lt;- prep(pca_recipe) %&gt;%
+  tidy(type = &quot;coef&quot;, number = 2) %&gt;%
+  filter(component %in% c(paste0(&quot;PC&quot;, 1:6))) %&gt;%
+  left_join(spectrum_list, by = c(&quot;terms&quot; = &quot;spectrum&quot;)) %&gt;%
+  group_by(component) %&gt;%
+  top_n(2, abs(value)) %&gt;%
+  mutate(spectrum_label = ifelse(value &gt; 0, spectrum_high, spectrum_low),
+         component = paste0(&quot;PC0&quot;, parse_number(component))) %&gt;%
+  summarise(component_description = paste(spectrum_label, collapse = &quot;, &quot;))
+
+character_list %&gt;%
+  left_join(personality_pca, by = &quot;character_code&quot;) %&gt;%
+  pivot_longer(starts_with(&quot;PC&quot;), names_to = &quot;component&quot;, values_to = &quot;value&quot;) %&gt;%
+  group_by(component, sign = sign(value)) %&gt;%
+  top_n(4, abs(value)) %&gt;%
+  ungroup() %&gt;%
+  filter(component %in% c(paste0(&quot;PC0&quot;, 1:6))) %&gt;%
+  mutate(label = glue(&quot;{character_name}&lt;br&gt;&lt;span style=&#39;font-size:7pt&#39;&gt;({fictional_work})&lt;/span&gt;&quot;),
+         label = reorder_within(label, by = value, within = component)) %&gt;%
+  left_join(component_descriptions, by = &quot;component&quot;) %&gt;%
+  mutate(component_label = glue(&quot;{component}&lt;br&gt;&lt;span style=&#39;font-size:9pt&#39;&gt;(e.g., {component_description})&lt;/span&gt;&quot;)) %&gt;%
+  ggplot(aes(value, label, fill = component)) +
+  geom_col(show.legend = FALSE) +
+  geom_vline(xintercept = 0, colour = &quot;grey50&quot;) +
+  facet_wrap(~ component_label, scales = &quot;free_y&quot;, ncol = 2) +
+  scale_y_reordered() +
+  scale_fill_manual(values = top_pc_palette) +
+  labs(title = &quot;Who are the most extreme characters?&quot;,
+       subtitle = paste(&quot;Each component shows its four highest- and lowest-scoring characters.&quot;,
+                        &quot;Below component titles are examples of the traits that comprise that component.&quot;,
+                        sep = &quot;\n&quot;)) +
+  theme(text = element_text(family = &quot;IBM Plex Sans&quot;),
+        plot.title = element_text(size = 24, margin = margin(t = 10)),
+        plot.subtitle = element_text(size = 10, margin = margin(t = 10, b = 20)),
+        plot.margin = margin(0, 20, 20, 20),
+        panel.spacing.y = unit(20, &quot;points&quot;),
+        strip.text = element_markdown(size = 14, hjust = 0.5, margin = margin(0, 5, 5, 5)),
+        axis.text.x = element_text(size = 9, hjust = 0.5),
+        axis.text.y = element_markdown(size = 9, hjust = 1))</code></pre>
+<p><img src="index_files/figure-html/pca-single-component-examples-1.png" width="768" style="display: block; margin: auto;" />
+ </p>
+<p>These are spot-on! Joffrey Baratheon is ludicrous and deranged, Gus Fring is hard and armoured, and Leslie Knope is most definitely obsessed and hurried. Characters on opposite ends of the PCs are spot-on, too, from tiresome, stick-in-the-mud Mr. Collins to refined, manicured Tahani Al-Jamil.<br />
+ </p>
+<p>We can also combine components to see how they relate to one another. (In fancier terminology, we’re taking a bivariate view instead of a univariate view.) For example, if we plot <code>PC01</code> (deranged vs. resonable) against <code>PC04</code> (rugged vs. refined), we can see where characters fall along both components, resulting in a more nuanced look at their personalities. Characters farther to the right (or left) are more deranged (or reasonable). And characters higher up (or down) are more rugged (or refined).</p>
+<pre class="r"><code>p &lt;- character_list %&gt;%
+  left_join(personality_pca, by = &quot;character_code&quot;) %&gt;%
+  mutate(Character = character_name,
+         `Fictional Work` = fictional_work,
+         colour_group = case_when(PC01 &gt; 0 &amp; PC04 &gt; 0 ~ &quot;deranged_rugged&quot;,
+                                  PC01 &gt; 0 ~ &quot;deranged_refined&quot;,
+                                  PC04 &lt; 0 ~ &quot;reasonable_refined&quot;,
+                                  TRUE ~ &quot;reasonable_rugged&quot;),
+         alpha_factor = sqrt(PC01 ^ 2 + PC04 ^ 2)) %&gt;%
+  ggplot(aes(PC01, PC04, label = Character, label2 = `Fictional Work`)) +
+  geom_hline(yintercept = 0, lty = 2, alpha = 0.8, colour = &quot;grey50&quot;) +
+  geom_vline(xintercept = 0, lty = 2, alpha = 0.8, colour = &quot;grey50&quot;) +
+  geom_point(aes(colour = colour_group, alpha = alpha_factor)) +
+  annotate(&quot;text&quot;, x = 14, y = 14, label = &quot;Deranged\n+\nRugged&quot;,
+           family = &quot;IBM Plex Sans&quot;, size = 7, colour = &quot;#cc0024&quot;) +
+  annotate(&quot;text&quot;, x = 14, y = -14, label = &quot;Deranged\n+\nRefined&quot;,
+           family = &quot;IBM Plex Sans&quot;, size = 7, colour = &quot;#4b264d&quot;) +
+  annotate(&quot;text&quot;, x = -14, y = -14, label = &quot;Reasonable\n+\nRefined&quot;,
+           family = &quot;IBM Plex Sans&quot;, size = 7, colour = &quot;#244F26&quot;) +
+  annotate(&quot;text&quot;, x = -14, y = 14, label = &quot;Reasonable\n+\nRugged&quot;,
+           family = &quot;IBM Plex Sans&quot;, size = 7, colour = &quot;#016eae&quot;) +
+  expand_limits(x = c(-21, 21),
+                y = c(-16, 16)) +
+  scale_colour_manual(values = c(&quot;#4b264d&quot;, &quot;#cc0024&quot;, &quot;#244F26&quot;, &quot;#016eae&quot;)) +
+  labs(title = &quot;&quot;) +
+  theme(legend.position = &quot;none&quot;,
+        text = element_text(family = &quot;IBM Plex Sans&quot;),
+        plot.title = element_text(margin = margin(t = 10, b = 30)))
+
+ggplotly(p, tooltip = c(&quot;label&quot;, &quot;label2&quot;))</code></pre>
+<div id="htmlwidget-1" style="width:768px;height:768px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"data":[{"x":[-23.1,23.1],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(127,127,127,0.8)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,0],"y":[-17.6,17.6],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(127,127,127,0.8)","dash":"dash"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[7.68352098142052,0.0179763132722107,0.0505253860532468,4.60733148876736,7.1859052887236,6.9004136772415,14.5075107559407,18.6600119266053,16.2858342155617,12.2042694573392,8.81840626301812,3.24851645493014,10.249114797056,7.42130888110742,6.76677787107962,1.64922887465607,13.1383379802805,4.05080580146522,7.87852169528869,5.23404658987472,7.00151523659547,6.64024920712874,7.198519456762,9.73569353174958,5.50347818801071,4.15246072867433,2.13478381333619,8.68881933832601,8.8378226809548,17.6964708711381,3.46402464307023,9.06898372749075,6.98397252120585,3.34299822031351,12.7575214847367,9.21796691170992,4.17153570037685,2.92156005274046,11.2709916372483,17.0951180355664,5.47199802778756,1.3455588277311,4.95172008666321,10.130308435101,2.72879376856355,3.57343988308589,20.96217524706,5.94225769738361,6.90696078135652,9.27761869543608,0.163570594180879,1.38637022587485,13.9907763636452,0.802277975269946,4.95502037939272,0.185682678872237,1.225396420164,8.20677351207634,4.14529668158724,16.640747267765,5.74301618107732,9.02117896065025,9.98611346926237,3.66663167599092,11.5894411535759,6.13763413055552,12.9902294462885,0.759829049918615,7.45778065355526,5.75007759534267,0.572942667217803,8.38070836205653,3.74885727222616,0.93663550209913,3.05218232114866,5.43199484284095,10.3961744004011,5.03233379338081,6.55567870499013,2.24233121505248,6.88215121223194,0.465562185727379,6.56556459468754,9.09168725540497,9.08019512666014,0.771082112801756,10.9110390151124,2.91216173539259,4.55282872956507,7.03385182935048,9.6142873535181,6.41621090747823,10.4966371161042,5.06759247599599,8.58641827885555,7.50727654938846,3.79164246405506,0.980618045527465,0.317247926516101,11.9079020362224,16.2604114258387,3.4482588729931,15.7164756598586,1.66245330393542,7.9942772073232,3.51559463108174,8.30786002461167,5.15111235215702,6.99280679109402,16.291485950955,13.2557824121856,3.01013382410638,9.47644040631862,8.31151917018193,8.21163975173325,1.22723268013953,0.671423095763985,4.40340283583933,9.51001826548448,5.51949585621882,10.3982173682604,2.00227876119718,0.357612702906492,1.39305277850815,5.80769421852069,1.31276278906153,4.64279183235645,0.496821179487203,8.63404812595478,4.54904588398964,3.07934737786318,12.7195466112802,5.04543286342722,2.02670928158851,9.67122527252234,3.22760710163278,3.81783329027279,5.39025345483262,8.34508095933689,13.0111942133986,7.79441295875091,5.4746358977032,8.0937551672259,1.37594618481652,1.5607675659848,11.3206542751226,0.871169217903597,6.06701642261476,4.32777561053977,2.76218378882496,10.7610331180314,5.45935531382209,2.23334228897752,0.955343804624092,2.31277955577319,1.96132875238436,6.19611075244911,7.92182997527447,12.9828766057241,10.7352902112133,12.2832794215704,12.6386243539352,10.0239086151674,16.4649439812948,3.92724063249884,9.51207079253746,2.56887113961482,2.15153324601204,6.5858344161178,11.7152552844718,0.830563629326253,5.01228814961132,5.19687075943783,6.26407706822908,7.74730207831347,1.34110649204411,8.8563346934722,10.2939525182772,7.82090656764653,1.15832217088133,10.0864869468959,15.4010332723166,6.51256354843411,1.9144407610656,3.018737935431,8.49480097826417,15.7701359220676,0.0266130524949279,0.289358340007559],"y":[-4.63936645285693,-1.8776792027716,-3.89489352689992,-2.03798448331997,-4.44108616104596,-5.02938865928426,-1.21655955041931,-3.03325619394826,-7.08228969064975,-6.71163134489872,-2.62837815921109,-3.09774591464797,-5.52094379165437,-4.32774673642435,-3.10115863396631,-3.83636516989488,-8.02130787237496,-7.31813559649574,-0.639346121731468,-4.42789122945649,-0.845785014169378,-7.76326620203947,-1.72694135770312,-2.20053976922599,-2.30804203894912,-3.19792655871032,-3.70859999132101,-5.40300667976022,-3.03590362745747,-1.07085433239992,-1.19726820039605,-0.308811499437072,-3.11852202992352,-3.09163353331272,-3.76369652731714,-6.78215283841339,-2.46662996801046,-1.80593792683083,-1.28818956008045,-1.04678610412198,-0.810795869497428,-0.608227776150431,-7.64357802946831,-5.3781924972112,-2.8325799207851,-2.63505037145421,-3.19616572307598,-3.03064920234932,-3.86124067192929,-6.2456163334417,-2.75252558666756,-2.59410211227075,-2.1135559816541,-8.12239548327093,-2.12137232680477,-8.0512413417235,-9.22139866206855,-2.37106726118706,-3.1018710407496,-0.409533426504926,-2.73471812723207,-4.91500976019261,-4.85098777453273,-3.80655941440085,-1.15980239057819,-1.76335093919623,-6.22495824883722,-1.08654567840774,-3.97822650626891,-1.56708349866537,-1.59961682763978,-3.22817807059804,-3.10014404624289,-6.60090513777451,-4.44200459115682,-1.69187463182473,-6.59393607245975,-1.30609770062613,-0.785844416991086,-5.45048805515322,-2.0325822045153,-3.36011388881314,-2.41627420667909,-5.66479250411542,-5.54651731821854,-5.11235591550122,-4.77690507073443,-5.54647204846825,-3.18101016414847,-8.88548457744678,-6.36928688581609,-4.68152505267081,-8.54917147158595,-3.03883952091781,-1.92149680035112,-4.50518574332302,-4.93362923227728,-0.829390901011124,-4.16225012759581,-9.28983122508111,-2.06086587852258,-5.66143010349954,-2.72223015303573,-0.604570598129046,-1.89809959871501,-1.1353122488963,-3.67262287143948,-4.70575861008852,-2.02933864712706,-4.95636185493149,-1.13388299569462,-4.54243625188724,-1.91363569393356,-3.14350474660267,-2.69045056076834,-3.86351171184775,-5.3299938380065,-2.04446740114208,-8.31807898595306,-7.57798140678687,-9.20934030863792,-1.92718329036699,-4.54237469311772,-3.49425133973446,-4.38706953173449,-4.40457272197663,-7.91539957705946,-4.18229796302615,-5.11791140261191,-0.0459852260716767,-3.22585579575181,-7.6599234770026,-2.95883895096007,-2.60250067345119,-3.91514044463015,-5.08937418958724,-1.16871433105408,-2.71277121034857,-10.5076077746566,-1.75145155742708,-3.86464875358633,-3.99775561653165,-1.14325036337199,-3.59844050857784,-4.70106032862186,-2.67037395160358,-5.66672570016427,-7.69511754129364,-6.04976362728376,-4.65936832456891,-2.66088891937772,-5.15941792914822,-10.5883797648025,-0.655970577715504,-2.5414751307516,-2.1992189638724,-6.89957670770462,-4.04693549140895,-7.9014799277691,-2.95519051027606,-3.66086447399779,-4.48890239173774,-0.508686969944774,-2.79170632723133,-2.44958970284801,-2.25385787120462,-1.15111178901038,-3.02695382234885,-4.68717121301078,-4.66478327562422,-1.20403338090735,-2.96455195300733,-7.12293068982644,-3.5443214272108,-3.62915564151592,-1.63459464064231,-5.46218178532298,-5.73225015147815,-4.32387697094685,-2.09607188577438,-1.84341756548266,-0.23256081123458,-5.7239413556144,-2.46407692565274,-4.99138014979561,-6.97571661343489,-4.18986574614061,-0.269412986012105,-4.47862462425699],"text":["Character: Count Alexei Vronsky<br />Fictional Work: Anna Karenina","Character: Countess Lidia Ivanovna<br />Fictional Work: Anna Karenina","Character: Countess Vronskaya<br />Fictional Work: Anna Karenina","Character: Prince Stepan 'Stiva' Oblonsky<br />Fictional Work: Anna Karenina","Character: Princess Anna Karenina<br />Fictional Work: Anna Karenina","Character: Princess Elizaveta 'Betsy' Tverskaya<br />Fictional Work: Anna Karenina","Character: George Bluth, Sr.<br />Fictional Work: Arrested Development","Character: George Oscar 'Gob' Bluth<br />Fictional Work: Arrested Development","Character: Lindsay Bluth Funke<br />Fictional Work: Arrested Development","Character: Lucille Bluth<br />Fictional Work: Arrested Development","Character: Tobias Funke<br />Fictional Work: Arrested Development","Character: Francisco d'Anconia<br />Fictional Work: Atlas Shrugged","Character: James Taggart<br />Fictional Work: Atlas Shrugged","Character: Azula<br />Fictional Work: Avatar: The Last Airbender","Character: Firelord Ozai<br />Fictional Work: Avatar: The Last Airbender","Character: Ty Lee<br />Fictional Work: Avatar: The Last Airbender","Character: Gaius Baltar<br />Fictional Work: Battlestar Galactica","Character: Number Six<br />Fictional Work: Battlestar Galactica","Character: Jimmy McGill<br />Fictional Work: Breaking Bad","Character: Marie Schrader<br />Fictional Work: Breaking Bad","Character: Jake Peralta<br />Fictional Work: Brooklyn Nine-Nine","Character: Cordelia Chase<br />Fictional Work: Buffy the Vampire Slayer","Character: Agatha<br />Fictional Work: Chilling Adventures of Sabrina","Character: Father Faustus Blackwood<br />Fictional Work: Chilling Adventures of Sabrina","Character: Mary Wardwell<br />Fictional Work: Chilling Adventures of Sabrina","Character: Prudence Night<br />Fictional Work: Chilling Adventures of Sabrina","Character: Sabrina Spellman<br />Fictional Work: Chilling Adventures of Sabrina","Character: Craig Pelton<br />Fictional Work: Community","Character: Jeff Winger<br />Fictional Work: Community","Character: Pierce Hawthorne<br />Fictional Work: Community","Character: Troy Barnes<br />Fictional Work: Community","Character: Faye Valentine<br />Fictional Work: Cowboy Bebop","Character: Goh Peik Lin<br />Fictional Work: Crazy Rich Asians","Character: Carlos Solis<br />Fictional Work: Desperate Housewives","Character: Edie Britt<br />Fictional Work: Desperate Housewives","Character: Gabrielle Solis<br />Fictional Work: Desperate Housewives","Character: Susan Mayer<br />Fictional Work: Desperate Housewives","Character: Vince Masuka<br />Fictional Work: Dexter","Character: Thomas Barrow<br />Fictional Work: Downton Abbey","Character: Baron Vladimir Harkonnen<br />Fictional Work: Dune","Character: Smash Williams<br />Fictional Work: Friday Night Lights","Character: Chandler Bing<br />Fictional Work: Friends","Character: Rachel Green<br />Fictional Work: Friends","Character: Cersei Lannister<br />Fictional Work: Game of Thrones","Character: Daenerys Targaryen<br />Fictional Work: Game of Thrones","Character: Jaime Lannister<br />Fictional Work: Game of Thrones","Character: Joffrey Baratheon<br />Fictional Work: Game of Thrones","Character: Melisandre<br />Fictional Work: Game of Thrones","Character: Oberyn Martell<br />Fictional Work: Game of Thrones","Character: Petyr Baelish<br />Fictional Work: Game of Thrones","Character: Tyrion Lannister<br />Fictional Work: Game of Thrones","Character: Tywin Lannister<br />Fictional Work: Game of Thrones","Character: Hannah Horvath<br />Fictional Work: Girls","Character: Marnie Michaels<br />Fictional Work: Girls","Character: Brittany Pierce<br />Fictional Work: Glee","Character: Kurt Hummel<br />Fictional Work: Glee","Character: Rachel Berry<br />Fictional Work: Glee","Character: Santana Lopez<br />Fictional Work: Glee","Character: Izzie Stevens<br />Fictional Work: Grey's Anatomy","Character: Bellatrix Lestrange<br />Fictional Work: Harry Potter","Character: Cornelius Fudge<br />Fictional Work: Harry Potter","Character: Dolores Umbridge<br />Fictional Work: Harry Potter","Character: Draco Malfoy<br />Fictional Work: Harry Potter","Character: Horace Slughorn<br />Fictional Work: Harry Potter","Character: Lord Voldemort<br />Fictional Work: Harry Potter","Character: Petunia Dursley<br />Fictional Work: Harry Potter","Character: Rita Skeeter<br />Fictional Work: Harry Potter","Character: Annalise Keating<br />Fictional Work: How To Get Away With Murder","Character: Asher Millstone<br />Fictional Work: How To Get Away With Murder","Character: Connor Walsh<br />Fictional Work: How To Get Away With Murder","Character: Laurel Castillo<br />Fictional Work: How To Get Away With Murder","Character: Mal Cobb<br />Fictional Work: Inception","Character: Dr. Ian Malcolm<br />Fictional Work: Jurassic Park","Character: Amy March<br />Fictional Work: Little Women","Character: Theodore Laurence<br />Fictional Work: Little Women","Character: Benjamin Linus<br />Fictional Work: LOST","Character: Shannon Rutherford<br />Fictional Work: LOST","Character: Frank Burns<br />Fictional Work: M*A*S*H","Character: Maxwell Klinger<br />Fictional Work: M*A*S*H","Character: Betty Draper<br />Fictional Work: Mad Men","Character: Don Draper<br />Fictional Work: Mad Men","Character: Harry Crane<br />Fictional Work: Mad Men","Character: Paul Kinsey<br />Fictional Work: Mad Men","Character: Pete Campbell<br />Fictional Work: Mad Men","Character: Roger Sterling<br />Fictional Work: Mad Men","Character: Salvatore Romano<br />Fictional Work: Mad Men","Character: Loki<br />Fictional Work: Marvel Cinematic Universe","Character: Tony Stark<br />Fictional Work: Marvel Cinematic Universe","Character: Damian Leigh<br />Fictional Work: Mean Girls","Character: Gretchen Wieners<br />Fictional Work: Mean Girls","Character: June George<br />Fictional Work: Mean Girls","Character: Karen Smith<br />Fictional Work: Mean Girls","Character: Regina George<br />Fictional Work: Mean Girls","Character: Anthony DiNozzo<br />Fictional Work: NCIS","Character: Flaca Gonzales<br />Fictional Work: Orange is the New Black","Character: Lorna Morello<br />Fictional Work: Orange is the New Black","Character: Piper Chapman<br />Fictional Work: Orange is the New Black","Character: Charlotte Byrde<br />Fictional Work: Ozark","Character: Wendy Byrde<br />Fictional Work: Ozark","Character: Tom Haverford<br />Fictional Work: Parks and Recreation","Character: George Wickham<br />Fictional Work: Pride and Prejudice","Character: Lady Catherine de Bourgh<br />Fictional Work: Pride and Prejudice","Character: Lydia Bennet<br />Fictional Work: Pride and Prejudice","Character: Mr. William Collins<br />Fictional Work: Pride and Prejudice","Character: Mrs. Bennet<br />Fictional Work: Pride and Prejudice","Character: Marsellus Wallace<br />Fictional Work: Pulp Fiction","Character: Mia Wallace<br />Fictional Work: Pulp Fiction","Character: Dr. Rene Belloq<br />Fictional Work: Raiders of the Lost Ark","Character: Major Arnold Toht<br />Fictional Work: Raiders of the Lost Ark","Character: Prince John<br />Fictional Work: Robin Hood","Character: Sheriff of Nottingham<br />Fictional Work: Robin Hood","Character: Juliet Capulet<br />Fictional Work: Romeo and Juliet","Character: Mercutio<br />Fictional Work: Romeo and Juliet","Character: Romeo Montague<br />Fictional Work: Romeo and Juliet","Character: Cyrus Beene<br />Fictional Work: Scandal","Character: Fitzgerald Grant<br />Fictional Work: Scandal","Character: Mellie Grant<br />Fictional Work: Scandal","Character: Rowan Pope<br />Fictional Work: Scandal","Character: Alexis Rose<br />Fictional Work: Schitt's Creek","Character: David Rose<br />Fictional Work: Schitt's Creek","Character: Moira Rose<br />Fictional Work: Schitt's Creek","Character: Christopher Turk<br />Fictional Work: Scrubs","Character: Elliot Reid<br />Fictional Work: Scrubs","Character: John Michael Dorian<br />Fictional Work: Scrubs","Character: Elaine Benes<br />Fictional Work: Seinfeld","Character: Jerry Seinfeld<br />Fictional Work: Seinfeld","Character: Carrie Bradshaw<br />Fictional Work: Sex and the City","Character: Mr. Big<br />Fictional Work: Sex and the City","Character: Samantha Jones<br />Fictional Work: Sex and the City","Character: Sherlock Holmes<br />Fictional Work: Sherlock","Character: Dinesh Chugtai<br />Fictional Work: Silicon Valley","Character: Gavin Belson<br />Fictional Work: Silicon Valley","Character: Dukat<br />Fictional Work: Star Trek: Deep Space Nine","Character: Elim Garak<br />Fictional Work: Star Trek: Deep Space Nine","Character: Quark<br />Fictional Work: Star Trek: Deep Space Nine","Character: Winn Adami<br />Fictional Work: Star Trek: Deep Space Nine","Character: Fogell (McLovin)<br />Fictional Work: Superbad","Character: Fez<br />Fictional Work: That 70's Show","Character: Jackie Burkhart<br />Fictional Work: That 70's Show","Character: Michael Kelso<br />Fictional Work: That 70's Show","Character: Midge Pinciotti<br />Fictional Work: That 70's Show","Character: Howard Wolowitz<br />Fictional Work: The Big Bang Theory","Character: Penny<br />Fictional Work: The Big Bang Theory","Character: Harvey Dent<br />Fictional Work: The Dark Knight","Character: Lau<br />Fictional Work: The Dark Knight","Character: Sal Maroni<br />Fictional Work: The Dark Knight","Character: Michael<br />Fictional Work: The Good Place","Character: Daisy Buchanan<br />Fictional Work: The Great Gatsby","Character: Jay Gatsby<br />Fictional Work: The Great Gatsby","Character: Jordan Baker<br />Fictional Work: The Great Gatsby","Character: Tom Buchanan<br />Fictional Work: The Great Gatsby","Character: Coriolanus Snow<br />Fictional Work: The Hunger Games","Character: Effie Trinket<br />Fictional Work: The Hunger Games","Character: Simba<br />Fictional Work: The Lion King","Character: Agent Smith<br />Fictional Work: The Matrix","Character: Patrick Jane<br />Fictional Work: The Mentalist","Character: Andy Bernard<br />Fictional Work: The Office","Character: Jan Levinson<br />Fictional Work: The Office","Character: Kelly Kapoor<br />Fictional Work: The Office","Character: Michael Scott<br />Fictional Work: The Office","Character: Robert California<br />Fictional Work: The Office","Character: Ryan Howard<br />Fictional Work: The Office","Character: Johnny<br />Fictional Work: The Room","Character: Lisa<br />Fictional Work: The Room","Character: Michelle<br />Fictional Work: The Room","Character: Mr. Burns<br />Fictional Work: The Simpsons","Character: Lori Grimes<br />Fictional Work: The Walking Dead","Character: Josh Lyman<br />Fictional Work: The West Wing","Character: Clarence Royce<br />Fictional Work: The Wire","Character: Clay Davis<br />Fictional Work: The Wire","Character: Ervin Burrell<br />Fictional Work: The Wire","Character: Maurice Levy<br />Fictional Work: The Wire","Character: Tommy Carcetti<br />Fictional Work: The Wire","Character: The Wizard of Oz<br />Fictional Work: The Wizard of Oz","Character: Kevin Pearson<br />Fictional Work: This Is Us","Character: Rosalie Hale<br />Fictional Work: Twilight","Character: Audrey Horne<br />Fictional Work: Twin Peaks","Character: Benjamin Horne<br />Fictional Work: Twin Peaks","Character: Catherine Martell<br />Fictional Work: Twin Peaks","Character: Donna Hayward<br />Fictional Work: Twin Peaks","Character: Leland Palmer<br />Fictional Work: Twin Peaks","Character: Charlie Harper<br />Fictional Work: Two and Half Men","Character: Evelyn Harper<br />Fictional Work: Two and Half Men","Character: Judith Harper-Melnick<br />Fictional Work: Two and Half Men","Character: Charlotte Hale<br />Fictional Work: Westworld","Character: Lee Sizemore<br />Fictional Work: Westworld","Character: Logan Delos<br />Fictional Work: Westworld","Character: Maeve Millay<br />Fictional Work: Westworld","Character: Robert Ford<br />Fictional Work: Westworld"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(75,38,77,1)","opacity":[0.474244554456756,0.169091266220786,0.25582743945464,0.30495636222668,0.45154343004495,0.455466477744305,0.714269129806737,0.901137883489061,0.851876964081035,0.687166698110244,0.483971280883986,0.2813449895107,0.588863211001957,0.457712171856506,0.408380280123724,0.26789211058244,0.750167619925665,0.447972591007351,0.428194335981787,0.383109486225619,0.391564216068292,0.527564249174386,0.406626957229952,0.517484754884352,0.344935996233485,0.313692792744169,0.272333082896993,0.528251486654949,0.49011696477733,0.850574126893806,0.245933637693973,0.478488191080072,0.417195788821506,0.284126228069796,0.660213748968578,0.580377259414466,0.296714138287825,0.236026824721023,0.576087455527108,0.824705151111194,0.326186057559025,0.151845806991555,0.479911670217127,0.581464750626221,0.257458955337735,0.279245945355992,1,0.375143575063525,0.428562415152412,0.569192925953057,0.206908469530264,0.2148166928004,0.696688962608622,0.439265014336907,0.320093618398936,0.434598613037445,0.488300084933834,0.455624121194778,0.310950366487282,0.804010496365152,0.36183354448705,0.530035633720766,0.565667638713682,0.315589605778603,0.589112639636944,0.362909616778864,0.707661007816843,0.145363563925983,0.451757878436222,0.344589292592052,0.161411159376925,0.474477255856083,0.297505960181465,0.374995210924185,0.320072776027729,0.332963290620135,0.617645217540449,0.311883384138216,0.372225838779478,0.341748347478188,0.396878712012091,0.23420171270496,0.389141825855345,0.548903582736799,0.545813152902853,0.310641501072375,0.600444379657801,0.35768974326797,0.327143674947956,0.575579780962314,0.584182833231233,0.429834537223212,0.670382503481037,0.342401001495131,0.466645871617146,0.464777582094912,0.355875981718267,0.143577753763493,0.267826818217046,0.737679586870741,0.793034581351593,0.373355954916011,0.774117765783838,0.164413869894671,0.441612499206647,0.247192098070091,0.478883289572207,0.388320626153545,0.401405287645584,0.820474848917009,0.660345759186491,0.322640770335594,0.504003842137599,0.470400003253674,0.45986861720382,0.262642691163707,0.319323400311332,0.297085651537742,0.631554404532411,0.491418748974936,0.685535712036414,0.2078403467009,0.284254687835621,0.250086991019904,0.401281648809875,0.285957741864037,0.482886783864522,0.269433918926926,0.519876634460978,0.283947214447916,0.280094068816006,0.726715945084749,0.339827123620968,0.230175680802811,0.536932831609899,0.347458872971914,0.260018818887227,0.347796738757218,0.665250769477583,0.652794406852363,0.462394556856053,0.379805639339946,0.439788569919755,0.253992103606748,0.301320653626463,0.588425273380565,0.334851627902436,0.509654535793375,0.40815729518006,0.321235115531608,0.564942186700531,0.411305908751494,0.553601400506257,0.138183904573235,0.236096405799934,0.215050246722902,0.487050648186886,0.470811281107811,0.741779167916125,0.567069492537017,0.639409141673494,0.664986170955788,0.519871713138824,0.806338747447504,0.287356415080013,0.508635082597979,0.209385137964014,0.248023192630262,0.435892974568,0.630492581398983,0.151247033052812,0.338723903972312,0.467438754848393,0.397792451446494,0.456173220289986,0.17926261960456,0.535713891402659,0.594918239919271,0.472569869734579,0.191321502604874,0.52919033745872,0.750570525797763,0.461128820384996,0.222514721939318,0.339148254665897,0.560934637048802,0.789885164680891,0.1,0.281311070509296],"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(75,38,77,1)"}},"hoveron":"points","name":"deranged_refined","legendgroup":"deranged_refined","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1.1688152221219,3.3413617109945,7.27682038166343,4.14252455458468,10.8164337095432,13.3292057347771,4.20075653647481,3.30846271364372,0.925743582333033,9.84546229661729,1.98546036527687,4.62180266069037,10.4543256643076,9.40851039318783,2.55661709112238,1.99100572921669,0.875869401670375,1.05596527235721,4.47185087597848,19.2006025934813,10.1151907646883,11.3794376207989,5.79124718458339,4.53642230013508,5.54834239102169,0.240639907380164,2.91169312426626,2.2039063718448,7.92866601796741,8.46505162253211,14.4617169512405,0.425803638464212,11.8298293665011,15.1675802763325,4.66195292966759,3.26105347923426,7.89529646438115,9.19374660682415,9.98917626550216,8.96628539393557,7.96837956204268,6.05743068058785,2.54155846190228,2.78261260850686,9.10161575812744,5.70246752075635,7.91928910074623,5.07868202497604,9.54373221547997,5.14745181437835,9.52939450548353,15.2333907904827,13.4794974479801,9.11214606197084,6.87592248173788,5.10322943078243,5.40931667001963,11.3476400695476,3.75649574259726,2.46069817429635,1.98654644329301,0.817836323825941,10.1312330734212,0.619674489309628,7.22301210818381,1.21035893677505,15.7826539265641,2.52832851088582,2.78186568465241,2.90098068103539,16.5643794969257,2.65715299581396,2.97180958593545,6.51112192115514,0.608439117807312,11.8246684628275,0.0233222122056498,3.5814329003746,2.87442912002712,4.42146220357744,7.34066773239167,10.1871629545459,5.62222686288816,1.67330861618522,7.81103452179302,0.804041262060999,3.97218388616833,0.168276438836769,0.73809244817873,11.1122439875142,3.97010602587424,6.42770395792304,8.210520901493,11.9044310763942,4.53145161038585,13.4589932247347,4.08505115394395,3.75252117986363,10.9756113983613,4.31718429839631,2.81469909719201,10.8921129074723,9.78227765003952,14.2526293119463,12.4009150767352,9.68446351376686,4.35191816411832,16.0580922002841,3.52436084596222,12.8498652082677,2.73183620190514,0.855730442431169,1.29835055782587,0.682704151356636,1.31879014211034,0.637190244614687,3.22320733929941,4.00888028256179,3.881014513005,12.8412234004729,11.3340709358282,1.6592510909235,6.33888768554147,19.8776138884333,12.9349384916762,2.34009784061348,0.112431091268197,4.95012904281082,10.3940313915367,0.228533300482905,8.29257436196539,13.4843697277107,9.29066804112915,8.82510727389919,13.1134424965516,5.52227290090549,4.0229309333108,2.30269784145471,13.7161302989705,10.9822500809846,9.73979860029882,5.90863484131743,14.6405139900659,14.7294961860678,9.11857000009365,3.70995797420941,11.7792817076503,5.67126001988535,13.303341974103,8.42013790359349,2.45275046310442,6.50900767392914,15.7737053254207,7.64222817456163,6.89744379375564,12.206070871766,15.4435017748801,6.23449578222632,14.2851706029911,18.8335462190864,10.5576960699268,17.0427722896535,3.8738155104193,16.8556437797124,13.5349077769906,5.1292327620061,1.1700983498842,3.01639224274838,11.4551123113434,7.08582720659392,1.0108426929125,5.19438724849173,2.46052188959259,2.39711186463894,12.0957217764524,6.28911553971355,20.3597780240306,1.61720316880096,12.65828156887,2.38769806195624,3.15998844719151,0.0587554503490046,19.0824233385858,4.25975436067311,2.94688135362906,2.53229468205543,4.93155392567645,2.83120835616621,15.9914768646523,2.35430610997983,0.388633059011529,5.90599063373646,8.75179145497416,2.68975737890957,8.54121391814267],"y":[2.29446108326916,3.38026396552483,4.60405872912795,0.866134477562311,0.281768781698679,4.13807393217123,1.83724173889142,7.2073583691524,2.93010519334081,6.05487917932743,4.3193457334553,5.70144186466618,2.2730242279721,5.28142315625373,1.63822528609472,6.75307867666436,2.84546056701852,0.787790681248259,3.08115796735455,0.520252614317505,0.430902201014125,0.111675285137105,2.04628586803793,4.17998284331077,1.60993311693845,0.410495795764306,2.28233906121429,3.74577792800578,1.19616336133268,5.07094533897698,3.77161434896502,1.53642787735994,1.15735344941642,9.26276313977129,6.45663263793665,3.88401629853708,6.39072535718156,1.27140396653557,9.19034337247259,2.46864173390513,0.0518399878212036,1.22275343062186,6.58459043048266,7.10356496368656,6.00453582891119,13.4845639124872,0.499586357441184,2.27839099942981,3.69684245817218,8.5198711634149,6.13930231318904,1.08686224475647,5.80414251287463,0.0785927891745832,4.70139446831208,8.03933942501897,1.46484770972002,2.11674410403897,1.70579976663449,5.21557705614348,4.48904897543745,2.01782711026718,3.19048180181589,0.0295612786393512,4.49926505270606,0.552748730990151,1.99444954805071,1.5478805154737,1.04332377589531,7.34285106006284,6.81702803740153,1.03331837113968,1.34389587425439,2.03964845895486,1.65242652163737,5.85221592050289,4.54216306325074,4.50897246588465,3.39980504139747,0.645374548592096,2.18475065405452,1.69881263926806,1.07054353213309,1.01053866724549,4.75433903400361,2.5700876475289,2.7981194845041,3.30699867738817,1.06612326959004,3.40935875704026,0.720355271668978,2.66465796466833,4.65136211397396,5.00239649065711,3.33097056021512,7.37614087951087,6.68653096628273,6.07668223438942,0.648070597374449,7.58881754799849,8.32565222934081,5.76940189858613,2.28133508532338,1.56415324238694,4.55185465163654,2.72929939438037,4.69206254740829,2.88535969784103,6.87004694203358,2.98878346815307,1.93773430611844,3.37790918648417,3.22662258551,1.73383463786856,9.69807203879154,2.68920227295392,1.2924499855431,0.0390767265751525,2.71029075198008,0.66842135715301,1.97808983513117,2.97691510144166,6.59569594321667,0.199769824007321,3.691670442929,3.48796201852007,2.96115197921403,0.296444847987281,3.81343336314115,7.33337255409704,1.82997340320937,1.49988909863436,0.798977523908193,8.37313875189588,4.57473309091699,4.15682804244666,2.33963418735785,4.65960242277625,0.833942439335629,1.50907458673066,2.72977936286415,1.63981579567644,5.64890892234635,0.920817964119058,6.66349370766902,4.38076944101081,0.523989214293157,1.09742638388215,2.2093994794879,1.26639261218894,4.45963233648115,5.44747141466133,7.06476263352669,0.561957844276902,1.05985680197651,8.85097110405961,2.51620826902405,1.42255109514603,4.25967352681991,2.02223506309669,7.31111865428287,9.13651621827761,0.900230868056138,8.41209349735034,4.43589127741862,1.249789561897,8.54387761260154,8.01549226082227,4.95513942827767,5.42068009725002,3.4048197235706,4.00654195082353,4.58445481328944,3.19397230708603,5.51629837822398,2.00363825075381,1.69470946257728,1.14146196838634,1.597128083317,0.84447547124477,1.71454207530118,0.469727606091607,5.35645617500186,4.36942895745527,6.78158941353719,4.03528654375362,0.685175018710848,4.48484265032623,3.14430621222648,6.80825258140981,0.340162140089272,6.81954240708932,4.08717757086781,2.08455058497765,2.14692791303733],"text":["Character: Lambert<br />Fictional Work: Alien","Character: Parker<br />Fictional Work: Alien","Character: the Alien<br />Fictional Work: Alien","Character: Buster Bluth<br />Fictional Work: Arrested Development","Character: Maeby Funke<br />Fictional Work: Arrested Development","Character: Oscar Bluth<br />Fictional Work: Arrested Development","Character: Sokka<br />Fictional Work: Avatar: The Last Airbender","Character: Toph Beifong<br />Fictional Work: Avatar: The Last Airbender","Character: Zuko<br />Fictional Work: Avatar: The Last Airbender","Character: Kara 'Starbuck' Thrace<br />Fictional Work: Battlestar Galactica","Character: Samuel 'Longshot' Anders<br />Fictional Work: Battlestar Galactica","Character: Saul Tigh<br />Fictional Work: Battlestar Galactica","Character: Jane Margolis<br />Fictional Work: Breaking Bad","Character: Jesse Pinkman<br />Fictional Work: Breaking Bad","Character: Walter White<br />Fictional Work: Breaking Bad","Character: Rosa Diaz<br />Fictional Work: Brooklyn Nine-Nine","Character: Angel<br />Fictional Work: Buffy the Vampire Slayer","Character: Buffy Summers<br />Fictional Work: Buffy the Vampire Slayer","Character: Xander Harris<br />Fictional Work: Buffy the Vampire Slayer","Character: Ben Chang<br />Fictional Work: Community","Character: Britta Perry<br />Fictional Work: Community","Character: Ian Duncan<br />Fictional Work: Community","Character: Ed<br />Fictional Work: Cowboy Bebop","Character: Spike Spiegel<br />Fictional Work: Cowboy Bebop","Character: Vicious<br />Fictional Work: Cowboy Bebop","Character: Tom Scavo<br />Fictional Work: Desperate Housewives","Character: Debra Morgan<br />Fictional Work: Dexter","Character: James Doakes<br />Fictional Work: Dexter","Character: Joey Quinn<br />Fictional Work: Dexter","Character: Sarah O'Brien<br />Fictional Work: Downton Abbey","Character: Marla Singer<br />Fictional Work: Fight Club","Character: The Narrator<br />Fictional Work: Fight Club","Character: Tyler Durden<br />Fictional Work: Fight Club","Character: Jayne Cobb<br />Fictional Work: Firefly + Serenity","Character: Malcolm Reynolds<br />Fictional Work: Firefly + Serenity","Character: River Tam<br />Fictional Work: Firefly + Serenity","Character: Dan Taylor<br />Fictional Work: Forrest Gump","Character: Jenny Curran<br />Fictional Work: Forrest Gump","Character: Tim Riggins<br />Fictional Work: Friday Night Lights","Character: Tyra Collette<br />Fictional Work: Friday Night Lights","Character: Joey Tribbiani<br />Fictional Work: Friends","Character: Phoebe Buffay<br />Fictional Work: Friends","Character: Arya Stark<br />Fictional Work: Game of Thrones","Character: Asha Greyjoy<br />Fictional Work: Game of Thrones","Character: Bronn<br />Fictional Work: Game of Thrones","Character: Sandor Clegane<br />Fictional Work: Game of Thrones","Character: Shae<br />Fictional Work: Game of Thrones","Character: Stannis Baratheon<br />Fictional Work: Game of Thrones","Character: Theon Greyjoy<br />Fictional Work: Game of Thrones","Character: Ygritte<br />Fictional Work: Game of Thrones","Character: Adam Sackler<br />Fictional Work: Girls","Character: Jessa Johansson<br />Fictional Work: Girls","Character: Noah Puckerman<br />Fictional Work: Glee","Character: Sue Sylvester<br />Fictional Work: Glee","Character: Alex Karev<br />Fictional Work: Grey's Anatomy","Character: Alastor Moody<br />Fictional Work: Harry Potter","Character: George Weasley<br />Fictional Work: Harry Potter","Character: Moaning Myrtle<br />Fictional Work: Harry Potter","Character: Nymphadora Tonks<br />Fictional Work: Harry Potter","Character: Ron Weasley<br />Fictional Work: Harry Potter","Character: Sirius Black<br />Fictional Work: Harry Potter","Character: Viktor Krum<br />Fictional Work: Harry Potter","Character: Dr. Gregory House<br />Fictional Work: House, M.D.","Character: Bonnie Winterbottom<br />Fictional Work: How To Get Away With Murder","Character: Frank Delfino<br />Fictional Work: How To Get Away With Murder","Character: Dom Cobb<br />Fictional Work: Inception","Character: Dennis Nedry<br />Fictional Work: Jurassic Park","Character: Jo March<br />Fictional Work: Little Women","Character: Boromir<br />Fictional Work: Lord of the Rings","Character: Gimli<br />Fictional Work: Lord of the Rings","Character: Gollum<br />Fictional Work: Lord of the Rings","Character: Merry Brandybuck<br />Fictional Work: Lord of the Rings","Character: Pippin Took<br />Fictional Work: Lord of the Rings","Character: Charlie Pace<br />Fictional Work: LOST","Character: Claire Littleton<br />Fictional Work: LOST","Character: James 'Sawyer' Ford<br />Fictional Work: LOST","Character: John Locke<br />Fictional Work: LOST","Character: Kate Austen<br />Fictional Work: LOST","Character: Michael Dawson<br />Fictional Work: LOST","Character: Benjamin 'Hawkeye' Pierce<br />Fictional Work: M*A*S*H","Character: Stan Rizzo<br />Fictional Work: Mad Men","Character: Peter Jason Quill<br />Fictional Work: Marvel Cinematic Universe","Character: Thanos<br />Fictional Work: Marvel Cinematic Universe","Character: Thor<br />Fictional Work: Marvel Cinematic Universe","Character: Janis Ian<br />Fictional Work: Mean Girls","Character: Billy Bibbit<br />Fictional Work: One Flew Over the Cuckoo's Nest","Character: Charlie Cheswick<br />Fictional Work: One Flew Over the Cuckoo's Nest","Character: Dale Harding<br />Fictional Work: One Flew Over the Cuckoo's Nest","Character: Nurse Mildred Ratched<br />Fictional Work: One Flew Over the Cuckoo's Nest","Character: Randle Patrick McMurphy<br />Fictional Work: One Flew Over the Cuckoo's Nest","Character: Alex Vause<br />Fictional Work: Orange is the New Black","Character: Crazy Eyes<br />Fictional Work: Orange is the New Black","Character: Nicky Nichols<br />Fictional Work: Orange is the New Black","Character: Pennsatucky Doggett<br />Fictional Work: Orange is the New Black","Character: Sam Healy<br />Fictional Work: Orange is the New Black","Character: Darlene Snell<br />Fictional Work: Ozark","Character: Jacob Snell<br />Fictional Work: Ozark","Character: Rachel Garrison<br />Fictional Work: Ozark","Character: Roy Petty<br />Fictional Work: Ozark","Character: Ruth Langmore<br />Fictional Work: Ozark","Character: Wyatt Langmore<br />Fictional Work: Ozark","Character: April Ludgate<br />Fictional Work: Parks and Recreation","Character: Hector Barbossa<br />Fictional Work: Pirates of the Caribbean","Character: Jack Sparrow<br />Fictional Work: Pirates of the Caribbean","Character: Brad Bellick<br />Fictional Work: Prison Break","Character: John Abruzzi<br />Fictional Work: Prison Break","Character: Lincoln 'L.J.' Burrows, Jr.<br />Fictional Work: Prison Break","Character: Theodore 'T-Bag' Bagwell<br />Fictional Work: Prison Break","Character: Butch Coolidge<br />Fictional Work: Pulp Fiction","Character: Ringo<br />Fictional Work: Pulp Fiction","Character: Vincent Vega<br />Fictional Work: Pulp Fiction","Character: Indiana Jones<br />Fictional Work: Raiders of the Lost Ark","Character: Marion Ravenwood<br />Fictional Work: Raiders of the Lost Ark","Character: Robin Hood<br />Fictional Work: Robin Hood","Character: Huck<br />Fictional Work: Scandal","Character: Jake Ballard<br />Fictional Work: Scandal","Character: Quinn Perkins<br />Fictional Work: Scandal","Character: Bob Kelso<br />Fictional Work: Scrubs","Character: Perry Cox<br />Fictional Work: Scrubs","Character: Cosmo Kramer<br />Fictional Work: Seinfeld","Character: George Costanza<br />Fictional Work: Seinfeld","Character: Morty Seinfeld<br />Fictional Work: Seinfeld","Character: Bertram Gilfoyle<br />Fictional Work: Silicon Valley","Character: Erlich Bachman<br />Fictional Work: Silicon Valley","Character: Jian-Yang<br />Fictional Work: Silicon Valley","Character: Nelson Bighetti<br />Fictional Work: Silicon Valley","Character: Rom<br />Fictional Work: Star Trek: Deep Space Nine","Character: Darth Vader<br />Fictional Work: Star Wars","Character: Han Solo<br />Fictional Work: Star Wars","Character: Jack O'Neill<br />Fictional Work: Stargate SG-1","Character: Officer Slater<br />Fictional Work: Superbad","Character: Seth<br />Fictional Work: Superbad","Character: Bob Pinciotti<br />Fictional Work: That 70's Show","Character: Steven Hyde<br />Fictional Work: That 70's Show","Character: John Murphy<br />Fictional Work: The 100","Character: Octavia Blake<br />Fictional Work: The 100","Character: Leslie Winkle<br />Fictional Work: The Big Bang Theory","Character: Stuart Bloom<br />Fictional Work: The Big Bang Theory","Character: The Joker<br />Fictional Work: The Dark Knight","Character: Eleanor Shellstrop<br />Fictional Work: The Good Place","Character: Jason Mendoza<br />Fictional Work: The Good Place","Character: Angel Eyes<br />Fictional Work: The Good, the Bad, and the Ugly","Character: Tuco<br />Fictional Work: The Good, the Bad, and the Ugly","Character: Myrtle Wilson<br />Fictional Work: The Great Gatsby","Character: Haymitch Abernathy<br />Fictional Work: The Hunger Games","Character: Pumbaa<br />Fictional Work: The Lion King","Character: Scar<br />Fictional Work: The Lion King","Character: Timon<br />Fictional Work: The Lion King","Character: Cypher<br />Fictional Work: The Matrix","Character: Red John<br />Fictional Work: The Mentalist","Character: Dwight Schrute<br />Fictional Work: The Office","Character: Kevin Malone<br />Fictional Work: The Office","Character: Meredith Palmer<br />Fictional Work: The Office","Character: Denny<br />Fictional Work: The Room","Character: Mark<br />Fictional Work: The Room","Character: Barney Gumble<br />Fictional Work: The Simpsons","Character: Bart Simpson<br />Fictional Work: The Simpsons","Character: Edna Krabappel<br />Fictional Work: The Simpsons","Character: Homer Simpson<br />Fictional Work: The Simpsons","Character: Krusty the Clown<br />Fictional Work: The Simpsons","Character: Moe Szyslak<br />Fictional Work: The Simpsons","Character: Nelson Muntz<br />Fictional Work: The Simpsons","Character: Andrea<br />Fictional Work: The Walking Dead","Character: Merle Dixon<br />Fictional Work: The Walking Dead","Character: Shane Walsh<br />Fictional Work: The Walking Dead","Character: Avon Barksdale<br />Fictional Work: The Wire","Character: Chris Partlow<br />Fictional Work: The Wire","Character: Frank Sobotka<br />Fictional Work: The Wire","Character: Jimmy McNulty<br />Fictional Work: The Wire","Character: Nick Sobotka<br />Fictional Work: The Wire","Character: Omar Little<br />Fictional Work: The Wire","Character: Preston 'Bodie' Broadus<br />Fictional Work: The Wire","Character: Reginald 'Bubbles' Cousins<br />Fictional Work: The Wire","Character: Spiros 'Vondas' Vondopoulos<br />Fictional Work: The Wire","Character: Thomas 'Herc' Hauk<br />Fictional Work: The Wire","Character: William Rawls<br />Fictional Work: The Wire","Character: Ziggy Sobotka<br />Fictional Work: The Wire","Character: The Cowardly Lion<br />Fictional Work: The Wizard of Oz","Character: The Wicked Witch of the West<br />Fictional Work: The Wizard of Oz","Character: Fox Mulder<br />Fictional Work: The X-Files","Character: Mr. Potato Head<br />Fictional Work: Toy Story","Character: Rex<br />Fictional Work: Toy Story","Character: Sid Phillips<br />Fictional Work: Toy Story","Character: Marty Hart<br />Fictional Work: True Detective","Character: Rust Cohle<br />Fictional Work: True Detective","Character: Bella Swan<br />Fictional Work: Twilight","Character: Emmett Cullen<br />Fictional Work: Twilight","Character: Jacob Black<br />Fictional Work: Twilight","Character: Bobby Briggs<br />Fictional Work: Twin Peaks","Character: James Hurley<br />Fictional Work: Twin Peaks","Character: Lucy Moran<br />Fictional Work: Twin Peaks","Character: Berta<br />Fictional Work: Two and Half Men","Character: Jake Harper<br />Fictional Work: Two and Half Men","Character: Clementine Pennyfeather<br />Fictional Work: Westworld","Character: Man in Black<br />Fictional Work: Westworld"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(204,0,36,1)","opacity":[0.199067837012922,0.292705217976613,0.458572564176685,0.270310959842662,0.553547818042481,0.688401979176166,0.285481058655499,0.429313144069221,0.220472133338334,0.58528572875447,0.292741025125589,0.403904555827837,0.548323092667591,0.552232477018618,0.218906735318574,0.391050504880975,0.216359623214994,0.145001756886103,0.321836033220387,0.914152307616791,0.523636043672948,0.57761875782538,0.352428682449137,0.353565618348942,0.336738869120711,0.10881808835108,0.247417058188685,0.275209381323662,0.433094126617109,0.512601476464464,0.730908012099037,0.156905999088897,0.599387020852038,0.852442090952462,0.430746677771895,0.306398757468926,0.525065429070466,0.487387779581396,0.671933926431949,0.488190712421286,0.430951356562319,0.354039857273971,0.391807303614102,0.416358643789445,0.557148166740126,0.717808356291352,0.429510382777597,0.327673342389922,0.528380479421459,0.516316652154205,0.575719152339228,0.744952431604989,0.719323717135206,0.48013245481122,0.446471894857139,0.497750962653947,0.329299105955109,0.584643397661923,0.265734359375497,0.336296772449186,0.299411125654158,0.181967608941007,0.545019009397037,0.115032661561709,0.454217760163766,0.145567132531104,0.772298454926613,0.2158139476635,0.216095868605896,0.427795098177349,0.858461600467914,0.210933457081612,0.228584109837836,0.38170584940165,0.164066197772876,0.655591421387577,0.283643884148334,0.335924539197295,0.279768386398588,0.280466359007492,0.417638107507074,0.532383971791622,0.334419251915993,0.172402187516446,0.481495047871037,0.204137206159349,0.297253459713561,0.230722027463359,0.144109093732512,0.588088026911265,0.261833882403206,0.387511243359797,0.494063444437274,0.643517223186217,0.33015272104773,0.748202171650216,0.425237488766126,0.395413645752634,0.561055432592697,0.463726087871035,0.466206558321114,0.618279876579703,0.520214129003069,0.704800870958366,0.656292990522734,0.520942126777243,0.363497011586425,0.789800139058382,0.420321984209663,0.655559888636193,0.23235630107912,0.238174330130016,0.237891911020721,0.168473754929257,0.509145918616258,0.207178430989035,0.237661103938038,0.260722153553345,0.291876181944637,0.641188952709078,0.583010258512662,0.234884661930324,0.481656521804132,0.942999136239804,0.666676200115511,0.268940659615942,0.215760876776309,0.301562212364905,0.564356182392966,0.403796406598125,0.453459907912561,0.671667554998887,0.489267357213179,0.611377147687255,0.685467123712851,0.385524150585879,0.288440931808496,0.311817374604259,0.679145211731112,0.564955682147427,0.523237990954546,0.351991302650929,0.763026388031326,0.722859988073181,0.573914438812504,0.335167174402455,0.595286449407156,0.336707414101289,0.668143433693985,0.454437926233653,0.307178352644265,0.453273891372176,0.831429231601399,0.417809020807184,0.388381947546316,0.736580932114565,0.761075952372154,0.36328849305293,0.729243995024017,0.902722802798503,0.640475651423216,0.919727286656871,0.259345142782845,0.898266638654265,0.700719683112499,0.315332900784945,0.459115138958408,0.456563176884304,0.624950442379545,0.471920400851772,0.241058650319803,0.370395294754364,0.312053334279625,0.260050366651927,0.659916734416719,0.372138134263873,0.966712733402423,0.173463625977544,0.636891060691118,0.197245987139845,0.242926989899284,0.108713093226737,0.94047693707162,0.35071375133951,0.406258118695304,0.293180325821766,0.302418925896403,0.316383249571632,0.789043933840027,0.398073628680589,0.110565504303784,0.476219373375915,0.503634461413547,0.234663786290244,0.466994845477034],"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(204,0,36,1)"}},"hoveron":"points","name":"deranged_rugged","legendgroup":"deranged_rugged","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-1.5091181086171,-5.98803856083756,-2.30846318553717,-8.25913843149796,-4.39762740423264,-12.1025404713382,-10.8617729015315,-6.173808615747,-11.2064369884425,-6.56579869025745,-3.5540085682935,-0.453329492342183,-13.1346124953187,-3.35039932924834,-13.0136098416093,-9.59674009253183,-13.516179211799,-8.21932136688561,-5.48338073461894,-5.84545582233979,-1.75610300365103,-5.73035167796959,-8.09146004136157,-1.58722771822786,-5.10994116329553,-8.85561724503693,-6.66748482301788,-3.51815355221338,-9.19652926629588,-1.0262891194315,-2.8697952015919,-9.42730459421821,-9.44820903273662,-4.25712623539729,-6.14944464823913,-2.84858141145633,-2.72204748400936,-8.87437378044887,-1.41097450194319,-8.51748232724042,-1.0233875358701,-0.102640721702813,-2.87597766114225,-8.95183548532621,-2.93246432475141,-9.96990447401944,-7.22108174684016,-6.31441040275609,-5.32162448343771,-11.1378562698134,-3.29658148506464,-6.00443289711783,-0.425715863118487,-3.09966696607144,-11.1937453675252,-6.34875797642145,-3.1271374899982,-0.41844747138782,-1.8653292393202,-5.06864471906947,-4.89986421482361,-2.38948464897559,-2.9197937359157,-5.18155601487662,-1.89666615023424,-1.04109790471012,-0.55716104954253,-1.23378864810057,-2.13266141309564,-5.11854013286725,-0.827430548333401,-5.09961688944757,-9.28633171926963,-6.07164946524282,-8.05394689712069,-7.42244712265438,-8.10918085529522,-12.4585178547622,-12.9281809522124,-7.40791854986604,-6.28315080384648,-12.4304054678026,-8.48726778836205,-0.648592594970618,-1.86889833956938,-9.08092470482076,-6.96945274216584,-8.68098676199478,-2.18577639373762,-1.52395956841139,-0.476081023932476,-12.750050578141,-10.8606003803608,-12.3579569622068,-9.43281361202921,-7.63486715070932,-5.61142010520673,-10.6975288500916,-16.0930364100556,-1.52982830157872,-1.95767253010552,-6.85273493663675,-1.61260690869365,-3.7476649598931,-4.44356319063175,-2.72509955611086,-11.7211001193448,-6.69109730036481,-11.6684714386351,-1.14545597879602,-1.64598240489863,-14.3909404062892,-11.5182372363468,-12.7765129508571,-6.3690117015641,-9.59844095322264,-7.42730786230291,-1.21528188828913,-2.71411801042349,-6.5295669084304,-9.05639922360326,-14.6177743643225,-6.49715665268712,-8.02087664060311,-7.34702768473646,-1.91649116066334,-7.37703233169186,-10.9169013326168,-0.492717536434638,-3.75056214765566,-8.5673451469487,-2.13353322348217,-6.75390711879321,-13.5208726654508,-6.32885642710312,-3.51111549250449,-11.20349642383,-6.70736083261218,-8.96108163870847,-5.18248743410733,-2.32704165800823,-12.8795705893888,-7.96929221674205,-1.66056478911509,-10.7335733196326,-5.86751393127326,-3.26284766390163,-5.44708380718558,-5.45944566869263,-0.544399602216337,-12.8830252561,-8.47224840511748,-11.8915255887017,-7.31059492406826,-14.1078365326189,-3.35615197308042,-3.29873305970046,-10.0987471344902,-7.32623905042037,-10.1028452566397,-14.2115512016673,-13.3681863368592,-2.14283925282807,-4.46625136083408,-0.706865442845385,-5.9146154582483,-4.508385073905,-8.60251188105183,-3.71832984080978,-7.24533462366254,-2.0823336551919,-3.10459256296275,-15.5885743508562,-1.55722532577358,-0.775282837364543,-12.8430050584629,-8.19850088765308,-13.0444929084655,-11.679422598366,-0.0338243150857766,-7.99696492582523,-14.2467579966219,-9.13131595240486,-7.035176632854,-7.38719427072894,-9.54467936453669,-2.21389365634181,-3.77056843827163,-1.95037752101243,-10.3312622052539,-3.21181887297227,-4.66078620019049,-11.9312246625544,-11.5928751753053,-12.8903465947875,-1.50131628732113,-8.67440201904723,-7.02438751382229,-8.62721680201964,-14.979699039975,-6.50410741105908,-8.53750459839437,-12.1003830695987,-6.04605678903607,-11.4590175211079,-7.56243488806456,-5.31005582171138,-3.60905222451859,-6.26787364634335,-12.9794417913363,-9.45752681047038,-1.8951143953487,-10.8220415287547,-7.96885466933247,-6.43100630432873,-8.71532115168061,-2.01011404571567,-6.7206612370548,-4.52897319485251,-4.04228965394375,-14.3566147393831,-2.59330092003746,-12.9849643385201,-10.7262088293604,-0.937543342428279,-3.78512686585435,-1.9081951699407],"y":[-0.0958961671957528,-1.08453184384035,-4.89718486018826,-0.11485467447347,-1.54982018939705,-1.41888878703452,-2.53780563519768,-1.54044769915995,-2.4930532214857,-2.52214467669695,-1.25444402796706,-1.34057180881434,-4.31219246630353,-3.50459814008719,-0.151487735024008,-3.21724919397808,-0.92389001293582,-0.824723164277701,-3.85321952422774,-2.72268633253185,-2.44283762327261,-0.945059154085223,-1.54300097125754,-2.9949178563244,-0.126529910419073,-6.65668751352761,-3.86433066928375,-1.20464651174689,-5.91691692005936,-3.55194326224809,-6.45268304280991,-5.05280385663457,-0.293829378336197,-5.18740717784886,-0.828733347583717,-1.3168582828954,-3.02692986235944,-0.687203762641103,-0.33522892460541,-5.91470656561108,-2.60885426974311,-5.82644118250265,-1.83271015815273,-4.00120257147203,-5.23042285044013,-1.5797665783803,-4.19364813094735,-0.117150629889466,-5.01465603850561,-4.23753404598568,-1.5112127089387,-0.566105075005599,-3.78157410881434,-7.66355487766272,-3.07513679179983,-5.82379093904708,-3.77287210537645,-6.946331281858,-3.68662233323405,-0.162820858235155,-2.66044840685653,-2.87770650723936,-7.32255048635716,-0.931138437818531,-4.34897393897339,-2.26153468077219,-2.60430326523971,-5.57735879909067,-0.433348260190208,-5.15097141669723,-0.399279000646289,-2.86425931352244,-0.537899661547372,-1.56309616914701,-4.0505265377788,-0.700519728432996,-7.02599960734474,-1.6618616646775,-0.644690622938141,-3.13136138899556,-0.716528508415381,-1.76424031775472,-3.96570165292468,-3.26555602827679,-6.00506129647207,-1.86933256024596,-0.67188011479481,-1.20420973468838,-2.86626992599935,-3.71146687770351,-5.98721845749824,-0.34318660158875,-0.0656062433864057,-1.6013665273685,-2.01878516808188,-1.36919980567477,-2.51023920960846,-1.49462207079672,-0.479865278013952,-3.18935700985553,-3.36620460818593,-2.95291879027166,-3.76256265903664,-3.13921799629448,-2.0438092260709,-3.12639017707912,-1.6889501459173,-2.82253486126418,-0.628388933479066,-1.46894115688697,-2.18379318267482,-1.71320794326858,-1.52606914556981,-0.633332336220375,-0.562687454214396,-2.54105469704659,-5.86419348864592,-2.52026690022596,-4.52525677007587,-4.82510288516812,-3.88722615084656,-1.10466197304048,-0.667690683182931,-1.17042185098704,-2.33684112466711,-0.103382085508585,-3.22480747912741,-4.67437713857606,-1.73379528822772,-2.94130901873263,-0.389216997373676,-4.86762208268083,-4.327127037728,-1.89577851692323,-2.89421185515156,-0.65142921590845,-8.73825162972038,-1.06484113672802,-0.0689258584412276,-0.851519718932132,-3.936296601837,-0.52118892971943,-4.42210145438387,-2.21110842376447,-0.40624887142594,-2.75988480588132,-2.45216047467247,-6.62725906969885,-0.326574116604165,-0.266838420014153,-3.396297631801,-5.50770616570942,-0.644149197671368,-1.91591809318143,-1.24936537300266,-2.51364514327891,-0.655975195553319,-2.93398972606966,-3.40993242372042,-0.936413247415606,-1.45918894282864,-0.815462409441462,-3.09986640194223,-2.74751057035051,-0.427854256120392,-2.92454559528977,-0.934923928848141,-0.328957577251247,-4.60866280124946,-1.38964487152341,-3.60255498126979,-2.77970500346153,-0.262632873721771,-2.57159107569241,-2.61614166979194,-1.18517859162582,-1.70970679155601,-2.07560736819037,-2.45954701816398,-10.9119289949671,-0.321486883099662,-0.770959814486729,-2.25406764624162,-0.770908815161716,-0.515911557220023,-1.1843469582701,-1.54524353273123,-0.932343382265137,-1.57756252748793,-1.92810927452997,-0.253930968784415,-1.16706632418132,-3.68403913880624,-1.82340260335562,-3.88713748789412,-1.02099940469679,-3.36574527424902,-3.59433886844954,-3.73162649910273,-0.432399347810074,-3.661558487012,-3.13130456339614,-4.0269108123425,-6.64602881420255,-0.558885053745952,-0.442937316080598,-3.18404207030372,-2.79011708481251,-1.69054269674356,-0.86304912870171,-3.43555599408884,-0.190155526592361,-4.45196936461078,-3.06391793951393,-2.60231789395621,-2.95771057182908,-3.23905046676847,-1.04102223656667,-0.441529264762082,-4.91230902434325,-2.6048079914674,-0.70121793903969,-3.03597329462541,-2.25648330658039,-3.43916271731346,-1.42694990185653,-1.51627081927492],"text":["Character: Ash<br />Fictional Work: Alien","Character: Count Alexei Karenin<br />Fictional Work: Anna Karenina","Character: Princess Ekaterina 'Kitty' Shcherbatskaya<br />Fictional Work: Anna Karenina","Character: Michael Bluth<br />Fictional Work: Arrested Development","Character: Dagny Taggart<br />Fictional Work: Atlas Shrugged","Character: Katara<br />Fictional Work: Avatar: The Last Airbender","Character: Billy Keikeya<br />Fictional Work: Battlestar Galactica","Character: Felix Gaeta<br />Fictional Work: Battlestar Galactica","Character: Laura Roslin<br />Fictional Work: Battlestar Galactica","Character: Lee 'Apollo' Adama<br />Fictional Work: Battlestar Galactica","Character: Gus Fring<br />Fictional Work: Breaking Bad","Character: Skyler White<br />Fictional Work: Breaking Bad","Character: Amy Santiago<br />Fictional Work: Brooklyn Nine-Nine","Character: Charles Boyle<br />Fictional Work: Brooklyn Nine-Nine","Character: Raymond Holt<br />Fictional Work: Brooklyn Nine-Nine","Character: Terry Jeffords<br />Fictional Work: Brooklyn Nine-Nine","Character: Rupert Giles<br />Fictional Work: Buffy the Vampire Slayer","Character: Willow Rosenberg<br />Fictional Work: Buffy the Vampire Slayer","Character: Ilsa Lund<br />Fictional Work: Casablanca","Character: Victor Laszlo<br />Fictional Work: Casablanca","Character: Ambrose Spellman<br />Fictional Work: Chilling Adventures of Sabrina","Character: Hilda Spellman<br />Fictional Work: Chilling Adventures of Sabrina","Character: Rosalind Walker<br />Fictional Work: Chilling Adventures of Sabrina","Character: Zelda Spellman<br />Fictional Work: Chilling Adventures of Sabrina","Character: Abed Nadir<br />Fictional Work: Community","Character: Annie Edison<br />Fictional Work: Community","Character: Shirley Bennett<br />Fictional Work: Community","Character: Julia<br />Fictional Work: Cowboy Bebop","Character: Astrid Leong-Teo<br />Fictional Work: Crazy Rich Asians","Character: Colin Khoo<br />Fictional Work: Crazy Rich Asians","Character: Eleanor Sung-Young<br />Fictional Work: Crazy Rich Asians","Character: Nick Young<br />Fictional Work: Crazy Rich Asians","Character: Rachel Chu<br />Fictional Work: Crazy Rich Asians","Character: Bree Van de Kamp<br />Fictional Work: Desperate Housewives","Character: Julie Mayer<br />Fictional Work: Desperate Housewives","Character: Mary Alice Young<br />Fictional Work: Desperate Housewives","Character: Maria LaGuerta<br />Fictional Work: Dexter","Character: Rita Bennett<br />Fictional Work: Dexter","Character: Thomas Matthews<br />Fictional Work: Dexter","Character: Cora Crawley, Countess of Grantham<br />Fictional Work: Downton Abbey","Character: Lady Edith Crawley<br />Fictional Work: Downton Abbey","Character: Lady Mary Crawley<br />Fictional Work: Downton Abbey","Character: Lady Sybil Crawley<br />Fictional Work: Downton Abbey","Character: Robert Crawley, 7th Earl of Grantham<br />Fictional Work: Downton Abbey","Character: Violet Crawley, Dowager Countess of Grantham<br />Fictional Work: Downton Abbey","Character: Duke Leto Atreides<br />Fictional Work: Dune","Character: Lady Jessica<br />Fictional Work: Dune","Character: Paul Atreides<br />Fictional Work: Dune","Character: Inara Serra<br />Fictional Work: Firefly + Serenity","Character: Simon Tam<br />Fictional Work: Firefly + Serenity","Character: The Operative<br />Fictional Work: Firefly + Serenity","Character: Jason Street<br />Fictional Work: Friday Night Lights","Character: Julie Taylor<br />Fictional Work: Friday Night Lights","Character: Lyla Garrity<br />Fictional Work: Friday Night Lights","Character: Tami Taylor<br />Fictional Work: Friday Night Lights","Character: Monica Geller<br />Fictional Work: Friends","Character: Ross Geller<br />Fictional Work: Friends","Character: Margaery Tyrell<br />Fictional Work: Game of Thrones","Character: Olenna Tyrell<br />Fictional Work: Game of Thrones","Character: Robb Stark<br />Fictional Work: Game of Thrones","Character: Sansa Stark<br />Fictional Work: Game of Thrones","Character: Varys<br />Fictional Work: Game of Thrones","Character: Shoshanna Shapiro<br />Fictional Work: Girls","Character: Artie Abrams<br />Fictional Work: Glee","Character: Mercedes Jones<br />Fictional Work: Glee","Character: Tina Cohen-Chang<br />Fictional Work: Glee","Character: Will Schuester<br />Fictional Work: Glee","Character: Addison Montgomery<br />Fictional Work: Grey's Anatomy","Character: Cristina Yang<br />Fictional Work: Grey's Anatomy","Character: Derek Shepherd<br />Fictional Work: Grey's Anatomy","Character: Meredith Grey<br />Fictional Work: Grey's Anatomy","Character: Preston Burke<br />Fictional Work: Grey's Anatomy","Character: Richard Webber<br />Fictional Work: Grey's Anatomy","Character: Albus Dumbledore<br />Fictional Work: Harry Potter","Character: Cho Chang<br />Fictional Work: Harry Potter","Character: Filius Flitwick<br />Fictional Work: Harry Potter","Character: Fleur Delacour<br />Fictional Work: Harry Potter","Character: Hermione Granger<br />Fictional Work: Harry Potter","Character: Minerva McGonagall<br />Fictional Work: Harry Potter","Character: Dr. Allison Cameron<br />Fictional Work: House, M.D.","Character: Dr. Eric Foreman<br />Fictional Work: House, M.D.","Character: Dr. James Wilson<br />Fictional Work: House, M.D.","Character: Dr. Lisa Cuddy<br />Fictional Work: House, M.D.","Character: Dr. Robert Chase<br />Fictional Work: House, M.D.","Character: Michaela Pratt<br />Fictional Work: How To Get Away With Murder","Character: Oliver Hampton<br />Fictional Work: How To Get Away With Murder","Character: Ariadne<br />Fictional Work: Inception","Character: Arthur<br />Fictional Work: Inception","Character: Mr. Saito<br />Fictional Work: Inception","Character: Robert Fischer<br />Fictional Work: Inception","Character: John Hammond<br />Fictional Work: Jurassic Park","Character: Melinda Warner<br />Fictional Work: Law & Order: SVU","Character: Olivia Benson<br />Fictional Work: Law & Order: SVU","Character: Meg March<br />Fictional Work: Little Women","Character: Legolas<br />Fictional Work: Lord of the Rings","Character: Jack Shephard<br />Fictional Work: LOST","Character: Juliet Burke<br />Fictional Work: LOST","Character: Sun-Hwa Kwon<br />Fictional Work: LOST","Character: Francis Mulcahy<br />Fictional Work: M*A*S*H","Character: Margaret 'Hot Lips' Houlihan<br />Fictional Work: M*A*S*H","Character: Bert Cooper<br />Fictional Work: Mad Men","Character: Henry Francis<br />Fictional Work: Mad Men","Character: Joan Holloway<br />Fictional Work: Mad Men","Character: Ken Cosgrove<br />Fictional Work: Mad Men","Character: Lane Pryce<br />Fictional Work: Mad Men","Character: Rachel Menken<br />Fictional Work: Mad Men","Character: Black Panther<br />Fictional Work: Marvel Cinematic Universe","Character: Dr. Strange<br />Fictional Work: Marvel Cinematic Universe","Character: Peggy Carter<br />Fictional Work: Marvel Cinematic Universe","Character: Aaron Samuels<br />Fictional Work: Mean Girls","Character: Abby Sciuto<br />Fictional Work: NCIS","Character: Donald Mallard<br />Fictional Work: NCIS","Character: Jimmy Palmer<br />Fictional Work: NCIS","Character: Timothy McGee<br />Fictional Work: NCIS","Character: Marty Byrde<br />Fictional Work: Ozark","Character: Ann Perkins<br />Fictional Work: Parks and Recreation","Character: Leslie Knope<br />Fictional Work: Parks and Recreation","Character: Elizabeth Swann<br />Fictional Work: Pirates of the Caribbean","Character: James Norrington<br />Fictional Work: Pirates of the Caribbean","Character: Charles Bingley<br />Fictional Work: Pride and Prejudice","Character: Georgiana Darcy<br />Fictional Work: Pride and Prejudice","Character: Jane Bennet<br />Fictional Work: Pride and Prejudice","Character: Mr. Darcy<br />Fictional Work: Pride and Prejudice","Character: Sara Tancredi<br />Fictional Work: Prison Break","Character: Veronica Donovan<br />Fictional Work: Prison Break","Character: Jules Winnfield<br />Fictional Work: Pulp Fiction","Character: Dr. Marcus Brody<br />Fictional Work: Raiders of the Lost Ark","Character: Maid Marian<br />Fictional Work: Robin Hood","Character: Benvolio<br />Fictional Work: Romeo and Juliet","Character: Abby Whelan<br />Fictional Work: Scandal","Character: David Rosen<br />Fictional Work: Scandal","Character: Olivia Pope<br />Fictional Work: Scandal","Character: Johnny Rose<br />Fictional Work: Schitt's Creek","Character: Ted Mullens<br />Fictional Work: Schitt's Creek","Character: Carla Espinosa<br />Fictional Work: Scrubs","Character: Helen Seinfeld<br />Fictional Work: Seinfeld","Character: Charlotte York<br />Fictional Work: Sex and the City","Character: Miranda Hobbes<br />Fictional Work: Sex and the City","Character: Molly Hooper<br />Fictional Work: Sherlock","Character: Mrs. Hudson<br />Fictional Work: Sherlock","Character: Mycroft Holmes<br />Fictional Work: Sherlock","Character: Jared Dunn<br />Fictional Work: Silicon Valley","Character: Monica Hall<br />Fictional Work: Silicon Valley","Character: Peter Gregory<br />Fictional Work: Silicon Valley","Character: Benjamin Sisko<br />Fictional Work: Star Trek: Deep Space Nine","Character: Jadzia Dax<br />Fictional Work: Star Trek: Deep Space Nine","Character: Jake Sisko<br />Fictional Work: Star Trek: Deep Space Nine","Character: Julian Bashir<br />Fictional Work: Star Trek: Deep Space Nine","Character: Kasidy Yates<br />Fictional Work: Star Trek: Deep Space Nine","Character: Nog<br />Fictional Work: Star Trek: Deep Space Nine","Character: Beverly Crusher<br />Fictional Work: Star Trek: The Next Generation","Character: Deanna Troi<br />Fictional Work: Star Trek: The Next Generation","Character: Geordi La Forge<br />Fictional Work: Star Trek: The Next Generation","Character: Guinan<br />Fictional Work: Star Trek: The Next Generation","Character: Jean-Luc Picard<br />Fictional Work: Star Trek: The Next Generation","Character: Wesley Crusher<br />Fictional Work: Star Trek: The Next Generation","Character: William Riker<br />Fictional Work: Star Trek: The Next Generation","Character: C-3PO<br />Fictional Work: Star Wars","Character: Princess Leia<br />Fictional Work: Star Wars","Character: Daniel Jackson<br />Fictional Work: Stargate SG-1","Character: Janet Fraiser<br />Fictional Work: Stargate SG-1","Character: Samantha Carter<br />Fictional Work: Stargate SG-1","Character: Becca<br />Fictional Work: Superbad","Character: Jules<br />Fictional Work: Superbad","Character: Eric Forman<br />Fictional Work: That 70's Show","Character: Kitty Forman<br />Fictional Work: That 70's Show","Character: Dr. Abigail Griffin<br />Fictional Work: The 100","Character: Amy Farrah Fowler<br />Fictional Work: The Big Bang Theory","Character: Bernadette Rostenkowski<br />Fictional Work: The Big Bang Theory","Character: Leonard Hofstadter<br />Fictional Work: The Big Bang Theory","Character: Raj Koothrappali<br />Fictional Work: The Big Bang Theory","Character: Sheldon Cooper<br />Fictional Work: The Big Bang Theory","Character: Alfred Pennyworth<br />Fictional Work: The Dark Knight","Character: Anthony Garcia<br />Fictional Work: The Dark Knight","Character: Bruce Wayne<br />Fictional Work: The Dark Knight","Character: Lucius Fox<br />Fictional Work: The Dark Knight","Character: Rachel Dawes<br />Fictional Work: The Dark Knight","Character: Chidi Anagonye<br />Fictional Work: The Good Place","Character: Janet<br />Fictional Work: The Good Place","Character: Tahani Al-Jamil<br />Fictional Work: The Good Place","Character: Nick Carraway<br />Fictional Work: The Great Gatsby","Character: Mufasa<br />Fictional Work: The Lion King","Character: Nala<br />Fictional Work: The Lion King","Character: Morpheus<br />Fictional Work: The Matrix","Character: The Oracle<br />Fictional Work: The Matrix","Character: Grace Van Pelt<br />Fictional Work: The Mentalist","Character: Angela Martin<br />Fictional Work: The Office","Character: Jim Halpert<br />Fictional Work: The Office","Character: Kelly Erin Hannon<br />Fictional Work: The Office","Character: Pam Beesly<br />Fictional Work: The Office","Character: Phyllis Lapin<br />Fictional Work: The Office","Character: Peter<br />Fictional Work: The Room","Character: Lisa Simpson<br />Fictional Work: The Simpsons","Character: Marge Simpson<br />Fictional Work: The Simpsons","Character: Ned Flanders<br />Fictional Work: The Simpsons","Character: Principal Skinner<br />Fictional Work: The Simpsons","Character: Waylon Smithers<br />Fictional Work: The Simpsons","Character: Abbey Bartlet<br />Fictional Work: The West Wing","Character: C. J. Cregg<br />Fictional Work: The West Wing","Character: Charlie Young<br />Fictional Work: The West Wing","Character: Donna Moss<br />Fictional Work: The West Wing","Character: Joey Lucas<br />Fictional Work: The West Wing","Character: Josiah Bartlet<br />Fictional Work: The West Wing","Character: Sam Seaborn<br />Fictional Work: The West Wing","Character: Cedric Daniels<br />Fictional Work: The Wire","Character: Norman Wilson<br />Fictional Work: The Wire","Character: Rhonda Pearlman<br />Fictional Work: The Wire","Character: Russell 'Stringer' Bell<br />Fictional Work: The Wire","Character: Dorothy Gale<br />Fictional Work: The Wizard of Oz","Character: Dana Scully<br />Fictional Work: The X-Files","Character: Beth Pearson<br />Fictional Work: This Is Us","Character: Kate Pearson<br />Fictional Work: This Is Us","Character: Randall Pearson<br />Fictional Work: This Is Us","Character: Rebecca Pearson<br />Fictional Work: This Is Us","Character: Sophie<br />Fictional Work: This Is Us","Character: Bo Peep<br />Fictional Work: Toy Story","Character: Buzz Lightyear<br />Fictional Work: Toy Story","Character: Woody<br />Fictional Work: Toy Story","Character: Maggie Hart<br />Fictional Work: True Detective","Character: Alice Cullen<br />Fictional Work: Twilight","Character: Carlisle Cullen<br />Fictional Work: Twilight","Character: Edward Cullen<br />Fictional Work: Twilight","Character: Esme Cullen<br />Fictional Work: Twilight","Character: Dale Cooper<br />Fictional Work: Twin Peaks","Character: Josie Packard<br />Fictional Work: Twin Peaks","Character: Alan Harper<br />Fictional Work: Two and Half Men","Character: Theresa Cullen<br />Fictional Work: Westworld"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(36,79,38,1)","opacity":[0.153372936810747,0.349992007590307,0.321124163333524,0.443478990705343,0.288824910268096,0.612247152719958,0.567916199698295,0.361928064868427,0.581935784667328,0.390753431316443,0.250396527706389,0.149201981661762,0.68270955594398,0.29680908622293,0.647890819258228,0.523519997281542,0.670815759016821,0.443507233918785,0.376492305726571,0.365597567289544,0.217706779660451,0.338052890105005,0.442504368955882,0.234085771323491,0.308119045683453,0.564657584085247,0.419680314444983,0.2482374106621,0.558510819236492,0.247315585709783,0.39197931103187,0.54821324131126,0.494762568988611,0.376869111788155,0.355132937865863,0.223282535747222,0.263378363706102,0.471037596838041,0.150711204855299,0.534184909760579,0.208843921364669,0.338894946714932,0.234978841842898,0.509920894813596,0.346162582287231,0.522342975880426,0.447372181106067,0.359881984281374,0.402727769416775,0.600695077597116,0.244272636718819,0.347653242625306,0.251968410633149,0.443768918658292,0.587441630564677,0.458756744581633,0.299041323795647,0.387544719117914,0.26599273504136,0.30638865866589,0.328069158800724,0.249172610633286,0.427282264620376,0.31469900384287,0.292343234738582,0.195398509858938,0.202860872241359,0.333944289333108,0.181923692013695,0.400560972770477,0.127859616921896,0.339823276073873,0.488275827802024,0.357909811597714,0.475947499450588,0.408890982125289,0.549655164804515,0.628732210462267,0.644870738067395,0.434133094496751,0.360242183315668,0.628135113278046,0.491120250695251,0.231498748253288,0.35874970914567,0.486961741344857,0.389386538816787,0.465154891745549,0.243332690094914,0.26085503056468,0.346580843274604,0.636720285122502,0.555297429082864,0.624106639852312,0.503087945855433,0.421842041123711,0.352650851494299,0.552745262767283,0.780553742015767,0.240438667182818,0.255778132847138,0.40916840021792,0.26435535090803,0.298541214329425,0.298641127431304,0.266667023142857,0.597488927696874,0.400577332191346,0.59074851914103,0.168445948202875,0.205930394797624,0.711437117613995,0.587890070210181,0.638333894553563,0.363249287300111,0.51524105980719,0.495214128254239,0.208653634395945,0.315224493847841,0.437416268372907,0.512072452179541,0.718612457287697,0.369163178521914,0.436853145958416,0.419823205219617,0.170875997097216,0.4344999013569,0.598924207990531,0.165853138006,0.29327939634139,0.457075250772107,0.316853547215798,0.433214043873451,0.675347728271679,0.387557907111764,0.241889757436812,0.699215414484531,0.380340703445745,0.473634590231228,0.314158228597483,0.284954031806,0.642543371377643,0.480196654729996,0.207245737341886,0.550158063229462,0.367134454563052,0.263839378470575,0.457176480579566,0.323497458518615,0.114426434449999,0.661162299181684,0.522809445707575,0.60036083835432,0.41327846876333,0.697270586331958,0.268634507571614,0.232959631722195,0.540487322901075,0.435782938766462,0.524572638533785,0.702568058570504,0.664165477823477,0.250375565786796,0.313801665281948,0.123884386762764,0.372034232824033,0.286312941547045,0.458477569658489,0.34294869235452,0.405536085336655,0.26725709828017,0.267519028421751,0.758653074947871,0.217611557074975,0.205671094920604,0.642864222411613,0.448420458421553,0.65623581378637,0.601505727794677,0.557497926918771,0.432450783379788,0.70176564303048,0.492726168178926,0.392633560770269,0.4067308833397,0.501860748908298,0.204434333616403,0.255350511257316,0.196209237005176,0.540200229166146,0.226876920584881,0.294927758097895,0.625214346639095,0.592898922608024,0.667203019831506,0.166418451507329,0.488387198348496,0.427599388828178,0.492479607120346,0.732648934365237,0.40925688216329,0.479321698600918,0.636642270781636,0.474637819221351,0.581602171942653,0.414048597842525,0.354551499844341,0.284485520364879,0.36746409220343,0.647616190391538,0.520963383224664,0.17024628373778,0.591462724915451,0.455415566824594,0.386626741784802,0.484046529018259,0.25225325747462,0.380746962955135,0.283997357895829,0.361867227277858,0.715669596891483,0.203858145861781,0.661677173579838,0.559604888394136,0.241615833314856,0.262274010273536,0.193145975905027],"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(36,79,38,1)"}},"hoveron":"points","name":"reasonable_refined","legendgroup":"reasonable_refined","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-3.24874106259635,-6.52370682256978,-6.40636702197308,-7.15720503116364,-8.70122195759391,-0.771417157034131,-5.29876020476785,-2.9484747463616,-4.87688828202556,-10.3861585475978,-10.4984623009401,-8.71581876373277,-2.23231987901312,-4.36367102735031,-5.7855732603609,-1.32941438001832,-12.7647359788451,-3.27491573806203,-1.21071038771012,-4.78992585472195,-0.505429205394135,-4.29259859940474,-6.6572521121222,-1.36778872806392,-5.12278030631469,-2.72882646525107,-3.00239951363349,-5.22727896594798,-14.7741381201629,-6.39750190676988,-14.5913889774235,-1.22866392927765,-15.5326555379539,-9.98951224489728,-7.78403557462247,-6.82482132672217,-4.80398979641904,-14.3495869191603,-0.855607785104174,-3.85646075433946,-7.23466227205905,-8.40249121816033,-11.3276950402183,-5.40199973953076,-10.6547659241817,-5.35356818002724,-10.8392708697783,-7.83411084569347,-10.1818635853263,-13.3716758031503,-7.40704820204872,-8.03090955924447,-11.7058790025785,-1.94741112509607,-7.62687202756796,-9.59904555190422,-6.36258118004867,-2.55262581215387,-6.44074132760961,-1.50642442743654,-2.02874888424856,-7.15022529546732,-6.22698104559982,-1.8135463723103,-0.939196749959762,-3.53759252474928,-4.0097928857285,-7.47795333462684,-9.54442205672562,-5.16202084671546,-10.4991392535641,-1.17848610529528,-4.69383683006322,-1.59870381977824,-11.9130550554584,-13.5177006911765,-8.90161448075832,-6.04477931028001,-8.23239078615154,-11.7884566249158,-2.99957195368116,-2.86271937739275,-7.11934904034203,-5.84606947447733,-12.1183742097695,-4.81730845889834,-3.1567731788334,-9.3223120005511,-12.8109423526907,-2.83730351193145,-1.41820883561817,-3.0328635550567,-2.96301785382636,-6.81270635463658,-0.308526209201559,-6.91606936627948,-9.16994494424906,-7.66201457987556,-1.42769214053607,-2.52658854512192,-5.4017904923456,-3.56264816463412,-4.27626093949209,-0.300385498989463,-3.56950679203729,-3.16976647181822,-0.609698123558171,-2.3490179950136,-0.809538794968645,-9.10344885738389,-2.02152909163267,-8.84764572617357,-2.47633788980422,-5.91517238455882,-3.02512306221533,-0.100876854459805,-3.40681805935487,-6.24712965498415,-10.402988682999,-2.02612920243082,-4.12367056656693,-8.4625083016389,-9.7925349603957,-6.05643153725121,-15.1296365758875,-3.5511323650451,-3.95834416017722,-3.2624317320942,-11.8774705935097,-13.2305119192169,-12.3649138327941,-8.40587959442823,-4.14780842094024,-1.07489870913525,-2.50974876869158,-2.87906238995892,-2.77275424658075,-3.11377644024508,-11.5420292773462,-4.2050015387714,-3.1054645463689,-1.1547488814213,-8.89187829243557,-4.54502739138061,-5.45835673246799,-11.4528271221382,-9.9580451728103,-5.94727699383983,-1.46794031479326,-4.6332182386988,-4.25666819509535,-2.12467377128547,-4.13151341034208,-7.86272800972125,-0.273147908526641,-11.650261954675,-6.34893396671109,-10.2212374617323,-4.25660317315865,-9.42345148076732,-1.05542128436885,-1.12995947947759,-8.17547725680635,-0.148684514413533,-5.2680833512887,-12.3819614301154,-1.83790301395683,-4.69840940033308,-0.834455856859583,-4.2337407453644,-6.5924437060439,-6.69681622271075,-7.37572952962943,-1.20467751564771,-5.22504541130484,-8.79919789258178,-3.02155726909965,-7.8560649904818,-9.24742504161402,-3.82967486059749,-1.08918272910774,-11.4799403714514,-3.34535037173248,-5.36458443130888,-10.845994924859,-0.834678850070277,-6.80248064254817,-4.4226750629559,-7.99517489285942],"y":[4.09498555843831,5.45772028936117,4.08862603997444,1.99191901831807,0.708035910819453,1.58739767259368,0.0725811414114199,0.879265538449645,0.664056011077381,4.25328807354793,0.0764036211500671,0.226720332443512,3.98312074308451,6.6497812000706,5.00186859499441,2.0843909327766,3.14505749065225,1.92031972296693,3.62519665428463,8.88680317692566,3.08242532025259,3.53256452421484,6.95418818934563,1.63123320235448,7.57327819282407,0.317414924464147,1.83532109058878,4.39173583680558,2.08603041391722,5.39163034236909,0.48654128671081,2.86980952134258,2.69056075636883,5.22572357407114,2.91555727545644,4.63336649171519,0.0765312941757781,0.832544742071057,1.6020253115418,1.8607433797007,4.65311515093509,3.48007600204237,3.1238653642967,4.5014615831089,4.71089338352898,2.16066168749157,6.91746183841433,0.794080656714668,6.66629619228871,5.06873128297608,6.59189035943918,4.33060788103143,1.74559971491751,2.81910304421954,1.71482596542785,0.255813854751553,2.85776539947634,4.84418521088871,1.65755251841483,2.14151744575338,1.57749946261426,2.5959937956176,5.46444925907661,7.76957306998429,3.00832371542307,2.76915878211276,1.8058768273146,4.54370795818102,0.260674394660346,2.57953336197623,2.52971168135103,4.19870514056867,2.55561776639312,3.77410294106319,2.01058430597659,1.84382386114591,5.67302094475432,1.73509288008498,1.29695842080581,4.13424656773056,1.07576755473611,3.33668368663499,1.73556230187536,3.54981283158958,2.88740464937689,1.36496393133635,1.98250191962927,1.95735508615974,1.37646894839694,2.3949134333479,3.53739598879186,5.07810110148393,2.25949247233558,1.80956593785299,0.0175956809446576,2.44942981845575,5.68192364738914,10.2732795560356,2.30851414805348,1.01817797290769,2.00728713139747,1.81993413095861,9.91987535653314,7.21704884250414,2.90230703034771,1.31296407873096,2.88516331294411,2.07998812012381,7.55407523761575,0.656065670743093,1.71353573121388,3.65948799332953,6.35358613995462,2.52969650816737,1.10284411129093,9.49992694504225,4.7846455472347,1.97056403432915,2.60541491647948,0.49249875074791,2.492459247959,4.080670318728,4.32250320281055,5.9253252360708,0.151074309705064,3.57723906842131,5.84605450754448,2.29153418960608,3.45582735289717,2.92965119730724,6.16416260826696,0.786232583052256,0.712475859306253,7.10691463924777,3.85483131682401,0.515846286714828,2.19012948412698,0.808972069401694,3.35511966885122,5.98043808399204,7.0114353627765,8.20609115737868,2.58977336028584,2.51392007371955,1.69113955429908,2.63365631157944,1.46059398680841,0.661627349821284,4.7333763528429,0.438682145841166,1.0087189755024,4.14406515725676,5.70623284477972,3.39673822201166,12.2513792460621,1.12612490372295,4.47159692084663,0.29239921659633,1.84791396662147,3.91798761717917,2.05939092015736,0.412284483168221,6.21910001501759,0.343224406336047,3.56549585130812,0.858500886852237,5.09153812479169,1.38130726885052,3.25854525344847,1.98969954174886,1.4624800286504,4.15111024217581,1.10698737229922,0.256406595727632,3.37653095600658,7.75830844721979,1.9643595990011,9.24184862584572,1.02952741183559,6.93172700690312,1.41645853778612,6.22573127376932,7.84636468082435,4.34212797691401,0.426989827078877,0.789500518607023,1.86002095037787,0.865344909328585,4.39395403114265],"text":["Character: Dallas<br />Fictional Work: Alien","Character: Ellen Ripley<br />Fictional Work: Alien","Character: Konstantin 'Kostya' Levin<br />Fictional Work: Anna Karenina","Character: Princess Darya 'Dolly' Oblonskaya<br />Fictional Work: Anna Karenina","Character: George Michael Bluth<br />Fictional Work: Arrested Development","Character: Ellis Wyatt<br />Fictional Work: Atlas Shrugged","Character: Henry Rearden<br />Fictional Work: Atlas Shrugged","Character: John Galt<br />Fictional Work: Atlas Shrugged","Character: Aang<br />Fictional Work: Avatar: The Last Airbender","Character: Hakoda<br />Fictional Work: Avatar: The Last Airbender","Character: Iroh<br />Fictional Work: Avatar: The Last Airbender","Character: Anastasia Dualla<br />Fictional Work: Battlestar Galactica","Character: Cally Henderson<br />Fictional Work: Battlestar Galactica","Character: Galen Tyrol<br />Fictional Work: Battlestar Galactica","Character: Karl 'Helo' Agathon<br />Fictional Work: Battlestar Galactica","Character: Sharon 'Boomer' Valerii<br />Fictional Work: Battlestar Galactica","Character: William Adama<br />Fictional Work: Battlestar Galactica","Character: Flynn White<br />Fictional Work: Breaking Bad","Character: Hank Schrader<br />Fictional Work: Breaking Bad","Character: Mike Ehrmantraut<br />Fictional Work: Breaking Bad","Character: Rick Blaine<br />Fictional Work: Casablanca","Character: Harvey Kinkle<br />Fictional Work: Chilling Adventures of Sabrina","Character: Jet Black<br />Fictional Work: Cowboy Bebop","Character: Lynette Scavo<br />Fictional Work: Desperate Housewives","Character: Mike Delfino<br />Fictional Work: Desperate Housewives","Character: Angel Batista<br />Fictional Work: Dexter","Character: Dexter Morgan<br />Fictional Work: Dexter","Character: Harry Morgan<br />Fictional Work: Dexter","Character: Anna Bates<br />Fictional Work: Downton Abbey","Character: Beryl Patmore<br />Fictional Work: Downton Abbey","Character: Charlie Carson<br />Fictional Work: Downton Abbey","Character: Daisy Mason<br />Fictional Work: Downton Abbey","Character: Elsie Carson<br />Fictional Work: Downton Abbey","Character: John Bates<br />Fictional Work: Downton Abbey","Character: William Mason<br />Fictional Work: Downton Abbey","Character: Chani<br />Fictional Work: Dune","Character: Thufir Hawat<br />Fictional Work: Dune","Character: Derrial Book<br />Fictional Work: Firefly + Serenity","Character: Hoban Washburne<br />Fictional Work: Firefly + Serenity","Character: Kaylee Frye<br />Fictional Work: Firefly + Serenity","Character: Zoe Washburne<br />Fictional Work: Firefly + Serenity","Character: Forrest Gump<br />Fictional Work: Forrest Gump","Character: Eric Taylor<br />Fictional Work: Friday Night Lights","Character: Landry Clarke<br />Fictional Work: Friday Night Lights","Character: Matt Saracen<br />Fictional Work: Friday Night Lights","Character: Brandon Stark<br />Fictional Work: Game of Thrones","Character: Brienne of Tarth<br />Fictional Work: Game of Thrones","Character: Catelyn Stark<br />Fictional Work: Game of Thrones","Character: Davos Seaworth<br />Fictional Work: Game of Thrones","Character: Eddard Stark<br />Fictional Work: Game of Thrones","Character: Jon Snow<br />Fictional Work: Game of Thrones","Character: Jorah Mormont<br />Fictional Work: Game of Thrones","Character: Samwell Tarly<br />Fictional Work: Game of Thrones","Character: Ray Ploshansky<br />Fictional Work: Girls","Character: George O'Malley<br />Fictional Work: Grey's Anatomy","Character: Miranda Bailey<br />Fictional Work: Grey's Anatomy","Character: Arthur Weasley<br />Fictional Work: Harry Potter","Character: Dobby<br />Fictional Work: Harry Potter","Character: Ginny Weasley<br />Fictional Work: Harry Potter","Character: Harry Potter<br />Fictional Work: Harry Potter","Character: Luna Lovegood<br />Fictional Work: Harry Potter","Character: Molly Weasley<br />Fictional Work: Harry Potter","Character: Remus Lupin<br />Fictional Work: Harry Potter","Character: Rubeus Hagrid<br />Fictional Work: Harry Potter","Character: Severus Snape<br />Fictional Work: Harry Potter","Character: Nate Lahey<br />Fictional Work: How To Get Away With Murder","Character: Wes Gibbins<br />Fictional Work: How To Get Away With Murder","Character: Dr. Alan Grant<br />Fictional Work: Jurassic Park","Character: Dr. Ellie Sattler<br />Fictional Work: Jurassic Park","Character: Ray Arnold<br />Fictional Work: Jurassic Park","Character: Donald Cragen<br />Fictional Work: Law & Order: SVU","Character: Elliot Stabler<br />Fictional Work: Law & Order: SVU","Character: John Munch<br />Fictional Work: Law & Order: SVU","Character: Odafin Tutuola<br />Fictional Work: Law & Order: SVU","Character: Beth March<br />Fictional Work: Little Women","Character: Marmee March<br />Fictional Work: Little Women","Character: Aragorn<br />Fictional Work: Lord of the Rings","Character: Frodo Baggins<br />Fictional Work: Lord of the Rings","Character: Gandalf<br />Fictional Work: Lord of the Rings","Character: Samwise Gamgee<br />Fictional Work: Lord of the Rings","Character: Desmond Hume<br />Fictional Work: LOST","Character: Hugo 'Hurley' Reyes<br />Fictional Work: LOST","Character: Jin-Soo Kwon<br />Fictional Work: LOST","Character: Sayid Jarrah<br />Fictional Work: LOST","Character: Walter 'Radar' O'Reilly<br />Fictional Work: M*A*S*H","Character: Peggy Olson<br />Fictional Work: Mad Men","Character: Black Widow<br />Fictional Work: Marvel Cinematic Universe","Character: Bruce Banner<br />Fictional Work: Marvel Cinematic Universe","Character: Captain America<br />Fictional Work: Marvel Cinematic Universe","Character: Captain Marvel<br />Fictional Work: Marvel Cinematic Universe","Character: Gamora<br />Fictional Work: Marvel Cinematic Universe","Character: Hawkeye<br />Fictional Work: Marvel Cinematic Universe","Character: Nick Fury<br />Fictional Work: Marvel Cinematic Universe","Character: Betsy Heron<br />Fictional Work: Mean Girls","Character: Cady Heron<br />Fictional Work: Mean Girls","Character: Ms. Sharon Norbury<br />Fictional Work: Mean Girls","Character: Leroy Jethro Gibbs<br />Fictional Work: NCIS","Character: 'Chief' Bromden<br />Fictional Work: One Flew Over the Cuckoo's Nest","Character: Red Reznikov<br />Fictional Work: Orange is the New Black","Character: Taystee Jefferson<br />Fictional Work: Orange is the New Black","Character: Jonah Byrde<br />Fictional Work: Ozark","Character: Mark Brendanawicz<br />Fictional Work: Parks and Recreation","Character: Ron Swanson<br />Fictional Work: Parks and Recreation","Character: Joshamee Gibbs<br />Fictional Work: Pirates of the Caribbean","Character: Will Turner<br />Fictional Work: Pirates of the Caribbean","Character: Elizabeth Bennet<br />Fictional Work: Pride and Prejudice","Character: Benjamin Miles 'C-Note' Franklin<br />Fictional Work: Prison Break","Character: Fernando Sucre<br />Fictional Work: Prison Break","Character: Lincoln Burrows<br />Fictional Work: Prison Break","Character: Michael Scofield<br />Fictional Work: Prison Break","Character: Sallah<br />Fictional Work: Raiders of the Lost Ark","Character: Friar Tuck<br />Fictional Work: Robin Hood","Character: Little John<br />Fictional Work: Robin Hood","Character: Friar Laurence<br />Fictional Work: Romeo and Juliet","Character: The Nurse<br />Fictional Work: Romeo and Juliet","Character: Stevie Budd<br />Fictional Work: Schitt's Creek","Character: Steve Brady<br />Fictional Work: Sex and the City","Character: D.I. Greg Lestrade<br />Fictional Work: Sherlock","Character: Dr. John Watson<br />Fictional Work: Sherlock","Character: Richard Hendricks<br />Fictional Work: Silicon Valley","Character: Kira Nerys<br />Fictional Work: Star Trek: Deep Space Nine","Character: Miles O'Brien<br />Fictional Work: Star Trek: Deep Space Nine","Character: Odo<br />Fictional Work: Star Trek: Deep Space Nine","Character: Worf<br />Fictional Work: Star Trek: Deep Space Nine","Character: Data<br />Fictional Work: Star Trek: The Next Generation","Character: Tasha Yar<br />Fictional Work: Star Trek: The Next Generation","Character: Worf<br />Fictional Work: Star Trek: The Next Generation","Character: Luke Skywalker<br />Fictional Work: Star Wars","Character: Obi-Wan Kenobi<br />Fictional Work: Star Wars","Character: George S. Hammond<br />Fictional Work: Stargate SG-1","Character: Teal'c<br />Fictional Work: Stargate SG-1","Character: Evan<br />Fictional Work: Superbad","Character: Donna Pinciotti<br />Fictional Work: That 70's Show","Character: Red Forman<br />Fictional Work: That 70's Show","Character: Bellamy Blake<br />Fictional Work: The 100","Character: Clarke Griffin<br />Fictional Work: The 100","Character: Raven Reyes<br />Fictional Work: The 100","Character: Mary Cooper<br />Fictional Work: The Big Bang Theory","Character: James Gordon<br />Fictional Work: The Dark Knight","Character: Blondie<br />Fictional Work: The Good, the Bad, and the Ugly","Character: Gale Hawthorne<br />Fictional Work: The Hunger Games","Character: Katniss Everdeen<br />Fictional Work: The Hunger Games","Character: Peeta Mellark<br />Fictional Work: The Hunger Games","Character: Neo<br />Fictional Work: The Matrix","Character: Trinity<br />Fictional Work: The Matrix","Character: Kimball Cho<br />Fictional Work: The Mentalist","Character: Teresa Lisbon<br />Fictional Work: The Mentalist","Character: Wayne Rigsby<br />Fictional Work: The Mentalist","Character: Stanley Hudson<br />Fictional Work: The Office","Character: Apu Nahasapeemapetilon<br />Fictional Work: The Simpsons","Character: Milhouse Van Houten<br />Fictional Work: The Simpsons","Character: Carl Grimes<br />Fictional Work: The Walking Dead","Character: Carol Peletier<br />Fictional Work: The Walking Dead","Character: Dale Horvath<br />Fictional Work: The Walking Dead","Character: Daryl Dixon<br />Fictional Work: The Walking Dead","Character: Glenn Rhee<br />Fictional Work: The Walking Dead","Character: Rick Grimes<br />Fictional Work: The Walking Dead","Character: Leo McGarry<br />Fictional Work: The West Wing","Character: Toby Ziegler<br />Fictional Work: The West Wing","Character: Beatrice 'Beadie' Russell<br />Fictional Work: The Wire","Character: Bunk Moreland<br />Fictional Work: The Wire","Character: D'Angelo Barksdale<br />Fictional Work: The Wire","Character: Dennis 'Cutty' Wise<br />Fictional Work: The Wire","Character: Ellis Carver<br />Fictional Work: The Wire","Character: Kima Greggs<br />Fictional Work: The Wire","Character: Lester Freamon<br />Fictional Work: The Wire","Character: Michael Lee<br />Fictional Work: The Wire","Character: Roland 'Prez' Pryzbylewski<br />Fictional Work: The Wire","Character: The Scarecrow<br />Fictional Work: The Wizard of Oz","Character: The Tin Man<br />Fictional Work: The Wizard of Oz","Character: Walter Skinner<br />Fictional Work: The X-Files","Character: Jack Pearson<br />Fictional Work: This Is Us","Character: Miguel Rivas<br />Fictional Work: This Is Us","Character: Toby Damon<br />Fictional Work: This Is Us","Character: William H. 'Shakespeare' Hill<br />Fictional Work: This Is Us","Character: Charlie Swan<br />Fictional Work: Twilight","Character: Jasper Hale<br />Fictional Work: Twilight","Character: Ed Hurley<br />Fictional Work: Twin Peaks","Character: Norma Jennings<br />Fictional Work: Twin Peaks","Character: Pete Martell<br />Fictional Work: Twin Peaks","Character: Shelly Johnson<br />Fictional Work: Twin Peaks","Character: Sheriff Truman<br />Fictional Work: Twin Peaks","Character: Akecheta<br />Fictional Work: Westworld","Character: Ashley Stubbs<br />Fictional Work: Westworld","Character: Bernard Lowe<br />Fictional Work: Westworld","Character: Dolores Abernathy<br />Fictional Work: Westworld","Character: Elsie Hughes<br />Fictional Work: Westworld","Character: Felix Lutz<br />Fictional Work: Westworld","Character: Teddy Flood<br />Fictional Work: Westworld"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(1,110,174,1)","opacity":[0.31309137433845,0.454041323721803,0.415101899337319,0.407764147675541,0.463687544843766,0.16423940130219,0.31619094475742,0.220640574057198,0.299966888769021,0.570882946263781,0.53973151596165,0.46320540013935,0.284666819278628,0.430312642463624,0.417169075473279,0.194649927615415,0.653565272852714,0.251579105358942,0.252680499110398,0.522394088208295,0.222652748813842,0.32736936818986,0.502254281429022,0.179883745567071,0.481451368645042,0.206471822099669,0.239649230128884,0.381885105595531,0.729843269355817,0.448058860147704,0.716034776847804,0.222574389956297,0.766098388816742,0.573053490275839,0.445723379044395,0.443009482091994,0.294924193112329,0.706327842736417,0.166444014354596,0.272451799349029,0.458178792007521,0.479365982844499,0.593549982108847,0.390673442404601,0.589216473076075,0.336564532645973,0.64118438168623,0.426897328603132,0.611585405322843,0.703164124697265,0.514656878357874,0.480632929575355,0.597194738465672,0.23566856419587,0.424447737359622,0.501197602083788,0.388231693110141,0.323771766526204,0.374289494701721,0.200928277927361,0.198847611594786,0.415403009543096,0.444541662422239,0.431375855848358,0.223853769826221,0.281507325775214,0.277429770974976,0.464554502683164,0.498855672865133,0.336457646009088,0.552666342085695,0.275850787080328,0.318134473678691,0.264577486432289,0.607780082419827,0.674906624130654,0.542178551272657,0.358737274252193,0.446660082878987,0.625444010705618,0.225363740494814,0.277375945845538,0.403405688412776,0.382407028017242,0.623948987910616,0.303623990486739,0.248623976607367,0.497892732929745,0.642309739022989,0.247990524218644,0.252210848157992,0.342656742606656,0.248561973968844,0.391414605731213,0.101646768708225,0.403799750841902,0.55215008273479,0.639351877698318,0.205057209494521,0.205474569243817,0.336115035081125,0.260357015422605,0.552783702972081,0.398910904838041,0.286150149926305,0.23586632300237,0.215141580182283,0.223253107855677,0.414991581158412,0.480759026579764,0.202294143930055,0.499999470199886,0.381533879847966,0.364950944837524,0.226792648211724,0.496812712893143,0.340883811733043,0.369987731143587,0.549428467433909,0.178006337463436,0.295517671312423,0.492278331940603,0.54856054950397,0.452634388265566,0.738859350942111,0.305068536634127,0.391894065614527,0.259764755159852,0.62018255601031,0.670956370638192,0.682359500636145,0.451330865499751,0.26929855695247,0.397382300200642,0.28612117073955,0.214110992334942,0.240271214709547,0.226675130420886,0.605125620314805,0.402672540298538,0.418046507664756,0.444639933040946,0.486532171614907,0.311663284454192,0.334036267076998,0.593601540928243,0.521066215308151,0.345628540035009,0.301423640731715,0.288446898907353,0.276435395040326,0.288577856553679,0.39124072746805,0.456597271203739,0.615213345888406,0.591573201826049,0.422224924126601,0.527980652409723,0.287865464532123,0.527123931846122,0.187850039326134,0.140073645297268,0.529986756282828,0.104442077583511,0.361848902961204,0.621974569357288,0.321085352723326,0.298907521417296,0.232975548618803,0.289480319893972,0.378679234343229,0.427102578562036,0.409015972797102,0.141313465982959,0.355823502248755,0.592711465164092,0.243305226610981,0.609850938536244,0.488390213206755,0.428833864023364,0.165180646647839,0.649822932684897,0.455079454759323,0.385082581680571,0.555022193044847,0.13775581094298,0.391554623351677,0.282109647904063,0.480585761136128],"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(1,110,174,1)"}},"hoveron":"points","name":"reasonable_rugged","legendgroup":"reasonable_rugged","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[14],"y":[14],"text":"Deranged<br />+<br />Rugged","hovertext":"","textfont":{"size":26.4566929133858,"color":"rgba(204,0,36,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[14],"y":[-14],"text":"Deranged<br />+<br />Refined","hovertext":"","textfont":{"size":26.4566929133858,"color":"rgba(75,38,77,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-14],"y":[-14],"text":"Reasonable<br />+<br />Refined","hovertext":"","textfont":{"size":26.4566929133858,"color":"rgba(36,79,38,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[-14],"y":[14],"text":"Reasonable<br />+<br />Rugged","hovertext":"","textfont":{"size":26.4566929133858,"color":"rgba(1,110,174,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"visible":false,"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":16,"r":0,"b":0,"l":0},"font":{"color":"rgba(0,0,0,1)","family":"IBM Plex Sans","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-23.1,23.1],"tickmode":"array","ticktext":["-20","-10","0","10","20"],"tickvals":[-20,-10,0,10,20],"categoryorder":"array","categoryarray":["-20","-10","0","10","20"],"nticks":null,"ticks":"outside","tickcolor":null,"ticklen":0,"tickwidth":0,"showticklabels":false,"tickfont":{"color":null,"family":null,"size":0},"tickangle":-0,"showline":true,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":null,"family":null,"size":0}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-17.6,17.6],"tickmode":"array","ticktext":["-10","0","10"],"tickvals":[-10,0,10],"categoryorder":"array","categoryarray":["-10","0","10"],"nticks":null,"ticks":"outside","tickcolor":null,"ticklen":0,"tickwidth":0,"showticklabels":false,"tickfont":{"color":null,"family":null,"size":0},"tickangle":-0,"showline":true,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":null,"family":null,"size":0}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"IBM Plex Sans","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"4568283335f5":{"yintercept":{},"type":"scatter"},"456820c66623":{"xintercept":{}},"45684dce3c36":{"colour":{},"alpha":{},"x":{},"y":{},"label":{},"label2":{}},"456860545b84":{"x":{},"y":{}},"4568710327b8":{"x":{},"y":{}},"4568572a13f0":{"x":{},"y":{}},"45689225027":{"x":{},"y":{}},"456858a66e8d":{"x":{},"y":{}}},"cur_data":"4568283335f5","visdat":{"4568283335f5":["function (y) ","x"],"456820c66623":["function (y) ","x"],"45684dce3c36":["function (y) ","x"],"456860545b84":["function (y) ","x"],"4568710327b8":["function (y) ","x"],"4568572a13f0":["function (y) ","x"],"45689225027":["function (y) ","x"],"456858a66e8d":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Taking this view also emphasizes that <strong>a single component can only take you so far</strong>. There isn’t just one type of “deranged” (<code>PC01</code>) character. Adding another component, in this case “rugged vs. refined” (<code>PC04</code>), we see that there are different flavours of deranged. For example, Jayne Cobb (<em>Firefly</em>) and Lucille Bluth (<em>Arrested Development</em>) have approximately the same score on <code>PC01</code>, but very different scores on <code>PC04</code>. I would agree that they’re both deranged, but in very different ways. Adding a third (or fourth! or fifth!) component into the mix would give us even more nuance. (But I won’t do that here, because visualizing more than two continuous dimensions gets tricky.)<br />
+ </p>
+</div>
+<div id="conclusion" class="section level3">
+<h3>Conclusion</h3>
+<p>We’ve learned a lot about this dataset by conducting PCA and exploring the results. But dimensionality reduction techniques like PCA are often a precursor to other things, like developing classification models. I also think this dataset is so rich and interesting that you could explore it in other ways that have nothing to do with PCA.</p>
+<p>If you’d like to take this analysis further, you can find the data on my <a href="https://github.com/tacookson/data/tree/master/fictional-character-personalities">GitHub repo of interesting datasets</a>. Some areas to look into are:</p>
+<ul>
+<li>How does gender affect how characters are portrayed and perceived?</li>
+<li>What are the clusters of personality types? Which characters from different fictional works are most like one another?</li>
+<li>Are certain personalities more prominent in certain genres? For example, do sitcoms tend to have personalities that other genres don’t?</li>
+</ul>
+</div>
+</div>
